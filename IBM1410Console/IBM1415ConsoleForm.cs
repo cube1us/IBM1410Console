@@ -47,8 +47,16 @@ namespace IBM1410Console
 
         void consoleOutputAvailable(object sender, SerialDataEventArgs e) {
             int c = e.SerialByte;
+
+            const int consoleCodeByte = 0x88;
+
+            if(e.DispatchCode != consoleCodeByte) {
+                return;
+            }
+
             string s = Char.ToString((char)e.SerialByte);
             // Debug.WriteLine("Data received by 1415 form: " + e.SerialByte.ToString("X2") + " /" + s + "/");
+
 
             switch (printerState) {
                 case state.ordinary:

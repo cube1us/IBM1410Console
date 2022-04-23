@@ -27,6 +27,7 @@ namespace IBM1410Console
         public IBM1415ConsoleForm(SerialDataPublisher consoleOutputPublisher)
         {
             InitializeComponent();
+            this.CreateHandle();    // This ensures controls are created before posting data from FPGA!
 
             if (consoleFont == null ) {
                 ConsoleOutput.Text = "Unable to set font.";
@@ -42,7 +43,7 @@ namespace IBM1410Console
             //            }
 
             consoleOutputPublisher.SerialOutputEvent += new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
-            // Debug.WriteLine("Event Handler for SerialDataPublisher Registered.");
+            Debug.WriteLine("Event Handler for SerialDataPublisher Registered.");
         }
 
         void consoleOutputAvailable(object sender, SerialDataEventArgs e) {
@@ -55,7 +56,7 @@ namespace IBM1410Console
             }
 
             string s = Char.ToString((char)e.SerialByte);
-            // Debug.WriteLine("Data received by 1415 form: " + e.SerialByte.ToString("X2") + " /" + s + "/");
+            Debug.WriteLine("Data received by 1415 form: " + e.SerialByte.ToString("X2") + " /" + s + "/");
 
 
             switch (printerState) {
@@ -124,13 +125,20 @@ namespace IBM1410Console
 
         void doAppend(string s) { 
             if (ConsoleOutput.InvokeRequired) {
-                // Debug.WriteLine("Console Output event: Delegating append of text.");
+                Debug.WriteLine("Console Output event: Delegating append of text.");
                 Action safeAppend = delegate { ConsoleOutput.AppendText(s); };
                 ConsoleOutput.Invoke(safeAppend);
             }
             else {
                 ConsoleOutput.AppendText(s);
-                // Debug.WriteLine("Console Output Event: Writing text directly.");
+                Debug.WriteLine("Console Output Event: Writing text directly.");
+            }
+        }
+
+        private void IBM1415ConsoleForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if(e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                Hide();
             }
         }
     }

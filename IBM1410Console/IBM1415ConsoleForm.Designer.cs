@@ -49,6 +49,7 @@ namespace IBM1410Console
             this.Controls.Add(this.ConsoleOutput);
             this.Name = "IBM1415ConsoleForm";
             this.Text = "IBM1415ConsoleForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IBM1415ConsoleForm_FormClosing);
             this.ResumeLayout(false);
 
         }

@@ -41,6 +41,7 @@ namespace IBM1410Console
 
             serialDataPublisher = new SerialDataPublisher(serialPort);
             IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher);
+
             Console.WriteLine("Starting up...");
             Debug.WriteLine("Debug: Starting up...");
         }

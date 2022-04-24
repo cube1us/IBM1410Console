@@ -36,6 +36,9 @@ namespace IBM1410Console
             this.panelCycle = new System.Windows.Forms.Panel();
             this.panelScan = new System.Windows.Forms.Panel();
             this.panelClock = new System.Windows.Forms.Panel();
+            this.label_CLOCK = new System.Windows.Forms.Label();
+            this.label_CLK_K = new System.Windows.Forms.Label();
+            this.label_CLK_J = new System.Windows.Forms.Label();
             this.label_CLK_H = new System.Windows.Forms.Label();
             this.label_CLK_G = new System.Windows.Forms.Label();
             this.label_CLK_F = new System.Windows.Forms.Label();
@@ -72,14 +75,22 @@ namespace IBM1410Console
             this.tabSystemCheck = new System.Windows.Forms.TabPage();
             this.tabPowerSystemControls = new System.Windows.Forms.TabPage();
             this.tabCEPanel = new System.Windows.Forms.TabPage();
-            this.label_CLK_J = new System.Windows.Forms.Label();
-            this.label_CLK_K = new System.Windows.Forms.Label();
-            this.label_CLOCK = new System.Windows.Forms.Label();
+            this.label_Scan_N = new System.Windows.Forms.Label();
+            this.label_Scan_1 = new System.Windows.Forms.Label();
+            this.label_Scan_2 = new System.Windows.Forms.Label();
+            this.label_Scan_3 = new System.Windows.Forms.Label();
+            this.label_SCAN = new System.Windows.Forms.Label();
+            this.label_SUB_SCAN = new System.Windows.Forms.Label();
+            this.label_SubScan_U = new System.Windows.Forms.Label();
+            this._SubScan_B = new System.Windows.Forms.Label();
+            this.label_SubScan_MQ = new System.Windows.Forms.Label();
+            this._SubScan_E = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
             this.panelCPU.SuspendLayout();
             this.panelCPUBorder.SuspendLayout();
+            this.panelScan.SuspendLayout();
             this.panelClock.SuspendLayout();
             this.panelARing.SuspendLayout();
             this.panelIRing.SuspendLayout();
@@ -119,14 +130,14 @@ namespace IBM1410Console
             this.panel1415CPUOutline.Location = new System.Drawing.Point(16, 8);
             this.panel1415CPUOutline.Margin = new System.Windows.Forms.Padding(0);
             this.panel1415CPUOutline.Name = "panel1415CPUOutline";
-            this.panel1415CPUOutline.Size = new System.Drawing.Size(529, 321);
+            this.panel1415CPUOutline.Size = new System.Drawing.Size(524, 320);
             this.panel1415CPUOutline.TabIndex = 0;
             // 
             // panelStatus
             // 
             this.panelStatus.BackColor = System.Drawing.Color.DarkGray;
             this.panelStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelStatus.Location = new System.Drawing.Point(434, 4);
+            this.panelStatus.Location = new System.Drawing.Point(430, 4);
             this.panelStatus.Name = "panelStatus";
             this.panelStatus.Size = new System.Drawing.Size(89, 311);
             this.panelStatus.TabIndex = 1;
@@ -139,7 +150,7 @@ namespace IBM1410Console
             this.panelCPU.Controls.Add(this.labelCPU);
             this.panelCPU.Location = new System.Drawing.Point(4, 4);
             this.panelCPU.Name = "panelCPU";
-            this.panelCPU.Size = new System.Drawing.Size(426, 311);
+            this.panelCPU.Size = new System.Drawing.Size(422, 311);
             this.panelCPU.TabIndex = 0;
             // 
             // panelCPUBorder
@@ -162,7 +173,7 @@ namespace IBM1410Console
             // Arith
             // 
             this.Arith.BackColor = System.Drawing.Color.DarkGray;
-            this.Arith.Location = new System.Drawing.Point(364, 2);
+            this.Arith.Location = new System.Drawing.Point(360, 2);
             this.Arith.Name = "Arith";
             this.Arith.Size = new System.Drawing.Size(60, 275);
             this.Arith.TabIndex = 5;
@@ -170,7 +181,7 @@ namespace IBM1410Console
             // panelCycle
             // 
             this.panelCycle.BackColor = System.Drawing.Color.DarkGray;
-            this.panelCycle.Location = new System.Drawing.Point(300, 2);
+            this.panelCycle.Location = new System.Drawing.Point(296, 2);
             this.panelCycle.Name = "panelCycle";
             this.panelCycle.Size = new System.Drawing.Size(60, 275);
             this.panelCycle.TabIndex = 4;
@@ -178,7 +189,17 @@ namespace IBM1410Console
             // panelScan
             // 
             this.panelScan.BackColor = System.Drawing.Color.DarkGray;
-            this.panelScan.Location = new System.Drawing.Point(236, 2);
+            this.panelScan.Controls.Add(this._SubScan_E);
+            this.panelScan.Controls.Add(this.label_SubScan_MQ);
+            this.panelScan.Controls.Add(this._SubScan_B);
+            this.panelScan.Controls.Add(this.label_SubScan_U);
+            this.panelScan.Controls.Add(this.label_SUB_SCAN);
+            this.panelScan.Controls.Add(this.label_SCAN);
+            this.panelScan.Controls.Add(this.label_Scan_3);
+            this.panelScan.Controls.Add(this.label_Scan_2);
+            this.panelScan.Controls.Add(this.label_Scan_1);
+            this.panelScan.Controls.Add(this.label_Scan_N);
+            this.panelScan.Location = new System.Drawing.Point(232, 2);
             this.panelScan.Name = "panelScan";
             this.panelScan.Size = new System.Drawing.Size(60, 275);
             this.panelScan.TabIndex = 3;
@@ -197,10 +218,43 @@ namespace IBM1410Console
             this.panelClock.Controls.Add(this.label_CLK_C);
             this.panelClock.Controls.Add(this.label_CLK_B);
             this.panelClock.Controls.Add(this.label_CLK_A);
-            this.panelClock.Location = new System.Drawing.Point(172, 2);
+            this.panelClock.Location = new System.Drawing.Point(168, 2);
             this.panelClock.Name = "panelClock";
             this.panelClock.Size = new System.Drawing.Size(60, 275);
             this.panelClock.TabIndex = 2;
+            // 
+            // label_CLOCK
+            // 
+            this.label_CLOCK.AutoSize = true;
+            this.label_CLOCK.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CLOCK.ForeColor = System.Drawing.Color.White;
+            this.label_CLOCK.Location = new System.Drawing.Point(8, 8);
+            this.label_CLOCK.Name = "label_CLOCK";
+            this.label_CLOCK.Size = new System.Drawing.Size(44, 15);
+            this.label_CLOCK.TabIndex = 17;
+            this.label_CLOCK.Text = "CLOCK";
+            // 
+            // label_CLK_K
+            // 
+            this.label_CLK_K.AutoSize = true;
+            this.label_CLK_K.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CLK_K.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CLK_K.Location = new System.Drawing.Point(23, 248);
+            this.label_CLK_K.Name = "label_CLK_K";
+            this.label_CLK_K.Size = new System.Drawing.Size(16, 15);
+            this.label_CLK_K.TabIndex = 16;
+            this.label_CLK_K.Text = "K";
+            // 
+            // label_CLK_J
+            // 
+            this.label_CLK_J.AutoSize = true;
+            this.label_CLK_J.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CLK_J.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CLK_J.Location = new System.Drawing.Point(23, 224);
+            this.label_CLK_J.Name = "label_CLK_J";
+            this.label_CLK_J.Size = new System.Drawing.Size(14, 15);
+            this.label_CLK_J.TabIndex = 15;
+            this.label_CLK_J.Text = "J";
             // 
             // label_CLK_H
             // 
@@ -300,7 +354,7 @@ namespace IBM1410Console
             this.panelARing.Controls.Add(this.label_A_3);
             this.panelARing.Controls.Add(this.label_A_2);
             this.panelARing.Controls.Add(this.label_A_1);
-            this.panelARing.Location = new System.Drawing.Point(108, 2);
+            this.panelARing.Location = new System.Drawing.Point(104, 2);
             this.panelARing.Name = "panelARing";
             this.panelARing.Size = new System.Drawing.Size(60, 275);
             this.panelARing.TabIndex = 1;
@@ -399,7 +453,7 @@ namespace IBM1410Console
             this.panelIRing.Controls.Add(this.label_I_2);
             this.panelIRing.Controls.Add(this.label_I_1);
             this.panelIRing.Controls.Add(this.label_I_OP);
-            this.panelIRing.Location = new System.Drawing.Point(4, 2);
+            this.panelIRing.Location = new System.Drawing.Point(0, 2);
             this.panelIRing.Name = "panelIRing";
             this.panelIRing.Size = new System.Drawing.Size(100, 275);
             this.panelIRing.TabIndex = 0;
@@ -609,46 +663,123 @@ namespace IBM1410Console
             this.tabCEPanel.Text = "CE PANEL";
             this.tabCEPanel.UseVisualStyleBackColor = true;
             // 
-            // label_CLK_J
+            // label_Scan_N
             // 
-            this.label_CLK_J.AutoSize = true;
-            this.label_CLK_J.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_CLK_J.ForeColor = System.Drawing.Color.DimGray;
-            this.label_CLK_J.Location = new System.Drawing.Point(23, 224);
-            this.label_CLK_J.Name = "label_CLK_J";
-            this.label_CLK_J.Size = new System.Drawing.Size(14, 15);
-            this.label_CLK_J.TabIndex = 15;
-            this.label_CLK_J.Text = "J";
+            this.label_Scan_N.AutoSize = true;
+            this.label_Scan_N.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_N.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_N.Location = new System.Drawing.Point(23, 32);
+            this.label_Scan_N.Name = "label_Scan_N";
+            this.label_Scan_N.Size = new System.Drawing.Size(17, 15);
+            this.label_Scan_N.TabIndex = 8;
+            this.label_Scan_N.Text = "N";
             // 
-            // label_CLK_K
+            // label_Scan_1
             // 
-            this.label_CLK_K.AutoSize = true;
-            this.label_CLK_K.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_CLK_K.ForeColor = System.Drawing.Color.DimGray;
-            this.label_CLK_K.Location = new System.Drawing.Point(23, 248);
-            this.label_CLK_K.Name = "label_CLK_K";
-            this.label_CLK_K.Size = new System.Drawing.Size(16, 15);
-            this.label_CLK_K.TabIndex = 16;
-            this.label_CLK_K.Text = "K";
+            this.label_Scan_1.AutoSize = true;
+            this.label_Scan_1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_1.Location = new System.Drawing.Point(23, 56);
+            this.label_Scan_1.Name = "label_Scan_1";
+            this.label_Scan_1.Size = new System.Drawing.Size(15, 15);
+            this.label_Scan_1.TabIndex = 9;
+            this.label_Scan_1.Text = "1";
             // 
-            // label_CLOCK
+            // label_Scan_2
             // 
-            this.label_CLOCK.AutoSize = true;
-            this.label_CLOCK.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_CLOCK.ForeColor = System.Drawing.Color.White;
-            this.label_CLOCK.Location = new System.Drawing.Point(8, 8);
-            this.label_CLOCK.Name = "label_CLOCK";
-            this.label_CLOCK.Size = new System.Drawing.Size(44, 15);
-            this.label_CLOCK.TabIndex = 17;
-            this.label_CLOCK.Text = "CLOCK";
+            this.label_Scan_2.AutoSize = true;
+            this.label_Scan_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_2.Location = new System.Drawing.Point(23, 80);
+            this.label_Scan_2.Name = "label_Scan_2";
+            this.label_Scan_2.Size = new System.Drawing.Size(15, 15);
+            this.label_Scan_2.TabIndex = 10;
+            this.label_Scan_2.Text = "2";
             // 
-            // UI1415L
+            // label_Scan_3
+            // 
+            this.label_Scan_3.AutoSize = true;
+            this.label_Scan_3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_3.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_3.Location = new System.Drawing.Point(23, 104);
+            this.label_Scan_3.Name = "label_Scan_3";
+            this.label_Scan_3.Size = new System.Drawing.Size(15, 15);
+            this.label_Scan_3.TabIndex = 11;
+            this.label_Scan_3.Text = "3";
+            // 
+            // label_SCAN
+            // 
+            this.label_SCAN.AutoSize = true;
+            this.label_SCAN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SCAN.ForeColor = System.Drawing.Color.White;
+            this.label_SCAN.Location = new System.Drawing.Point(11, 8);
+            this.label_SCAN.Name = "label_SCAN";
+            this.label_SCAN.Size = new System.Drawing.Size(38, 15);
+            this.label_SCAN.TabIndex = 18;
+            this.label_SCAN.Text = "SCAN";
+            // 
+            // label_SUB_SCAN
+            // 
+            this.label_SUB_SCAN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SUB_SCAN.ForeColor = System.Drawing.Color.White;
+            this.label_SUB_SCAN.Location = new System.Drawing.Point(8, 135);
+            this.label_SUB_SCAN.Name = "label_SUB_SCAN";
+            this.label_SUB_SCAN.Size = new System.Drawing.Size(41, 37);
+            this.label_SUB_SCAN.TabIndex = 19;
+            this.label_SUB_SCAN.Text = "SUB SCAN\r\n";
+            this.label_SUB_SCAN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_SubScan_U
+            // 
+            this.label_SubScan_U.AutoSize = true;
+            this.label_SubScan_U.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SubScan_U.ForeColor = System.Drawing.Color.DimGray;
+            this.label_SubScan_U.Location = new System.Drawing.Point(23, 176);
+            this.label_SubScan_U.Name = "label_SubScan_U";
+            this.label_SubScan_U.Size = new System.Drawing.Size(17, 15);
+            this.label_SubScan_U.TabIndex = 20;
+            this.label_SubScan_U.Text = "U";
+            // 
+            // _SubScan_B
+            // 
+            this._SubScan_B.AutoSize = true;
+            this._SubScan_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._SubScan_B.ForeColor = System.Drawing.Color.DimGray;
+            this._SubScan_B.Location = new System.Drawing.Point(23, 200);
+            this._SubScan_B.Name = "_SubScan_B";
+            this._SubScan_B.Size = new System.Drawing.Size(16, 15);
+            this._SubScan_B.TabIndex = 21;
+            this._SubScan_B.Text = "B";
+            // 
+            // label_SubScan_MQ
+            // 
+            this.label_SubScan_MQ.AutoSize = true;
+            this.label_SubScan_MQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SubScan_MQ.ForeColor = System.Drawing.Color.DimGray;
+            this.label_SubScan_MQ.Location = new System.Drawing.Point(16, 248);
+            this.label_SubScan_MQ.Name = "label_SubScan_MQ";
+            this.label_SubScan_MQ.Size = new System.Drawing.Size(29, 15);
+            this.label_SubScan_MQ.TabIndex = 22;
+            this.label_SubScan_MQ.Text = "MQ";
+            // 
+            // _SubScan_E
+            // 
+            this._SubScan_E.AutoSize = true;
+            this._SubScan_E.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._SubScan_E.ForeColor = System.Drawing.Color.DimGray;
+            this._SubScan_E.Location = new System.Drawing.Point(22, 224);
+            this._SubScan_E.Name = "_SubScan_E";
+            this._SubScan_E.Size = new System.Drawing.Size(16, 15);
+            this._SubScan_E.TabIndex = 23;
+            this._SubScan_E.Text = "E";
+            // 
+            // UI1415LForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1043, 604);
             this.Controls.Add(this.tabPageControl);
-            this.Name = "UI1415L";
+            this.Name = "UI1415LForm";
             this.Text = "IBM 1415 Indicator Lights";
             this.tabPageControl.ResumeLayout(false);
             this.tabCPUStatus.ResumeLayout(false);
@@ -656,6 +787,8 @@ namespace IBM1410Console
             this.panelCPU.ResumeLayout(false);
             this.panelCPU.PerformLayout();
             this.panelCPUBorder.ResumeLayout(false);
+            this.panelScan.ResumeLayout(false);
+            this.panelScan.PerformLayout();
             this.panelClock.ResumeLayout(false);
             this.panelClock.PerformLayout();
             this.panelARing.ResumeLayout(false);
@@ -717,5 +850,15 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CLK_K;
         private System.Windows.Forms.Label label_CLK_J;
         private System.Windows.Forms.Label label_CLOCK;
+        private System.Windows.Forms.Label label_SubScan_MQ;
+        private System.Windows.Forms.Label _SubScan_B;
+        private System.Windows.Forms.Label label_SubScan_U;
+        private System.Windows.Forms.Label label_SUB_SCAN;
+        private System.Windows.Forms.Label label_SCAN;
+        private System.Windows.Forms.Label label_Scan_3;
+        private System.Windows.Forms.Label label_Scan_2;
+        private System.Windows.Forms.Label label_Scan_1;
+        private System.Windows.Forms.Label label_Scan_N;
+        private System.Windows.Forms.Label _SubScan_E;
     }
 }

@@ -34,7 +34,26 @@ namespace IBM1410Console
             this.panelCPUBorder = new System.Windows.Forms.Panel();
             this.Arith = new System.Windows.Forms.Panel();
             this.panelCycle = new System.Windows.Forms.Panel();
+            this.label_Cycle_X = new System.Windows.Forms.Label();
+            this.label_Cycle_I = new System.Windows.Forms.Label();
+            this.label_Cycle_F = new System.Windows.Forms.Label();
+            this.label_Cycle_E = new System.Windows.Forms.Label();
+            this.label_Cycle_D = new System.Windows.Forms.Label();
+            this.label_Cycle_C = new System.Windows.Forms.Label();
+            this.label_Cycle_B = new System.Windows.Forms.Label();
+            this.label_Cycle_A = new System.Windows.Forms.Label();
+            this.label_CYCLE = new System.Windows.Forms.Label();
             this.panelScan = new System.Windows.Forms.Panel();
+            this._SubScan_E = new System.Windows.Forms.Label();
+            this.label_SubScan_MQ = new System.Windows.Forms.Label();
+            this._SubScan_B = new System.Windows.Forms.Label();
+            this.label_SubScan_U = new System.Windows.Forms.Label();
+            this.label_SUB_SCAN = new System.Windows.Forms.Label();
+            this.label_SCAN = new System.Windows.Forms.Label();
+            this.label_Scan_3 = new System.Windows.Forms.Label();
+            this.label_Scan_2 = new System.Windows.Forms.Label();
+            this.label_Scan_1 = new System.Windows.Forms.Label();
+            this.label_Scan_N = new System.Windows.Forms.Label();
             this.panelClock = new System.Windows.Forms.Panel();
             this.label_CLOCK = new System.Windows.Forms.Label();
             this.label_CLK_K = new System.Windows.Forms.Label();
@@ -75,21 +94,26 @@ namespace IBM1410Console
             this.tabSystemCheck = new System.Windows.Forms.TabPage();
             this.tabPowerSystemControls = new System.Windows.Forms.TabPage();
             this.tabCEPanel = new System.Windows.Forms.TabPage();
-            this.label_Scan_N = new System.Windows.Forms.Label();
-            this.label_Scan_1 = new System.Windows.Forms.Label();
-            this.label_Scan_2 = new System.Windows.Forms.Label();
-            this.label_Scan_3 = new System.Windows.Forms.Label();
-            this.label_SCAN = new System.Windows.Forms.Label();
-            this.label_SUB_SCAN = new System.Windows.Forms.Label();
-            this.label_SubScan_U = new System.Windows.Forms.Label();
-            this._SubScan_B = new System.Windows.Forms.Label();
-            this.label_SubScan_MQ = new System.Windows.Forms.Label();
-            this._SubScan_E = new System.Windows.Forms.Label();
+            this.label_ARITH = new System.Windows.Forms.Label();
+            this.label_Carry_In = new System.Windows.Forms.Label();
+            this.label_Carry_Out = new System.Windows.Forms.Label();
+            this.label_A_Compl = new System.Windows.Forms.Label();
+            this.label_B_Compl = new System.Windows.Forms.Label();
+            this.label_STATUS = new System.Windows.Forms.Label();
+            this.label_B_GT_A = new System.Windows.Forms.Label();
+            this.label_B_EQ_A = new System.Windows.Forms.Label();
+            this.label_B_LT_A = new System.Windows.Forms.Label();
+            this.label_Overflow = new System.Windows.Forms.Label();
+            this.label_Divide_Overflow = new System.Windows.Forms.Label();
+            this._Zero_Balance = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
+            this.panelStatus.SuspendLayout();
             this.panelCPU.SuspendLayout();
             this.panelCPUBorder.SuspendLayout();
+            this.Arith.SuspendLayout();
+            this.panelCycle.SuspendLayout();
             this.panelScan.SuspendLayout();
             this.panelClock.SuspendLayout();
             this.panelARing.SuspendLayout();
@@ -137,6 +161,13 @@ namespace IBM1410Console
             // 
             this.panelStatus.BackColor = System.Drawing.Color.DarkGray;
             this.panelStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelStatus.Controls.Add(this._Zero_Balance);
+            this.panelStatus.Controls.Add(this.label_Divide_Overflow);
+            this.panelStatus.Controls.Add(this.label_Overflow);
+            this.panelStatus.Controls.Add(this.label_B_LT_A);
+            this.panelStatus.Controls.Add(this.label_B_EQ_A);
+            this.panelStatus.Controls.Add(this.label_B_GT_A);
+            this.panelStatus.Controls.Add(this.label_STATUS);
             this.panelStatus.Location = new System.Drawing.Point(430, 4);
             this.panelStatus.Name = "panelStatus";
             this.panelStatus.Size = new System.Drawing.Size(89, 311);
@@ -173,6 +204,11 @@ namespace IBM1410Console
             // Arith
             // 
             this.Arith.BackColor = System.Drawing.Color.DarkGray;
+            this.Arith.Controls.Add(this.label_B_Compl);
+            this.Arith.Controls.Add(this.label_A_Compl);
+            this.Arith.Controls.Add(this.label_Carry_Out);
+            this.Arith.Controls.Add(this.label_Carry_In);
+            this.Arith.Controls.Add(this.label_ARITH);
             this.Arith.Location = new System.Drawing.Point(360, 2);
             this.Arith.Name = "Arith";
             this.Arith.Size = new System.Drawing.Size(60, 275);
@@ -181,10 +217,118 @@ namespace IBM1410Console
             // panelCycle
             // 
             this.panelCycle.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCycle.Controls.Add(this.label_Cycle_X);
+            this.panelCycle.Controls.Add(this.label_Cycle_I);
+            this.panelCycle.Controls.Add(this.label_Cycle_F);
+            this.panelCycle.Controls.Add(this.label_Cycle_E);
+            this.panelCycle.Controls.Add(this.label_Cycle_D);
+            this.panelCycle.Controls.Add(this.label_Cycle_C);
+            this.panelCycle.Controls.Add(this.label_Cycle_B);
+            this.panelCycle.Controls.Add(this.label_Cycle_A);
+            this.panelCycle.Controls.Add(this.label_CYCLE);
             this.panelCycle.Location = new System.Drawing.Point(296, 2);
             this.panelCycle.Name = "panelCycle";
             this.panelCycle.Size = new System.Drawing.Size(60, 275);
             this.panelCycle.TabIndex = 4;
+            // 
+            // label_Cycle_X
+            // 
+            this.label_Cycle_X.AutoSize = true;
+            this.label_Cycle_X.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_X.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_X.Location = new System.Drawing.Point(23, 224);
+            this.label_Cycle_X.Name = "label_Cycle_X";
+            this.label_Cycle_X.Size = new System.Drawing.Size(16, 15);
+            this.label_Cycle_X.TabIndex = 26;
+            this.label_Cycle_X.Text = "X";
+            // 
+            // label_Cycle_I
+            // 
+            this.label_Cycle_I.AutoSize = true;
+            this.label_Cycle_I.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_I.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_I.Location = new System.Drawing.Point(25, 200);
+            this.label_Cycle_I.Name = "label_Cycle_I";
+            this.label_Cycle_I.Size = new System.Drawing.Size(11, 15);
+            this.label_Cycle_I.TabIndex = 25;
+            this.label_Cycle_I.Text = "I";
+            // 
+            // label_Cycle_F
+            // 
+            this.label_Cycle_F.AutoSize = true;
+            this.label_Cycle_F.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_F.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_F.Location = new System.Drawing.Point(23, 152);
+            this.label_Cycle_F.Name = "label_Cycle_F";
+            this.label_Cycle_F.Size = new System.Drawing.Size(15, 15);
+            this.label_Cycle_F.TabIndex = 24;
+            this.label_Cycle_F.Text = "F";
+            // 
+            // label_Cycle_E
+            // 
+            this.label_Cycle_E.AutoSize = true;
+            this.label_Cycle_E.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_E.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_E.Location = new System.Drawing.Point(23, 128);
+            this.label_Cycle_E.Name = "label_Cycle_E";
+            this.label_Cycle_E.Size = new System.Drawing.Size(16, 15);
+            this.label_Cycle_E.TabIndex = 23;
+            this.label_Cycle_E.Text = "E";
+            // 
+            // label_Cycle_D
+            // 
+            this.label_Cycle_D.AutoSize = true;
+            this.label_Cycle_D.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_D.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_D.Location = new System.Drawing.Point(23, 104);
+            this.label_Cycle_D.Name = "label_Cycle_D";
+            this.label_Cycle_D.Size = new System.Drawing.Size(17, 15);
+            this.label_Cycle_D.TabIndex = 22;
+            this.label_Cycle_D.Text = "D";
+            // 
+            // label_Cycle_C
+            // 
+            this.label_Cycle_C.AutoSize = true;
+            this.label_Cycle_C.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_C.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_C.Location = new System.Drawing.Point(23, 80);
+            this.label_Cycle_C.Name = "label_Cycle_C";
+            this.label_Cycle_C.Size = new System.Drawing.Size(16, 15);
+            this.label_Cycle_C.TabIndex = 21;
+            this.label_Cycle_C.Text = "C";
+            // 
+            // label_Cycle_B
+            // 
+            this.label_Cycle_B.AutoSize = true;
+            this.label_Cycle_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_B.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_B.Location = new System.Drawing.Point(23, 56);
+            this.label_Cycle_B.Name = "label_Cycle_B";
+            this.label_Cycle_B.Size = new System.Drawing.Size(16, 15);
+            this.label_Cycle_B.TabIndex = 20;
+            this.label_Cycle_B.Text = "B";
+            // 
+            // label_Cycle_A
+            // 
+            this.label_Cycle_A.AutoSize = true;
+            this.label_Cycle_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Cycle_A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Cycle_A.Location = new System.Drawing.Point(24, 32);
+            this.label_Cycle_A.Name = "label_Cycle_A";
+            this.label_Cycle_A.Size = new System.Drawing.Size(15, 15);
+            this.label_Cycle_A.TabIndex = 19;
+            this.label_Cycle_A.Text = "A";
+            // 
+            // label_CYCLE
+            // 
+            this.label_CYCLE.AutoSize = true;
+            this.label_CYCLE.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CYCLE.ForeColor = System.Drawing.Color.White;
+            this.label_CYCLE.Location = new System.Drawing.Point(9, 8);
+            this.label_CYCLE.Name = "label_CYCLE";
+            this.label_CYCLE.Size = new System.Drawing.Size(40, 15);
+            this.label_CYCLE.TabIndex = 18;
+            this.label_CYCLE.Text = "CYCLE";
             // 
             // panelScan
             // 
@@ -203,6 +347,116 @@ namespace IBM1410Console
             this.panelScan.Name = "panelScan";
             this.panelScan.Size = new System.Drawing.Size(60, 275);
             this.panelScan.TabIndex = 3;
+            // 
+            // _SubScan_E
+            // 
+            this._SubScan_E.AutoSize = true;
+            this._SubScan_E.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._SubScan_E.ForeColor = System.Drawing.Color.DimGray;
+            this._SubScan_E.Location = new System.Drawing.Point(22, 224);
+            this._SubScan_E.Name = "_SubScan_E";
+            this._SubScan_E.Size = new System.Drawing.Size(16, 15);
+            this._SubScan_E.TabIndex = 23;
+            this._SubScan_E.Text = "E";
+            // 
+            // label_SubScan_MQ
+            // 
+            this.label_SubScan_MQ.AutoSize = true;
+            this.label_SubScan_MQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SubScan_MQ.ForeColor = System.Drawing.Color.DimGray;
+            this.label_SubScan_MQ.Location = new System.Drawing.Point(16, 248);
+            this.label_SubScan_MQ.Name = "label_SubScan_MQ";
+            this.label_SubScan_MQ.Size = new System.Drawing.Size(29, 15);
+            this.label_SubScan_MQ.TabIndex = 22;
+            this.label_SubScan_MQ.Text = "MQ";
+            // 
+            // _SubScan_B
+            // 
+            this._SubScan_B.AutoSize = true;
+            this._SubScan_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._SubScan_B.ForeColor = System.Drawing.Color.DimGray;
+            this._SubScan_B.Location = new System.Drawing.Point(23, 200);
+            this._SubScan_B.Name = "_SubScan_B";
+            this._SubScan_B.Size = new System.Drawing.Size(16, 15);
+            this._SubScan_B.TabIndex = 21;
+            this._SubScan_B.Text = "B";
+            // 
+            // label_SubScan_U
+            // 
+            this.label_SubScan_U.AutoSize = true;
+            this.label_SubScan_U.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SubScan_U.ForeColor = System.Drawing.Color.DimGray;
+            this.label_SubScan_U.Location = new System.Drawing.Point(23, 176);
+            this.label_SubScan_U.Name = "label_SubScan_U";
+            this.label_SubScan_U.Size = new System.Drawing.Size(17, 15);
+            this.label_SubScan_U.TabIndex = 20;
+            this.label_SubScan_U.Text = "U";
+            // 
+            // label_SUB_SCAN
+            // 
+            this.label_SUB_SCAN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SUB_SCAN.ForeColor = System.Drawing.Color.White;
+            this.label_SUB_SCAN.Location = new System.Drawing.Point(8, 135);
+            this.label_SUB_SCAN.Name = "label_SUB_SCAN";
+            this.label_SUB_SCAN.Size = new System.Drawing.Size(41, 37);
+            this.label_SUB_SCAN.TabIndex = 19;
+            this.label_SUB_SCAN.Text = "SUB SCAN\r\n";
+            this.label_SUB_SCAN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_SCAN
+            // 
+            this.label_SCAN.AutoSize = true;
+            this.label_SCAN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SCAN.ForeColor = System.Drawing.Color.White;
+            this.label_SCAN.Location = new System.Drawing.Point(11, 8);
+            this.label_SCAN.Name = "label_SCAN";
+            this.label_SCAN.Size = new System.Drawing.Size(38, 15);
+            this.label_SCAN.TabIndex = 18;
+            this.label_SCAN.Text = "SCAN";
+            // 
+            // label_Scan_3
+            // 
+            this.label_Scan_3.AutoSize = true;
+            this.label_Scan_3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_3.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_3.Location = new System.Drawing.Point(23, 104);
+            this.label_Scan_3.Name = "label_Scan_3";
+            this.label_Scan_3.Size = new System.Drawing.Size(15, 15);
+            this.label_Scan_3.TabIndex = 11;
+            this.label_Scan_3.Text = "3";
+            // 
+            // label_Scan_2
+            // 
+            this.label_Scan_2.AutoSize = true;
+            this.label_Scan_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_2.Location = new System.Drawing.Point(23, 80);
+            this.label_Scan_2.Name = "label_Scan_2";
+            this.label_Scan_2.Size = new System.Drawing.Size(15, 15);
+            this.label_Scan_2.TabIndex = 10;
+            this.label_Scan_2.Text = "2";
+            // 
+            // label_Scan_1
+            // 
+            this.label_Scan_1.AutoSize = true;
+            this.label_Scan_1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_1.Location = new System.Drawing.Point(23, 56);
+            this.label_Scan_1.Name = "label_Scan_1";
+            this.label_Scan_1.Size = new System.Drawing.Size(15, 15);
+            this.label_Scan_1.TabIndex = 9;
+            this.label_Scan_1.Text = "1";
+            // 
+            // label_Scan_N
+            // 
+            this.label_Scan_N.AutoSize = true;
+            this.label_Scan_N.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Scan_N.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Scan_N.Location = new System.Drawing.Point(23, 32);
+            this.label_Scan_N.Name = "label_Scan_N";
+            this.label_Scan_N.Size = new System.Drawing.Size(17, 15);
+            this.label_Scan_N.TabIndex = 8;
+            this.label_Scan_N.Text = "N";
             // 
             // panelClock
             // 
@@ -338,7 +592,7 @@ namespace IBM1410Console
             this.label_CLK_A.AutoSize = true;
             this.label_CLK_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label_CLK_A.ForeColor = System.Drawing.Color.DimGray;
-            this.label_CLK_A.Location = new System.Drawing.Point(23, 32);
+            this.label_CLK_A.Location = new System.Drawing.Point(24, 32);
             this.label_CLK_A.Name = "label_CLK_A";
             this.label_CLK_A.Size = new System.Drawing.Size(15, 15);
             this.label_CLK_A.TabIndex = 7;
@@ -606,7 +860,7 @@ namespace IBM1410Console
             this.label_I_OP.AutoSize = true;
             this.label_I_OP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label_I_OP.ForeColor = System.Drawing.Color.DimGray;
-            this.label_I_OP.Location = new System.Drawing.Point(22, 32);
+            this.label_I_OP.Location = new System.Drawing.Point(18, 32);
             this.label_I_OP.Name = "label_I_OP";
             this.label_I_OP.Size = new System.Drawing.Size(26, 15);
             this.label_I_OP.TabIndex = 0;
@@ -663,115 +917,137 @@ namespace IBM1410Console
             this.tabCEPanel.Text = "CE PANEL";
             this.tabCEPanel.UseVisualStyleBackColor = true;
             // 
-            // label_Scan_N
+            // label_ARITH
             // 
-            this.label_Scan_N.AutoSize = true;
-            this.label_Scan_N.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Scan_N.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Scan_N.Location = new System.Drawing.Point(23, 32);
-            this.label_Scan_N.Name = "label_Scan_N";
-            this.label_Scan_N.Size = new System.Drawing.Size(17, 15);
-            this.label_Scan_N.TabIndex = 8;
-            this.label_Scan_N.Text = "N";
+            this.label_ARITH.AutoSize = true;
+            this.label_ARITH.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_ARITH.ForeColor = System.Drawing.Color.White;
+            this.label_ARITH.Location = new System.Drawing.Point(8, 8);
+            this.label_ARITH.Name = "label_ARITH";
+            this.label_ARITH.Size = new System.Drawing.Size(43, 15);
+            this.label_ARITH.TabIndex = 19;
+            this.label_ARITH.Text = "ARITH";
             // 
-            // label_Scan_1
+            // label_Carry_In
             // 
-            this.label_Scan_1.AutoSize = true;
-            this.label_Scan_1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Scan_1.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Scan_1.Location = new System.Drawing.Point(23, 56);
-            this.label_Scan_1.Name = "label_Scan_1";
-            this.label_Scan_1.Size = new System.Drawing.Size(15, 15);
-            this.label_Scan_1.TabIndex = 9;
-            this.label_Scan_1.Text = "1";
+            this.label_Carry_In.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Carry_In.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Carry_In.Location = new System.Drawing.Point(3, 32);
+            this.label_Carry_In.Name = "label_Carry_In";
+            this.label_Carry_In.Size = new System.Drawing.Size(57, 37);
+            this.label_Carry_In.TabIndex = 20;
+            this.label_Carry_In.Text = "CARRY IN";
+            this.label_Carry_In.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label_Scan_2
+            // label_Carry_Out
             // 
-            this.label_Scan_2.AutoSize = true;
-            this.label_Scan_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Scan_2.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Scan_2.Location = new System.Drawing.Point(23, 80);
-            this.label_Scan_2.Name = "label_Scan_2";
-            this.label_Scan_2.Size = new System.Drawing.Size(15, 15);
-            this.label_Scan_2.TabIndex = 10;
-            this.label_Scan_2.Text = "2";
+            this.label_Carry_Out.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Carry_Out.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Carry_Out.Location = new System.Drawing.Point(2, 72);
+            this.label_Carry_Out.Name = "label_Carry_Out";
+            this.label_Carry_Out.Size = new System.Drawing.Size(57, 37);
+            this.label_Carry_Out.TabIndex = 21;
+            this.label_Carry_Out.Text = "CARRY OUT";
+            this.label_Carry_Out.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label_Scan_3
+            // label_A_Compl
             // 
-            this.label_Scan_3.AutoSize = true;
-            this.label_Scan_3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Scan_3.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Scan_3.Location = new System.Drawing.Point(23, 104);
-            this.label_Scan_3.Name = "label_Scan_3";
-            this.label_Scan_3.Size = new System.Drawing.Size(15, 15);
-            this.label_Scan_3.TabIndex = 11;
-            this.label_Scan_3.Text = "3";
+            this.label_A_Compl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_A_Compl.ForeColor = System.Drawing.Color.DimGray;
+            this.label_A_Compl.Location = new System.Drawing.Point(2, 111);
+            this.label_A_Compl.Name = "label_A_Compl";
+            this.label_A_Compl.Size = new System.Drawing.Size(57, 37);
+            this.label_A_Compl.TabIndex = 22;
+            this.label_A_Compl.Text = "A COMPL";
+            this.label_A_Compl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label_SCAN
+            // label_B_Compl
             // 
-            this.label_SCAN.AutoSize = true;
-            this.label_SCAN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_SCAN.ForeColor = System.Drawing.Color.White;
-            this.label_SCAN.Location = new System.Drawing.Point(11, 8);
-            this.label_SCAN.Name = "label_SCAN";
-            this.label_SCAN.Size = new System.Drawing.Size(38, 15);
-            this.label_SCAN.TabIndex = 18;
-            this.label_SCAN.Text = "SCAN";
+            this.label_B_Compl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_B_Compl.ForeColor = System.Drawing.Color.DimGray;
+            this.label_B_Compl.Location = new System.Drawing.Point(2, 152);
+            this.label_B_Compl.Name = "label_B_Compl";
+            this.label_B_Compl.Size = new System.Drawing.Size(57, 37);
+            this.label_B_Compl.TabIndex = 23;
+            this.label_B_Compl.Text = "B COMPL";
+            this.label_B_Compl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label_SUB_SCAN
+            // label_STATUS
             // 
-            this.label_SUB_SCAN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_SUB_SCAN.ForeColor = System.Drawing.Color.White;
-            this.label_SUB_SCAN.Location = new System.Drawing.Point(8, 135);
-            this.label_SUB_SCAN.Name = "label_SUB_SCAN";
-            this.label_SUB_SCAN.Size = new System.Drawing.Size(41, 37);
-            this.label_SUB_SCAN.TabIndex = 19;
-            this.label_SUB_SCAN.Text = "SUB SCAN\r\n";
-            this.label_SUB_SCAN.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_STATUS.AutoSize = true;
+            this.label_STATUS.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_STATUS.ForeColor = System.Drawing.Color.White;
+            this.label_STATUS.Location = new System.Drawing.Point(20, 8);
+            this.label_STATUS.Name = "label_STATUS";
+            this.label_STATUS.Size = new System.Drawing.Size(50, 15);
+            this.label_STATUS.TabIndex = 20;
+            this.label_STATUS.Text = "STATUS";
             // 
-            // label_SubScan_U
+            // label_B_GT_A
             // 
-            this.label_SubScan_U.AutoSize = true;
-            this.label_SubScan_U.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_SubScan_U.ForeColor = System.Drawing.Color.DimGray;
-            this.label_SubScan_U.Location = new System.Drawing.Point(23, 176);
-            this.label_SubScan_U.Name = "label_SubScan_U";
-            this.label_SubScan_U.Size = new System.Drawing.Size(17, 15);
-            this.label_SubScan_U.TabIndex = 20;
-            this.label_SubScan_U.Text = "U";
+            this.label_B_GT_A.AutoSize = true;
+            this.label_B_GT_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_B_GT_A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_B_GT_A.Location = new System.Drawing.Point(28, 74);
+            this.label_B_GT_A.Name = "label_B_GT_A";
+            this.label_B_GT_A.Size = new System.Drawing.Size(32, 15);
+            this.label_B_GT_A.TabIndex = 23;
+            this.label_B_GT_A.Text = "B>A";
             // 
-            // _SubScan_B
+            // label_B_EQ_A
             // 
-            this._SubScan_B.AutoSize = true;
-            this._SubScan_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this._SubScan_B.ForeColor = System.Drawing.Color.DimGray;
-            this._SubScan_B.Location = new System.Drawing.Point(23, 200);
-            this._SubScan_B.Name = "_SubScan_B";
-            this._SubScan_B.Size = new System.Drawing.Size(16, 15);
-            this._SubScan_B.TabIndex = 21;
-            this._SubScan_B.Text = "B";
+            this.label_B_EQ_A.AutoSize = true;
+            this.label_B_EQ_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_B_EQ_A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_B_EQ_A.Location = new System.Drawing.Point(27, 112);
+            this.label_B_EQ_A.Name = "label_B_EQ_A";
+            this.label_B_EQ_A.Size = new System.Drawing.Size(32, 15);
+            this.label_B_EQ_A.TabIndex = 24;
+            this.label_B_EQ_A.Text = "B=A";
             // 
-            // label_SubScan_MQ
+            // label_B_LT_A
             // 
-            this.label_SubScan_MQ.AutoSize = true;
-            this.label_SubScan_MQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_SubScan_MQ.ForeColor = System.Drawing.Color.DimGray;
-            this.label_SubScan_MQ.Location = new System.Drawing.Point(16, 248);
-            this.label_SubScan_MQ.Name = "label_SubScan_MQ";
-            this.label_SubScan_MQ.Size = new System.Drawing.Size(29, 15);
-            this.label_SubScan_MQ.TabIndex = 22;
-            this.label_SubScan_MQ.Text = "MQ";
+            this.label_B_LT_A.AutoSize = true;
+            this.label_B_LT_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_B_LT_A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_B_LT_A.Location = new System.Drawing.Point(27, 156);
+            this.label_B_LT_A.Name = "label_B_LT_A";
+            this.label_B_LT_A.Size = new System.Drawing.Size(32, 15);
+            this.label_B_LT_A.TabIndex = 25;
+            this.label_B_LT_A.Text = "B<A";
             // 
-            // _SubScan_E
+            // label_Overflow
             // 
-            this._SubScan_E.AutoSize = true;
-            this._SubScan_E.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this._SubScan_E.ForeColor = System.Drawing.Color.DimGray;
-            this._SubScan_E.Location = new System.Drawing.Point(22, 224);
-            this._SubScan_E.Name = "_SubScan_E";
-            this._SubScan_E.Size = new System.Drawing.Size(16, 15);
-            this._SubScan_E.TabIndex = 23;
-            this._SubScan_E.Text = "E";
+            this.label_Overflow.AutoSize = true;
+            this.label_Overflow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Overflow.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Overflow.Location = new System.Drawing.Point(2, 196);
+            this.label_Overflow.Name = "label_Overflow";
+            this.label_Overflow.Size = new System.Drawing.Size(82, 15);
+            this.label_Overflow.TabIndex = 26;
+            this.label_Overflow.Text = "OVERFLOW";
+            // 
+            // label_Divide_Overflow
+            // 
+            this.label_Divide_Overflow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Divide_Overflow.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Divide_Overflow.Location = new System.Drawing.Point(-1, 225);
+            this.label_Divide_Overflow.Name = "label_Divide_Overflow";
+            this.label_Divide_Overflow.Size = new System.Drawing.Size(91, 37);
+            this.label_Divide_Overflow.TabIndex = 27;
+            this.label_Divide_Overflow.Text = "DIVIDE OVERFLOW";
+            this.label_Divide_Overflow.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // _Zero_Balance
+            // 
+            this._Zero_Balance.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this._Zero_Balance.ForeColor = System.Drawing.Color.DimGray;
+            this._Zero_Balance.Location = new System.Drawing.Point(-2, 268);
+            this._Zero_Balance.Name = "_Zero_Balance";
+            this._Zero_Balance.Size = new System.Drawing.Size(91, 37);
+            this._Zero_Balance.TabIndex = 28;
+            this._Zero_Balance.Text = "ZERO BALANCE";
+            this._Zero_Balance.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // UI1415LForm
             // 
@@ -784,9 +1060,15 @@ namespace IBM1410Console
             this.tabPageControl.ResumeLayout(false);
             this.tabCPUStatus.ResumeLayout(false);
             this.panel1415CPUOutline.ResumeLayout(false);
+            this.panelStatus.ResumeLayout(false);
+            this.panelStatus.PerformLayout();
             this.panelCPU.ResumeLayout(false);
             this.panelCPU.PerformLayout();
             this.panelCPUBorder.ResumeLayout(false);
+            this.Arith.ResumeLayout(false);
+            this.Arith.PerformLayout();
+            this.panelCycle.ResumeLayout(false);
+            this.panelCycle.PerformLayout();
             this.panelScan.ResumeLayout(false);
             this.panelScan.PerformLayout();
             this.panelClock.ResumeLayout(false);
@@ -860,5 +1142,26 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_Scan_1;
         private System.Windows.Forms.Label label_Scan_N;
         private System.Windows.Forms.Label _SubScan_E;
+        private System.Windows.Forms.Label label_Cycle_F;
+        private System.Windows.Forms.Label label_Cycle_E;
+        private System.Windows.Forms.Label label_Cycle_D;
+        private System.Windows.Forms.Label label_Cycle_C;
+        private System.Windows.Forms.Label label_Cycle_B;
+        private System.Windows.Forms.Label label_Cycle_A;
+        private System.Windows.Forms.Label label_CYCLE;
+        private System.Windows.Forms.Label label_Cycle_X;
+        private System.Windows.Forms.Label label_Cycle_I;
+        private System.Windows.Forms.Label label_ARITH;
+        private System.Windows.Forms.Label label_B_Compl;
+        private System.Windows.Forms.Label label_A_Compl;
+        private System.Windows.Forms.Label label_Carry_Out;
+        private System.Windows.Forms.Label label_Carry_In;
+        private System.Windows.Forms.Label label_STATUS;
+        private System.Windows.Forms.Label label_B_GT_A;
+        private System.Windows.Forms.Label _Zero_Balance;
+        private System.Windows.Forms.Label label_Divide_Overflow;
+        private System.Windows.Forms.Label label_Overflow;
+        private System.Windows.Forms.Label label_B_LT_A;
+        private System.Windows.Forms.Label label_B_EQ_A;
     }
 }

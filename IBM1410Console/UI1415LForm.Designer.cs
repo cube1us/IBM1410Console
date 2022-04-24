@@ -131,6 +131,25 @@ namespace IBM1410Console
             this.label_Read_CH2 = new System.Windows.Forms.Label();
             this.label_RBCInterlock_CH2 = new System.Windows.Forms.Label();
             this.label_Interlock_CH2 = new System.Windows.Forms.Label();
+            this.label_NoTransfer_CH1 = new System.Windows.Forms.Label();
+            this.label_WrongLengthRecord_CH1 = new System.Windows.Forms.Label();
+            this.label_Condition_CH1 = new System.Windows.Forms.Label();
+            this.label_Busy_CH1 = new System.Windows.Forms.Label();
+            this.label_DataCheck_CH1 = new System.Windows.Forms.Label();
+            this.label_NotReady_CH1 = new System.Windows.Forms.Label();
+            this.label_NoTransfer_CH2 = new System.Windows.Forms.Label();
+            this.label_DataCheck_CH2 = new System.Windows.Forms.Label();
+            this.label_WrongLengthRecord_CH2 = new System.Windows.Forms.Label();
+            this.label_Condition_CH2 = new System.Windows.Forms.Label();
+            this.label_Busy_CH2 = new System.Windows.Forms.Label();
+            this.label_NotReady_CH2 = new System.Windows.Forms.Label();
+            this.panelSystemCheckBackground = new System.Windows.Forms.Panel();
+            this.panelSystemCheckHeader = new System.Windows.Forms.Panel();
+            this.label_SystemCheckHeader = new System.Windows.Forms.Label();
+            this.panelProcessCheck = new System.Windows.Forms.Panel();
+            this.panelProgramCheck = new System.Windows.Forms.Panel();
+            this.label_ProcessCheck = new System.Windows.Forms.Label();
+            this.label_ProgramCheck = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -151,6 +170,11 @@ namespace IBM1410Console
             this.panel_IOChCtrl_CH2.SuspendLayout();
             this.panel_IOChCtrl_CH1.SuspendLayout();
             this.panelChCtrlHeader.SuspendLayout();
+            this.tabSystemCheck.SuspendLayout();
+            this.panelSystemCheckBackground.SuspendLayout();
+            this.panelSystemCheckHeader.SuspendLayout();
+            this.panelProcessCheck.SuspendLayout();
+            this.panelProgramCheck.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageControl
@@ -1070,6 +1094,12 @@ namespace IBM1410Console
             // panel_IOChStatus_CH2
             // 
             this.panel_IOChStatus_CH2.BackColor = System.Drawing.Color.DarkGray;
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_NoTransfer_CH2);
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_DataCheck_CH2);
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_WrongLengthRecord_CH2);
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_Condition_CH2);
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_Busy_CH2);
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_NotReady_CH2);
             this.panel_IOChStatus_CH2.Controls.Add(this.label_IOChStatus_CH2);
             this.panel_IOChStatus_CH2.Location = new System.Drawing.Point(307, 32);
             this.panel_IOChStatus_CH2.Name = "panel_IOChStatus_CH2";
@@ -1090,6 +1120,12 @@ namespace IBM1410Console
             // panel_IOChStatus_CH1
             // 
             this.panel_IOChStatus_CH1.BackColor = System.Drawing.Color.DarkGray;
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_NoTransfer_CH1);
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_DataCheck_CH1);
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_WrongLengthRecord_CH1);
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_Condition_CH1);
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_Busy_CH1);
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_NotReady_CH1);
             this.panel_IOChStatus_CH1.Controls.Add(this.label_IOChStatus_CH1);
             this.panel_IOChStatus_CH1.Location = new System.Drawing.Point(206, 32);
             this.panel_IOChStatus_CH1.Name = "panel_IOChStatus_CH1";
@@ -1201,13 +1237,14 @@ namespace IBM1410Console
             // 
             // tabSystemCheck
             // 
+            this.tabSystemCheck.BackColor = System.Drawing.Color.DarkGray;
+            this.tabSystemCheck.Controls.Add(this.panelSystemCheckBackground);
             this.tabSystemCheck.Location = new System.Drawing.Point(4, 24);
             this.tabSystemCheck.Name = "tabSystemCheck";
             this.tabSystemCheck.Padding = new System.Windows.Forms.Padding(3);
             this.tabSystemCheck.Size = new System.Drawing.Size(563, 346);
             this.tabSystemCheck.TabIndex = 2;
             this.tabSystemCheck.Text = "SYSTEM CHECK";
-            this.tabSystemCheck.UseVisualStyleBackColor = true;
             // 
             // tabPowerSystemControls
             // 
@@ -1361,6 +1398,209 @@ namespace IBM1410Console
             this.label_Interlock_CH2.TabIndex = 33;
             this.label_Interlock_CH2.Text = "INTERLOCK";
             // 
+            // label_NoTransfer_CH1
+            // 
+            this.label_NoTransfer_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_NoTransfer_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_NoTransfer_CH1.Location = new System.Drawing.Point(3, 214);
+            this.label_NoTransfer_CH1.Name = "label_NoTransfer_CH1";
+            this.label_NoTransfer_CH1.Size = new System.Drawing.Size(91, 62);
+            this.label_NoTransfer_CH1.TabIndex = 44;
+            this.label_NoTransfer_CH1.Text = "NO TRANSFER";
+            this.label_NoTransfer_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_WrongLengthRecord_CH1
+            // 
+            this.label_WrongLengthRecord_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_WrongLengthRecord_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_WrongLengthRecord_CH1.Location = new System.Drawing.Point(6, 164);
+            this.label_WrongLengthRecord_CH1.Name = "label_WrongLengthRecord_CH1";
+            this.label_WrongLengthRecord_CH1.Size = new System.Drawing.Size(83, 52);
+            this.label_WrongLengthRecord_CH1.TabIndex = 43;
+            this.label_WrongLengthRecord_CH1.Text = "WRONG LENGTH RECORD ";
+            this.label_WrongLengthRecord_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Condition_CH1
+            // 
+            this.label_Condition_CH1.AutoSize = true;
+            this.label_Condition_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Condition_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Condition_CH1.Location = new System.Drawing.Point(7, 139);
+            this.label_Condition_CH1.Name = "label_Condition_CH1";
+            this.label_Condition_CH1.Size = new System.Drawing.Size(82, 15);
+            this.label_Condition_CH1.TabIndex = 42;
+            this.label_Condition_CH1.Text = "CONDITION";
+            // 
+            // label_Busy_CH1
+            // 
+            this.label_Busy_CH1.AutoSize = true;
+            this.label_Busy_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Busy_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Busy_CH1.Location = new System.Drawing.Point(27, 76);
+            this.label_Busy_CH1.Name = "label_Busy_CH1";
+            this.label_Busy_CH1.Size = new System.Drawing.Size(43, 15);
+            this.label_Busy_CH1.TabIndex = 41;
+            this.label_Busy_CH1.Text = "BUSY";
+            // 
+            // label_DataCheck_CH1
+            // 
+            this.label_DataCheck_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_DataCheck_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_DataCheck_CH1.Location = new System.Drawing.Point(14, 99);
+            this.label_DataCheck_CH1.Name = "label_DataCheck_CH1";
+            this.label_DataCheck_CH1.Size = new System.Drawing.Size(69, 37);
+            this.label_DataCheck_CH1.TabIndex = 40;
+            this.label_DataCheck_CH1.Text = "DATA CHECK";
+            this.label_DataCheck_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_NotReady_CH1
+            // 
+            this.label_NotReady_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_NotReady_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_NotReady_CH1.Location = new System.Drawing.Point(18, 26);
+            this.label_NotReady_CH1.Name = "label_NotReady_CH1";
+            this.label_NotReady_CH1.Size = new System.Drawing.Size(60, 41);
+            this.label_NotReady_CH1.TabIndex = 39;
+            this.label_NotReady_CH1.Text = "NOT READY";
+            this.label_NotReady_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_NoTransfer_CH2
+            // 
+            this.label_NoTransfer_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_NoTransfer_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_NoTransfer_CH2.Location = new System.Drawing.Point(3, 214);
+            this.label_NoTransfer_CH2.Name = "label_NoTransfer_CH2";
+            this.label_NoTransfer_CH2.Size = new System.Drawing.Size(91, 62);
+            this.label_NoTransfer_CH2.TabIndex = 50;
+            this.label_NoTransfer_CH2.Text = "NO TRANSFER";
+            this.label_NoTransfer_CH2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_DataCheck_CH2
+            // 
+            this.label_DataCheck_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_DataCheck_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_DataCheck_CH2.Location = new System.Drawing.Point(14, 99);
+            this.label_DataCheck_CH2.Name = "label_DataCheck_CH2";
+            this.label_DataCheck_CH2.Size = new System.Drawing.Size(69, 37);
+            this.label_DataCheck_CH2.TabIndex = 46;
+            this.label_DataCheck_CH2.Text = "DATA CHECK";
+            this.label_DataCheck_CH2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_WrongLengthRecord_CH2
+            // 
+            this.label_WrongLengthRecord_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_WrongLengthRecord_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_WrongLengthRecord_CH2.Location = new System.Drawing.Point(6, 164);
+            this.label_WrongLengthRecord_CH2.Name = "label_WrongLengthRecord_CH2";
+            this.label_WrongLengthRecord_CH2.Size = new System.Drawing.Size(83, 52);
+            this.label_WrongLengthRecord_CH2.TabIndex = 49;
+            this.label_WrongLengthRecord_CH2.Text = "WRONG LENGTH RECORD ";
+            this.label_WrongLengthRecord_CH2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Condition_CH2
+            // 
+            this.label_Condition_CH2.AutoSize = true;
+            this.label_Condition_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Condition_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Condition_CH2.Location = new System.Drawing.Point(7, 139);
+            this.label_Condition_CH2.Name = "label_Condition_CH2";
+            this.label_Condition_CH2.Size = new System.Drawing.Size(82, 15);
+            this.label_Condition_CH2.TabIndex = 48;
+            this.label_Condition_CH2.Text = "CONDITION";
+            // 
+            // label_Busy_CH2
+            // 
+            this.label_Busy_CH2.AutoSize = true;
+            this.label_Busy_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Busy_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Busy_CH2.Location = new System.Drawing.Point(27, 76);
+            this.label_Busy_CH2.Name = "label_Busy_CH2";
+            this.label_Busy_CH2.Size = new System.Drawing.Size(43, 15);
+            this.label_Busy_CH2.TabIndex = 47;
+            this.label_Busy_CH2.Text = "BUSY";
+            // 
+            // label_NotReady_CH2
+            // 
+            this.label_NotReady_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_NotReady_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_NotReady_CH2.Location = new System.Drawing.Point(18, 25);
+            this.label_NotReady_CH2.Name = "label_NotReady_CH2";
+            this.label_NotReady_CH2.Size = new System.Drawing.Size(60, 41);
+            this.label_NotReady_CH2.TabIndex = 45;
+            this.label_NotReady_CH2.Text = "NOT READY";
+            this.label_NotReady_CH2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panelSystemCheckBackground
+            // 
+            this.panelSystemCheckBackground.BackColor = System.Drawing.Color.White;
+            this.panelSystemCheckBackground.Controls.Add(this.panelProgramCheck);
+            this.panelSystemCheckBackground.Controls.Add(this.panelProcessCheck);
+            this.panelSystemCheckBackground.Controls.Add(this.panelSystemCheckHeader);
+            this.panelSystemCheckBackground.Location = new System.Drawing.Point(16, 8);
+            this.panelSystemCheckBackground.Name = "panelSystemCheckBackground";
+            this.panelSystemCheckBackground.Size = new System.Drawing.Size(308, 321);
+            this.panelSystemCheckBackground.TabIndex = 0;
+            // 
+            // panelSystemCheckHeader
+            // 
+            this.panelSystemCheckHeader.BackColor = System.Drawing.Color.DarkGray;
+            this.panelSystemCheckHeader.Controls.Add(this.label_SystemCheckHeader);
+            this.panelSystemCheckHeader.Location = new System.Drawing.Point(4, 4);
+            this.panelSystemCheckHeader.Name = "panelSystemCheckHeader";
+            this.panelSystemCheckHeader.Size = new System.Drawing.Size(299, 26);
+            this.panelSystemCheckHeader.TabIndex = 1;
+            // 
+            // label_SystemCheckHeader
+            // 
+            this.label_SystemCheckHeader.AutoSize = true;
+            this.label_SystemCheckHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SystemCheckHeader.ForeColor = System.Drawing.Color.White;
+            this.label_SystemCheckHeader.Location = new System.Drawing.Point(99, 6);
+            this.label_SystemCheckHeader.Name = "label_SystemCheckHeader";
+            this.label_SystemCheckHeader.Size = new System.Drawing.Size(101, 15);
+            this.label_SystemCheckHeader.TabIndex = 21;
+            this.label_SystemCheckHeader.Text = "SYSTEM    CHECK";
+            // 
+            // panelProcessCheck
+            // 
+            this.panelProcessCheck.BackColor = System.Drawing.Color.DarkGray;
+            this.panelProcessCheck.Controls.Add(this.label_ProcessCheck);
+            this.panelProcessCheck.Location = new System.Drawing.Point(4, 32);
+            this.panelProcessCheck.Name = "panelProcessCheck";
+            this.panelProcessCheck.Size = new System.Drawing.Size(198, 285);
+            this.panelProcessCheck.TabIndex = 2;
+            // 
+            // panelProgramCheck
+            // 
+            this.panelProgramCheck.BackColor = System.Drawing.Color.DarkGray;
+            this.panelProgramCheck.Controls.Add(this.label_ProgramCheck);
+            this.panelProgramCheck.Location = new System.Drawing.Point(206, 32);
+            this.panelProgramCheck.Name = "panelProgramCheck";
+            this.panelProgramCheck.Size = new System.Drawing.Size(97, 285);
+            this.panelProgramCheck.TabIndex = 3;
+            // 
+            // label_ProcessCheck
+            // 
+            this.label_ProcessCheck.AutoSize = true;
+            this.label_ProcessCheck.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_ProcessCheck.ForeColor = System.Drawing.Color.White;
+            this.label_ProcessCheck.Location = new System.Drawing.Point(70, 8);
+            this.label_ProcessCheck.Name = "label_ProcessCheck";
+            this.label_ProcessCheck.Size = new System.Drawing.Size(58, 15);
+            this.label_ProcessCheck.TabIndex = 21;
+            this.label_ProcessCheck.Text = "PROCESS";
+            // 
+            // label_ProgramCheck
+            // 
+            this.label_ProgramCheck.AutoSize = true;
+            this.label_ProgramCheck.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_ProgramCheck.ForeColor = System.Drawing.Color.White;
+            this.label_ProgramCheck.Location = new System.Drawing.Point(15, 8);
+            this.label_ProgramCheck.Name = "label_ProgramCheck";
+            this.label_ProgramCheck.Size = new System.Drawing.Size(67, 15);
+            this.label_ProgramCheck.TabIndex = 22;
+            this.label_ProgramCheck.Text = "PROGRAM";
+            // 
             // UI1415LForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1403,6 +1643,14 @@ namespace IBM1410Console
             this.panel_IOChCtrl_CH1.PerformLayout();
             this.panelChCtrlHeader.ResumeLayout(false);
             this.panelChCtrlHeader.PerformLayout();
+            this.tabSystemCheck.ResumeLayout(false);
+            this.panelSystemCheckBackground.ResumeLayout(false);
+            this.panelSystemCheckHeader.ResumeLayout(false);
+            this.panelSystemCheckHeader.PerformLayout();
+            this.panelProcessCheck.ResumeLayout(false);
+            this.panelProcessCheck.PerformLayout();
+            this.panelProgramCheck.ResumeLayout(false);
+            this.panelProgramCheck.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1514,5 +1762,24 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_Read_CH2;
         private System.Windows.Forms.Label label_RBCInterlock_CH2;
         private System.Windows.Forms.Label label_Interlock_CH2;
+        private System.Windows.Forms.Label label_NoTransfer_CH1;
+        private System.Windows.Forms.Label label_DataCheck_CH1;
+        private System.Windows.Forms.Label label_WrongLengthRecord_CH1;
+        private System.Windows.Forms.Label label_Condition_CH1;
+        private System.Windows.Forms.Label label_Busy_CH1;
+        private System.Windows.Forms.Label label_NotReady_CH1;
+        private System.Windows.Forms.Label label_NoTransfer_CH2;
+        private System.Windows.Forms.Label label_DataCheck_CH2;
+        private System.Windows.Forms.Label label_WrongLengthRecord_CH2;
+        private System.Windows.Forms.Label label_Condition_CH2;
+        private System.Windows.Forms.Label label_Busy_CH2;
+        private System.Windows.Forms.Label label_NotReady_CH2;
+        private System.Windows.Forms.Panel panelSystemCheckBackground;
+        private System.Windows.Forms.Panel panelSystemCheckHeader;
+        private System.Windows.Forms.Label label_SystemCheckHeader;
+        private System.Windows.Forms.Panel panelProgramCheck;
+        private System.Windows.Forms.Panel panelProcessCheck;
+        private System.Windows.Forms.Label label_ProgramCheck;
+        private System.Windows.Forms.Label label_ProcessCheck;
     }
 }

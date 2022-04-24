@@ -8,10 +8,12 @@ using System.Windows.Forms;
 
 namespace IBM1410Console
 {
-    public partial class UI1415L : Form
+    public partial class UI1415LForm : Form
     {
-        public UI1415L() {
+        public UI1415LForm(SerialDataPublisher lightOutputPublisher) {
             InitializeComponent();
+            this.CreateHandle();    // This ensures that controls are created before receiving data from the FPGA
+
         }
     }
 }

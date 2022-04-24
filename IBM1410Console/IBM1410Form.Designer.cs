@@ -55,6 +55,7 @@ namespace IBM1410Console
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lightStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -260,30 +261,39 @@ namespace IBM1410Console
             // 
             this.windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.consoleStripMenuItem,
+            this.lightStripMenuItem,
             this.customizeToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.windowsStripMenuItem.Name = "windowsStripMenuItem";
             this.windowsStripMenuItem.Size = new System.Drawing.Size(68, 20);
             this.windowsStripMenuItem.Text = "&Windows";
-            this.windowsStripMenuItem.ToolTipText = "Opens Main Console Window";
+            this.windowsStripMenuItem.ToolTipText = "Opens 1410 Windows";
+            this.windowsStripMenuItem.Click += new System.EventHandler(this.windowsStripMenuItem_Click);
             // 
             // consoleStripMenuItem
             // 
             this.consoleStripMenuItem.Name = "consoleStripMenuItem";
-            this.consoleStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.consoleStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.consoleStripMenuItem.Text = "Console";
             this.consoleStripMenuItem.Click += new System.EventHandler(this.consoleStripMenuItem_Click);
+            // 
+            // lightStripMenuItem
+            // 
+            this.lightStripMenuItem.Name = "lightStripMenuItem";
+            this.lightStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.lightStripMenuItem.Text = "Console Lights";
+            this.lightStripMenuItem.Click += new System.EventHandler(this.lightStripMenuItem_Click);
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.customizeToolStripMenuItem.Text = "&Customize";
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // helpToolStripMenuItem
@@ -378,6 +388,7 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consoleStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem lightStripMenuItem;
     }
 }
 

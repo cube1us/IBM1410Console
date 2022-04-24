@@ -105,16 +105,32 @@ namespace IBM1410Console
             this.tabIOChannels = new System.Windows.Forms.TabPage();
             this.panelIOBackground = new System.Windows.Forms.Panel();
             this.panel_IOChStatus_CH2 = new System.Windows.Forms.Panel();
+            this.label_IOChStatus_CH2 = new System.Windows.Forms.Label();
             this.panel_IOChStatus_CH1 = new System.Windows.Forms.Panel();
+            this.label_IOChStatus_CH1 = new System.Windows.Forms.Label();
             this.panelChStatusHeader = new System.Windows.Forms.Panel();
+            this.label_IOChStatusHeader = new System.Windows.Forms.Label();
             this.panel_IOChCtrl_CH2 = new System.Windows.Forms.Panel();
+            this.label_IOChCtrl_CH2 = new System.Windows.Forms.Label();
             this.panel_IOChCtrl_CH1 = new System.Windows.Forms.Panel();
+            this.label_IOChCtrl_CH1 = new System.Windows.Forms.Label();
             this.panelChCtrlHeader = new System.Windows.Forms.Panel();
+            this.label_IOChControlHeader = new System.Windows.Forms.Label();
             this.tabSystemCheck = new System.Windows.Forms.TabPage();
             this.tabPowerSystemControls = new System.Windows.Forms.TabPage();
             this.tabCEPanel = new System.Windows.Forms.TabPage();
-            this.label_IOChControlHeader = new System.Windows.Forms.Label();
-            this.label_IOChStatusHeader = new System.Windows.Forms.Label();
+            this.label_Interlock_CH1 = new System.Windows.Forms.Label();
+            this.label_RBCInterlock_CH1 = new System.Windows.Forms.Label();
+            this.label_Read_CH1 = new System.Windows.Forms.Label();
+            this.label_Write_CH1 = new System.Windows.Forms.Label();
+            this.label_OverlapInProcess_CH1 = new System.Windows.Forms.Label();
+            this.label_NotOverlapInProcess_CH1 = new System.Windows.Forms.Label();
+            this.label_NotOverlapInProcess_CH2 = new System.Windows.Forms.Label();
+            this.label_OverlapInProcess_Ch2 = new System.Windows.Forms.Label();
+            this.label_Write_CH2 = new System.Windows.Forms.Label();
+            this.label_Read_CH2 = new System.Windows.Forms.Label();
+            this.label_RBCInterlock_CH2 = new System.Windows.Forms.Label();
+            this.label_Interlock_CH2 = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -129,7 +145,11 @@ namespace IBM1410Console
             this.panelIRing.SuspendLayout();
             this.tabIOChannels.SuspendLayout();
             this.panelIOBackground.SuspendLayout();
+            this.panel_IOChStatus_CH2.SuspendLayout();
+            this.panel_IOChStatus_CH1.SuspendLayout();
             this.panelChStatusHeader.SuspendLayout();
+            this.panel_IOChCtrl_CH2.SuspendLayout();
+            this.panel_IOChCtrl_CH1.SuspendLayout();
             this.panelChCtrlHeader.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -1050,18 +1070,42 @@ namespace IBM1410Console
             // panel_IOChStatus_CH2
             // 
             this.panel_IOChStatus_CH2.BackColor = System.Drawing.Color.DarkGray;
+            this.panel_IOChStatus_CH2.Controls.Add(this.label_IOChStatus_CH2);
             this.panel_IOChStatus_CH2.Location = new System.Drawing.Point(307, 32);
             this.panel_IOChStatus_CH2.Name = "panel_IOChStatus_CH2";
             this.panel_IOChStatus_CH2.Size = new System.Drawing.Size(97, 285);
             this.panel_IOChStatus_CH2.TabIndex = 5;
             // 
+            // label_IOChStatus_CH2
+            // 
+            this.label_IOChStatus_CH2.AutoSize = true;
+            this.label_IOChStatus_CH2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_IOChStatus_CH2.ForeColor = System.Drawing.Color.White;
+            this.label_IOChStatus_CH2.Location = new System.Drawing.Point(32, 8);
+            this.label_IOChStatus_CH2.Name = "label_IOChStatus_CH2";
+            this.label_IOChStatus_CH2.Size = new System.Drawing.Size(33, 15);
+            this.label_IOChStatus_CH2.TabIndex = 21;
+            this.label_IOChStatus_CH2.Text = "CH 2";
+            // 
             // panel_IOChStatus_CH1
             // 
             this.panel_IOChStatus_CH1.BackColor = System.Drawing.Color.DarkGray;
+            this.panel_IOChStatus_CH1.Controls.Add(this.label_IOChStatus_CH1);
             this.panel_IOChStatus_CH1.Location = new System.Drawing.Point(206, 32);
             this.panel_IOChStatus_CH1.Name = "panel_IOChStatus_CH1";
             this.panel_IOChStatus_CH1.Size = new System.Drawing.Size(97, 285);
             this.panel_IOChStatus_CH1.TabIndex = 4;
+            // 
+            // label_IOChStatus_CH1
+            // 
+            this.label_IOChStatus_CH1.AutoSize = true;
+            this.label_IOChStatus_CH1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_IOChStatus_CH1.ForeColor = System.Drawing.Color.White;
+            this.label_IOChStatus_CH1.Location = new System.Drawing.Point(32, 8);
+            this.label_IOChStatus_CH1.Name = "label_IOChStatus_CH1";
+            this.label_IOChStatus_CH1.Size = new System.Drawing.Size(33, 15);
+            this.label_IOChStatus_CH1.TabIndex = 20;
+            this.label_IOChStatus_CH1.Text = "CH 1";
             // 
             // panelChStatusHeader
             // 
@@ -1072,21 +1116,68 @@ namespace IBM1410Console
             this.panelChStatusHeader.Size = new System.Drawing.Size(198, 26);
             this.panelChStatusHeader.TabIndex = 3;
             // 
+            // label_IOChStatusHeader
+            // 
+            this.label_IOChStatusHeader.AutoSize = true;
+            this.label_IOChStatusHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_IOChStatusHeader.ForeColor = System.Drawing.Color.White;
+            this.label_IOChStatusHeader.Location = new System.Drawing.Point(28, 6);
+            this.label_IOChStatusHeader.Name = "label_IOChStatusHeader";
+            this.label_IOChStatusHeader.Size = new System.Drawing.Size(140, 15);
+            this.label_IOChStatusHeader.TabIndex = 22;
+            this.label_IOChStatusHeader.Text = "I/O   CHANNEL   STATUS";
+            // 
             // panel_IOChCtrl_CH2
             // 
             this.panel_IOChCtrl_CH2.BackColor = System.Drawing.Color.DarkGray;
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_NotOverlapInProcess_CH2);
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_OverlapInProcess_Ch2);
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_Write_CH2);
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_Read_CH2);
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_RBCInterlock_CH2);
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_Interlock_CH2);
+            this.panel_IOChCtrl_CH2.Controls.Add(this.label_IOChCtrl_CH2);
             this.panel_IOChCtrl_CH2.Location = new System.Drawing.Point(105, 32);
             this.panel_IOChCtrl_CH2.Name = "panel_IOChCtrl_CH2";
             this.panel_IOChCtrl_CH2.Size = new System.Drawing.Size(97, 285);
             this.panel_IOChCtrl_CH2.TabIndex = 2;
             // 
+            // label_IOChCtrl_CH2
+            // 
+            this.label_IOChCtrl_CH2.AutoSize = true;
+            this.label_IOChCtrl_CH2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_IOChCtrl_CH2.ForeColor = System.Drawing.Color.White;
+            this.label_IOChCtrl_CH2.Location = new System.Drawing.Point(32, 8);
+            this.label_IOChCtrl_CH2.Name = "label_IOChCtrl_CH2";
+            this.label_IOChCtrl_CH2.Size = new System.Drawing.Size(33, 15);
+            this.label_IOChCtrl_CH2.TabIndex = 20;
+            this.label_IOChCtrl_CH2.Text = "CH 2";
+            // 
             // panel_IOChCtrl_CH1
             // 
             this.panel_IOChCtrl_CH1.BackColor = System.Drawing.Color.DarkGray;
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_NotOverlapInProcess_CH1);
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_OverlapInProcess_CH1);
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_Write_CH1);
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_Read_CH1);
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_RBCInterlock_CH1);
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_Interlock_CH1);
+            this.panel_IOChCtrl_CH1.Controls.Add(this.label_IOChCtrl_CH1);
             this.panel_IOChCtrl_CH1.Location = new System.Drawing.Point(4, 32);
             this.panel_IOChCtrl_CH1.Name = "panel_IOChCtrl_CH1";
             this.panel_IOChCtrl_CH1.Size = new System.Drawing.Size(97, 285);
             this.panel_IOChCtrl_CH1.TabIndex = 1;
+            // 
+            // label_IOChCtrl_CH1
+            // 
+            this.label_IOChCtrl_CH1.AutoSize = true;
+            this.label_IOChCtrl_CH1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_IOChCtrl_CH1.ForeColor = System.Drawing.Color.White;
+            this.label_IOChCtrl_CH1.Location = new System.Drawing.Point(29, 8);
+            this.label_IOChCtrl_CH1.Name = "label_IOChCtrl_CH1";
+            this.label_IOChCtrl_CH1.Size = new System.Drawing.Size(33, 15);
+            this.label_IOChCtrl_CH1.TabIndex = 19;
+            this.label_IOChCtrl_CH1.Text = "CH 1";
             // 
             // panelChCtrlHeader
             // 
@@ -1096,6 +1187,17 @@ namespace IBM1410Console
             this.panelChCtrlHeader.Name = "panelChCtrlHeader";
             this.panelChCtrlHeader.Size = new System.Drawing.Size(198, 26);
             this.panelChCtrlHeader.TabIndex = 0;
+            // 
+            // label_IOChControlHeader
+            // 
+            this.label_IOChControlHeader.AutoSize = true;
+            this.label_IOChControlHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_IOChControlHeader.ForeColor = System.Drawing.Color.White;
+            this.label_IOChControlHeader.Location = new System.Drawing.Point(23, 6);
+            this.label_IOChControlHeader.Name = "label_IOChControlHeader";
+            this.label_IOChControlHeader.Size = new System.Drawing.Size(152, 15);
+            this.label_IOChControlHeader.TabIndex = 21;
+            this.label_IOChControlHeader.Text = "I/O   CHANNEL   CONTROL";
             // 
             // tabSystemCheck
             // 
@@ -1127,27 +1229,137 @@ namespace IBM1410Console
             this.tabCEPanel.Text = "CE PANEL";
             this.tabCEPanel.UseVisualStyleBackColor = true;
             // 
-            // label_IOChControlHeader
+            // label_Interlock_CH1
             // 
-            this.label_IOChControlHeader.AutoSize = true;
-            this.label_IOChControlHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_IOChControlHeader.ForeColor = System.Drawing.Color.White;
-            this.label_IOChControlHeader.Location = new System.Drawing.Point(23, 6);
-            this.label_IOChControlHeader.Name = "label_IOChControlHeader";
-            this.label_IOChControlHeader.Size = new System.Drawing.Size(152, 15);
-            this.label_IOChControlHeader.TabIndex = 21;
-            this.label_IOChControlHeader.Text = "I/O   CHANNEL   CONTROL";
+            this.label_Interlock_CH1.AutoSize = true;
+            this.label_Interlock_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Interlock_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Interlock_CH1.Location = new System.Drawing.Point(7, 40);
+            this.label_Interlock_CH1.Name = "label_Interlock_CH1";
+            this.label_Interlock_CH1.Size = new System.Drawing.Size(84, 15);
+            this.label_Interlock_CH1.TabIndex = 27;
+            this.label_Interlock_CH1.Text = "INTERLOCK";
             // 
-            // label_IOChStatusHeader
+            // label_RBCInterlock_CH1
             // 
-            this.label_IOChStatusHeader.AutoSize = true;
-            this.label_IOChStatusHeader.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_IOChStatusHeader.ForeColor = System.Drawing.Color.White;
-            this.label_IOChStatusHeader.Location = new System.Drawing.Point(28, 6);
-            this.label_IOChStatusHeader.Name = "label_IOChStatusHeader";
-            this.label_IOChStatusHeader.Size = new System.Drawing.Size(140, 15);
-            this.label_IOChStatusHeader.TabIndex = 22;
-            this.label_IOChStatusHeader.Text = "I/O   CHANNEL   STATUS";
+            this.label_RBCInterlock_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_RBCInterlock_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_RBCInterlock_CH1.Location = new System.Drawing.Point(4, 67);
+            this.label_RBCInterlock_CH1.Name = "label_RBCInterlock_CH1";
+            this.label_RBCInterlock_CH1.Size = new System.Drawing.Size(91, 37);
+            this.label_RBCInterlock_CH1.TabIndex = 28;
+            this.label_RBCInterlock_CH1.Text = "RBC INTERLOCK";
+            this.label_RBCInterlock_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Read_CH1
+            // 
+            this.label_Read_CH1.AutoSize = true;
+            this.label_Read_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Read_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Read_CH1.Location = new System.Drawing.Point(26, 112);
+            this.label_Read_CH1.Name = "label_Read_CH1";
+            this.label_Read_CH1.Size = new System.Drawing.Size(44, 15);
+            this.label_Read_CH1.TabIndex = 29;
+            this.label_Read_CH1.Text = "READ";
+            // 
+            // label_Write_CH1
+            // 
+            this.label_Write_CH1.AutoSize = true;
+            this.label_Write_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Write_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Write_CH1.Location = new System.Drawing.Point(23, 139);
+            this.label_Write_CH1.Name = "label_Write_CH1";
+            this.label_Write_CH1.Size = new System.Drawing.Size(50, 15);
+            this.label_Write_CH1.TabIndex = 30;
+            this.label_Write_CH1.Text = "WRITE";
+            // 
+            // label_OverlapInProcess_CH1
+            // 
+            this.label_OverlapInProcess_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_OverlapInProcess_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_OverlapInProcess_CH1.Location = new System.Drawing.Point(7, 164);
+            this.label_OverlapInProcess_CH1.Name = "label_OverlapInProcess_CH1";
+            this.label_OverlapInProcess_CH1.Size = new System.Drawing.Size(83, 52);
+            this.label_OverlapInProcess_CH1.TabIndex = 31;
+            this.label_OverlapInProcess_CH1.Text = "OVERLAP IN PROCESS";
+            this.label_OverlapInProcess_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_NotOverlapInProcess_CH1
+            // 
+            this.label_NotOverlapInProcess_CH1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_NotOverlapInProcess_CH1.ForeColor = System.Drawing.Color.DimGray;
+            this.label_NotOverlapInProcess_CH1.Location = new System.Drawing.Point(4, 214);
+            this.label_NotOverlapInProcess_CH1.Name = "label_NotOverlapInProcess_CH1";
+            this.label_NotOverlapInProcess_CH1.Size = new System.Drawing.Size(91, 62);
+            this.label_NotOverlapInProcess_CH1.TabIndex = 32;
+            this.label_NotOverlapInProcess_CH1.Text = "NOT OVERLAP IN  PROCESS";
+            this.label_NotOverlapInProcess_CH1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_NotOverlapInProcess_CH2
+            // 
+            this.label_NotOverlapInProcess_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_NotOverlapInProcess_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_NotOverlapInProcess_CH2.Location = new System.Drawing.Point(3, 214);
+            this.label_NotOverlapInProcess_CH2.Name = "label_NotOverlapInProcess_CH2";
+            this.label_NotOverlapInProcess_CH2.Size = new System.Drawing.Size(91, 62);
+            this.label_NotOverlapInProcess_CH2.TabIndex = 38;
+            this.label_NotOverlapInProcess_CH2.Text = "NOT OVERLAP IN  PROCESS";
+            this.label_NotOverlapInProcess_CH2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_OverlapInProcess_Ch2
+            // 
+            this.label_OverlapInProcess_Ch2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_OverlapInProcess_Ch2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_OverlapInProcess_Ch2.Location = new System.Drawing.Point(6, 164);
+            this.label_OverlapInProcess_Ch2.Name = "label_OverlapInProcess_Ch2";
+            this.label_OverlapInProcess_Ch2.Size = new System.Drawing.Size(83, 52);
+            this.label_OverlapInProcess_Ch2.TabIndex = 37;
+            this.label_OverlapInProcess_Ch2.Text = "OVERLAP IN PROCESS";
+            this.label_OverlapInProcess_Ch2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Write_CH2
+            // 
+            this.label_Write_CH2.AutoSize = true;
+            this.label_Write_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Write_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Write_CH2.Location = new System.Drawing.Point(22, 139);
+            this.label_Write_CH2.Name = "label_Write_CH2";
+            this.label_Write_CH2.Size = new System.Drawing.Size(50, 15);
+            this.label_Write_CH2.TabIndex = 36;
+            this.label_Write_CH2.Text = "WRITE";
+            // 
+            // label_Read_CH2
+            // 
+            this.label_Read_CH2.AutoSize = true;
+            this.label_Read_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Read_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Read_CH2.Location = new System.Drawing.Point(25, 112);
+            this.label_Read_CH2.Name = "label_Read_CH2";
+            this.label_Read_CH2.Size = new System.Drawing.Size(44, 15);
+            this.label_Read_CH2.TabIndex = 35;
+            this.label_Read_CH2.Text = "READ";
+            // 
+            // label_RBCInterlock_CH2
+            // 
+            this.label_RBCInterlock_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_RBCInterlock_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_RBCInterlock_CH2.Location = new System.Drawing.Point(3, 67);
+            this.label_RBCInterlock_CH2.Name = "label_RBCInterlock_CH2";
+            this.label_RBCInterlock_CH2.Size = new System.Drawing.Size(91, 37);
+            this.label_RBCInterlock_CH2.TabIndex = 34;
+            this.label_RBCInterlock_CH2.Text = "RBC INTERLOCK";
+            this.label_RBCInterlock_CH2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Interlock_CH2
+            // 
+            this.label_Interlock_CH2.AutoSize = true;
+            this.label_Interlock_CH2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Interlock_CH2.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Interlock_CH2.Location = new System.Drawing.Point(6, 40);
+            this.label_Interlock_CH2.Name = "label_Interlock_CH2";
+            this.label_Interlock_CH2.Size = new System.Drawing.Size(84, 15);
+            this.label_Interlock_CH2.TabIndex = 33;
+            this.label_Interlock_CH2.Text = "INTERLOCK";
             // 
             // UI1415LForm
             // 
@@ -1179,8 +1391,16 @@ namespace IBM1410Console
             this.panelIRing.PerformLayout();
             this.tabIOChannels.ResumeLayout(false);
             this.panelIOBackground.ResumeLayout(false);
+            this.panel_IOChStatus_CH2.ResumeLayout(false);
+            this.panel_IOChStatus_CH2.PerformLayout();
+            this.panel_IOChStatus_CH1.ResumeLayout(false);
+            this.panel_IOChStatus_CH1.PerformLayout();
             this.panelChStatusHeader.ResumeLayout(false);
             this.panelChStatusHeader.PerformLayout();
+            this.panel_IOChCtrl_CH2.ResumeLayout(false);
+            this.panel_IOChCtrl_CH2.PerformLayout();
+            this.panel_IOChCtrl_CH1.ResumeLayout(false);
+            this.panel_IOChCtrl_CH1.PerformLayout();
             this.panelChCtrlHeader.ResumeLayout(false);
             this.panelChCtrlHeader.PerformLayout();
             this.ResumeLayout(false);
@@ -1278,5 +1498,21 @@ namespace IBM1410Console
         private System.Windows.Forms.Panel panelChStatusHeader;
         private System.Windows.Forms.Label label_IOChControlHeader;
         private System.Windows.Forms.Label label_IOChStatusHeader;
+        private System.Windows.Forms.Label label_IOChStatus_CH2;
+        private System.Windows.Forms.Label label_IOChStatus_CH1;
+        private System.Windows.Forms.Label label_IOChCtrl_CH2;
+        private System.Windows.Forms.Label label_IOChCtrl_CH1;
+        private System.Windows.Forms.Label label_NotOverlapInProcess_CH1;
+        private System.Windows.Forms.Label label_OverlapInProcess_CH1;
+        private System.Windows.Forms.Label label_Write_CH1;
+        private System.Windows.Forms.Label label_Read_CH1;
+        private System.Windows.Forms.Label label_RBCInterlock_CH1;
+        private System.Windows.Forms.Label label_Interlock_CH1;
+        private System.Windows.Forms.Label label_NotOverlapInProcess_CH2;
+        private System.Windows.Forms.Label label_OverlapInProcess_Ch2;
+        private System.Windows.Forms.Label label_Write_CH2;
+        private System.Windows.Forms.Label label_Read_CH2;
+        private System.Windows.Forms.Label label_RBCInterlock_CH2;
+        private System.Windows.Forms.Label label_Interlock_CH2;
     }
 }

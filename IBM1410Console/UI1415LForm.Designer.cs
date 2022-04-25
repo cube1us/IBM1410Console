@@ -178,6 +178,20 @@ namespace IBM1410Console
             this.panelPowerControlsHeader = new System.Windows.Forms.Panel();
             this.label_Power = new System.Windows.Forms.Label();
             this.tabCEPanel = new System.Windows.Forms.TabPage();
+            this.label_SystemControls_1401Compat = new System.Windows.Forms.Label();
+            this.label_SystemControls_PriorityAlert = new System.Windows.Forms.Label();
+            this.label_SystemControls_OffNormal = new System.Windows.Forms.Label();
+            this.label_SystemControls_Stop = new System.Windows.Forms.Label();
+            this.panelCERegistersBackground = new System.Windows.Forms.Panel();
+            this.panelCERegistersHeader = new System.Windows.Forms.Panel();
+            this.panelCECycle = new System.Windows.Forms.Panel();
+            this.panelCEAChSel = new System.Windows.Forms.Panel();
+            this.panelCEBReg = new System.Windows.Forms.Panel();
+            this.panelCEAReg = new System.Windows.Forms.Panel();
+            this.panelCEAssem = new System.Windows.Forms.Panel();
+            this.panelCEMod = new System.Windows.Forms.Panel();
+            this.panelCEAddr = new System.Windows.Forms.Panel();
+            this.panelCEOp = new System.Windows.Forms.Panel();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -205,10 +219,13 @@ namespace IBM1410Console
             this.panelSystemCheckHeader.SuspendLayout();
             this.tabPowerSystemControls.SuspendLayout();
             this.panelSystemControlsBackground.SuspendLayout();
+            this.panelSystemControls.SuspendLayout();
             this.panelSystemControlsHeader.SuspendLayout();
             this.panelPowerControlsBackground.SuspendLayout();
             this.panelPowerControls.SuspendLayout();
             this.panelPowerControlsHeader.SuspendLayout();
+            this.tabCEPanel.SuspendLayout();
+            this.panelCERegistersBackground.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageControl
@@ -1829,6 +1846,10 @@ namespace IBM1410Console
             // panelSystemControls
             // 
             this.panelSystemControls.BackColor = System.Drawing.Color.DarkGray;
+            this.panelSystemControls.Controls.Add(this.label_SystemControls_Stop);
+            this.panelSystemControls.Controls.Add(this.label_SystemControls_OffNormal);
+            this.panelSystemControls.Controls.Add(this.label_SystemControls_PriorityAlert);
+            this.panelSystemControls.Controls.Add(this.label_SystemControls_1401Compat);
             this.panelSystemControls.Location = new System.Drawing.Point(4, 39);
             this.panelSystemControls.Name = "panelSystemControls";
             this.panelSystemControls.Size = new System.Drawing.Size(177, 121);
@@ -1954,13 +1975,149 @@ namespace IBM1410Console
             // 
             // tabCEPanel
             // 
+            this.tabCEPanel.BackColor = System.Drawing.Color.DarkGray;
+            this.tabCEPanel.Controls.Add(this.panelCERegistersBackground);
             this.tabCEPanel.Location = new System.Drawing.Point(4, 24);
             this.tabCEPanel.Name = "tabCEPanel";
             this.tabCEPanel.Padding = new System.Windows.Forms.Padding(3);
             this.tabCEPanel.Size = new System.Drawing.Size(563, 346);
             this.tabCEPanel.TabIndex = 4;
             this.tabCEPanel.Text = "CE PANEL";
-            this.tabCEPanel.UseVisualStyleBackColor = true;
+            // 
+            // label_SystemControls_1401Compat
+            // 
+            this.label_SystemControls_1401Compat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SystemControls_1401Compat.ForeColor = System.Drawing.Color.DimGray;
+            this.label_SystemControls_1401Compat.Location = new System.Drawing.Point(11, 18);
+            this.label_SystemControls_1401Compat.Name = "label_SystemControls_1401Compat";
+            this.label_SystemControls_1401Compat.Size = new System.Drawing.Size(78, 37);
+            this.label_SystemControls_1401Compat.TabIndex = 50;
+            this.label_SystemControls_1401Compat.Text = "I/O OFFLINE";
+            this.label_SystemControls_1401Compat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_SystemControls_PriorityAlert
+            // 
+            this.label_SystemControls_PriorityAlert.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SystemControls_PriorityAlert.ForeColor = System.Drawing.Color.DimGray;
+            this.label_SystemControls_PriorityAlert.Location = new System.Drawing.Point(11, 65);
+            this.label_SystemControls_PriorityAlert.Name = "label_SystemControls_PriorityAlert";
+            this.label_SystemControls_PriorityAlert.Size = new System.Drawing.Size(78, 37);
+            this.label_SystemControls_PriorityAlert.TabIndex = 51;
+            this.label_SystemControls_PriorityAlert.Text = "PRIORITY ALERT";
+            this.label_SystemControls_PriorityAlert.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_SystemControls_OffNormal
+            // 
+            this.label_SystemControls_OffNormal.BackColor = System.Drawing.Color.Maroon;
+            this.label_SystemControls_OffNormal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SystemControls_OffNormal.ForeColor = System.Drawing.Color.DarkGray;
+            this.label_SystemControls_OffNormal.Location = new System.Drawing.Point(95, 18);
+            this.label_SystemControls_OffNormal.Name = "label_SystemControls_OffNormal";
+            this.label_SystemControls_OffNormal.Size = new System.Drawing.Size(78, 37);
+            this.label_SystemControls_OffNormal.TabIndex = 52;
+            this.label_SystemControls_OffNormal.Text = "OFF NORMAL";
+            this.label_SystemControls_OffNormal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_SystemControls_Stop
+            // 
+            this.label_SystemControls_Stop.BackColor = System.Drawing.Color.Maroon;
+            this.label_SystemControls_Stop.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SystemControls_Stop.ForeColor = System.Drawing.Color.DarkGray;
+            this.label_SystemControls_Stop.Location = new System.Drawing.Point(95, 65);
+            this.label_SystemControls_Stop.Name = "label_SystemControls_Stop";
+            this.label_SystemControls_Stop.Size = new System.Drawing.Size(78, 37);
+            this.label_SystemControls_Stop.TabIndex = 53;
+            this.label_SystemControls_Stop.Text = "STOP";
+            this.label_SystemControls_Stop.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panelCERegistersBackground
+            // 
+            this.panelCERegistersBackground.BackColor = System.Drawing.Color.White;
+            this.panelCERegistersBackground.Controls.Add(this.panelCEAddr);
+            this.panelCERegistersBackground.Controls.Add(this.panelCEOp);
+            this.panelCERegistersBackground.Controls.Add(this.panelCEMod);
+            this.panelCERegistersBackground.Controls.Add(this.panelCEAssem);
+            this.panelCERegistersBackground.Controls.Add(this.panelCEAReg);
+            this.panelCERegistersBackground.Controls.Add(this.panelCEBReg);
+            this.panelCERegistersBackground.Controls.Add(this.panelCEAChSel);
+            this.panelCERegistersBackground.Controls.Add(this.panelCECycle);
+            this.panelCERegistersBackground.Controls.Add(this.panelCERegistersHeader);
+            this.panelCERegistersBackground.Location = new System.Drawing.Point(4, 4);
+            this.panelCERegistersBackground.Name = "panelCERegistersBackground";
+            this.panelCERegistersBackground.Size = new System.Drawing.Size(317, 336);
+            this.panelCERegistersBackground.TabIndex = 0;
+            // 
+            // panelCERegistersHeader
+            // 
+            this.panelCERegistersHeader.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCERegistersHeader.Location = new System.Drawing.Point(4, 4);
+            this.panelCERegistersHeader.Name = "panelCERegistersHeader";
+            this.panelCERegistersHeader.Size = new System.Drawing.Size(309, 33);
+            this.panelCERegistersHeader.TabIndex = 0;
+            // 
+            // panelCECycle
+            // 
+            this.panelCECycle.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCECycle.Location = new System.Drawing.Point(4, 39);
+            this.panelCECycle.Name = "panelCECycle";
+            this.panelCECycle.Size = new System.Drawing.Size(25, 292);
+            this.panelCECycle.TabIndex = 1;
+            // 
+            // panelCEAChSel
+            // 
+            this.panelCEAChSel.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEAChSel.Location = new System.Drawing.Point(31, 39);
+            this.panelCEAChSel.Name = "panelCEAChSel";
+            this.panelCEAChSel.Size = new System.Drawing.Size(25, 292);
+            this.panelCEAChSel.TabIndex = 2;
+            // 
+            // panelCEBReg
+            // 
+            this.panelCEBReg.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEBReg.Location = new System.Drawing.Point(58, 39);
+            this.panelCEBReg.Name = "panelCEBReg";
+            this.panelCEBReg.Size = new System.Drawing.Size(25, 292);
+            this.panelCEBReg.TabIndex = 3;
+            // 
+            // panelCEAReg
+            // 
+            this.panelCEAReg.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEAReg.Location = new System.Drawing.Point(85, 39);
+            this.panelCEAReg.Name = "panelCEAReg";
+            this.panelCEAReg.Size = new System.Drawing.Size(25, 292);
+            this.panelCEAReg.TabIndex = 4;
+            // 
+            // panelCEAssem
+            // 
+            this.panelCEAssem.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEAssem.Location = new System.Drawing.Point(112, 39);
+            this.panelCEAssem.Name = "panelCEAssem";
+            this.panelCEAssem.Size = new System.Drawing.Size(50, 292);
+            this.panelCEAssem.TabIndex = 5;
+            // 
+            // panelCEMod
+            // 
+            this.panelCEMod.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEMod.Location = new System.Drawing.Point(249, 39);
+            this.panelCEMod.Name = "panelCEMod";
+            this.panelCEMod.Size = new System.Drawing.Size(31, 292);
+            this.panelCEMod.TabIndex = 6;
+            // 
+            // panelCEAddr
+            // 
+            this.panelCEAddr.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEAddr.Location = new System.Drawing.Point(282, 39);
+            this.panelCEAddr.Name = "panelCEAddr";
+            this.panelCEAddr.Size = new System.Drawing.Size(31, 292);
+            this.panelCEAddr.TabIndex = 6;
+            // 
+            // panelCEOp
+            // 
+            this.panelCEOp.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEOp.Location = new System.Drawing.Point(164, 39);
+            this.panelCEOp.Name = "panelCEOp";
+            this.panelCEOp.Size = new System.Drawing.Size(25, 292);
+            this.panelCEOp.TabIndex = 6;
             // 
             // UI1415LForm
             // 
@@ -2014,6 +2171,7 @@ namespace IBM1410Console
             this.panelSystemCheckHeader.PerformLayout();
             this.tabPowerSystemControls.ResumeLayout(false);
             this.panelSystemControlsBackground.ResumeLayout(false);
+            this.panelSystemControls.ResumeLayout(false);
             this.panelSystemControlsHeader.ResumeLayout(false);
             this.panelSystemControlsHeader.PerformLayout();
             this.panelPowerControlsBackground.ResumeLayout(false);
@@ -2021,6 +2179,8 @@ namespace IBM1410Console
             this.panelPowerControls.PerformLayout();
             this.panelPowerControlsHeader.ResumeLayout(false);
             this.panelPowerControlsHeader.PerformLayout();
+            this.tabCEPanel.ResumeLayout(false);
+            this.panelCERegistersBackground.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -2179,5 +2339,19 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_Power_DiskOffline;
         private System.Windows.Forms.Label label_Power_TapeOffline;
         private System.Windows.Forms.Label label_Power_IOOffline;
+        private System.Windows.Forms.Label label_SystemControls_Stop;
+        private System.Windows.Forms.Label label_SystemControls_OffNormal;
+        private System.Windows.Forms.Label label_SystemControls_PriorityAlert;
+        private System.Windows.Forms.Label label_SystemControls_1401Compat;
+        private System.Windows.Forms.Panel panelCERegistersBackground;
+        private System.Windows.Forms.Panel panelCERegistersHeader;
+        private System.Windows.Forms.Panel panelCECycle;
+        private System.Windows.Forms.Panel panelCEAddr;
+        private System.Windows.Forms.Panel panelCEOp;
+        private System.Windows.Forms.Panel panelCEMod;
+        private System.Windows.Forms.Panel panelCEAssem;
+        private System.Windows.Forms.Panel panelCEAReg;
+        private System.Windows.Forms.Panel panelCEBReg;
+        private System.Windows.Forms.Panel panelCEAChSel;
     }
 }

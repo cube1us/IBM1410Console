@@ -143,28 +143,41 @@ namespace IBM1410Console
             this.tabSystemCheck = new System.Windows.Forms.TabPage();
             this.panelSystemCheckBackground = new System.Windows.Forms.Panel();
             this.panelProgramCheck = new System.Windows.Forms.Panel();
+            this.label_Check_Instruction = new System.Windows.Forms.Label();
+            this.label_Check_RBCInterlock = new System.Windows.Forms.Label();
+            this.label_Check_Address = new System.Windows.Forms.Label();
+            this.label_Check_IOInterlock = new System.Windows.Forms.Label();
             this.label_ProgramCheck = new System.Windows.Forms.Label();
             this.panelProcessCheck = new System.Windows.Forms.Panel();
+            this.label_Check_BCharacterSelect = new System.Windows.Forms.Label();
+            this.label_Check_ACharacterSelect = new System.Windows.Forms.Label();
+            this.label_Check_OPModifierSet = new System.Windows.Forms.Label();
+            this.label_Check_OPRegisterSet = new System.Windows.Forms.Label();
+            this.label_Check_BRegisterSet = new System.Windows.Forms.Label();
+            this.label_Check_ARegisterSet = new System.Windows.Forms.Label();
+            this.label_Check_AddressExit = new System.Windows.Forms.Label();
+            this.label_Check_AddressChannel = new System.Windows.Forms.Label();
+            this.label_Check_Assembly = new System.Windows.Forms.Label();
+            this.label_Check_BChannel = new System.Windows.Forms.Label();
+            this.label_Check_AChannel = new System.Windows.Forms.Label();
             this.label_ProcessCheck = new System.Windows.Forms.Label();
             this.panelSystemCheckHeader = new System.Windows.Forms.Panel();
             this.label_SystemCheckHeader = new System.Windows.Forms.Label();
             this.tabPowerSystemControls = new System.Windows.Forms.TabPage();
+            this.panelSystemControlsBackground = new System.Windows.Forms.Panel();
+            this.panelSystemControls = new System.Windows.Forms.Panel();
+            this.panelSystemControlsHeader = new System.Windows.Forms.Panel();
+            this.label_SystemControls = new System.Windows.Forms.Label();
+            this.panelPowerControlsBackground = new System.Windows.Forms.Panel();
+            this.panelPowerControls = new System.Windows.Forms.Panel();
+            this.label_Power_DiskOffline = new System.Windows.Forms.Label();
+            this.label_Power_TapeOffline = new System.Windows.Forms.Label();
+            this.label_Power_IOOffline = new System.Windows.Forms.Label();
+            this.label_Power_CBTrip = new System.Windows.Forms.Label();
+            this.label_Power_Thermal = new System.Windows.Forms.Label();
+            this.panelPowerControlsHeader = new System.Windows.Forms.Panel();
+            this.label_Power = new System.Windows.Forms.Label();
             this.tabCEPanel = new System.Windows.Forms.TabPage();
-            this.label_Check_AChannel = new System.Windows.Forms.Label();
-            this.label_Check_BChannel = new System.Windows.Forms.Label();
-            this.label_Check_Assembly = new System.Windows.Forms.Label();
-            this.label_Check_AddressChannel = new System.Windows.Forms.Label();
-            this.label_Check_AddressExit = new System.Windows.Forms.Label();
-            this.label_Check_ARegisterSet = new System.Windows.Forms.Label();
-            this.label_Check_BRegisterSet = new System.Windows.Forms.Label();
-            this.label_Check_OPRegisterSet = new System.Windows.Forms.Label();
-            this.label_Check_OPModifierSet = new System.Windows.Forms.Label();
-            this.label_Check_ACharacterSelect = new System.Windows.Forms.Label();
-            this.label_Check_BCharacterSelect = new System.Windows.Forms.Label();
-            this.label_Check_IOInterlock = new System.Windows.Forms.Label();
-            this.label_Check_Address = new System.Windows.Forms.Label();
-            this.label_Check_RBCInterlock = new System.Windows.Forms.Label();
-            this.label_Check_Instruction = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -190,6 +203,12 @@ namespace IBM1410Console
             this.panelProgramCheck.SuspendLayout();
             this.panelProcessCheck.SuspendLayout();
             this.panelSystemCheckHeader.SuspendLayout();
+            this.tabPowerSystemControls.SuspendLayout();
+            this.panelSystemControlsBackground.SuspendLayout();
+            this.panelSystemControlsHeader.SuspendLayout();
+            this.panelPowerControlsBackground.SuspendLayout();
+            this.panelPowerControls.SuspendLayout();
+            this.panelPowerControlsHeader.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageControl
@@ -1549,6 +1568,53 @@ namespace IBM1410Console
             this.panelProgramCheck.Size = new System.Drawing.Size(97, 300);
             this.panelProgramCheck.TabIndex = 3;
             // 
+            // label_Check_Instruction
+            // 
+            this.label_Check_Instruction.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_Instruction.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_Instruction.Location = new System.Drawing.Point(-7, 158);
+            this.label_Check_Instruction.Name = "label_Check_Instruction";
+            this.label_Check_Instruction.Size = new System.Drawing.Size(110, 37);
+            this.label_Check_Instruction.TabIndex = 53;
+            this.label_Check_Instruction.Text = "INSTRUCTION CHECK";
+            this.label_Check_Instruction.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_Check_Instruction.Visible = false;
+            // 
+            // label_Check_RBCInterlock
+            // 
+            this.label_Check_RBCInterlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_RBCInterlock.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_RBCInterlock.Location = new System.Drawing.Point(4, 108);
+            this.label_Check_RBCInterlock.Name = "label_Check_RBCInterlock";
+            this.label_Check_RBCInterlock.Size = new System.Drawing.Size(88, 37);
+            this.label_Check_RBCInterlock.TabIndex = 52;
+            this.label_Check_RBCInterlock.Text = "RBC INTERLOCK";
+            this.label_Check_RBCInterlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_Check_RBCInterlock.Visible = false;
+            // 
+            // label_Check_Address
+            // 
+            this.label_Check_Address.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_Address.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_Address.Location = new System.Drawing.Point(4, 66);
+            this.label_Check_Address.Name = "label_Check_Address";
+            this.label_Check_Address.Size = new System.Drawing.Size(88, 37);
+            this.label_Check_Address.TabIndex = 51;
+            this.label_Check_Address.Text = "ADDRESS CHECK";
+            this.label_Check_Address.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_Check_Address.Visible = false;
+            // 
+            // label_Check_IOInterlock
+            // 
+            this.label_Check_IOInterlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_IOInterlock.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_IOInterlock.Location = new System.Drawing.Point(4, 24);
+            this.label_Check_IOInterlock.Name = "label_Check_IOInterlock";
+            this.label_Check_IOInterlock.Size = new System.Drawing.Size(88, 37);
+            this.label_Check_IOInterlock.TabIndex = 50;
+            this.label_Check_IOInterlock.Text = "I/O INTERLOCK";
+            this.label_Check_IOInterlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // label_ProgramCheck
             // 
             this.label_ProgramCheck.AutoSize = true;
@@ -1579,6 +1645,133 @@ namespace IBM1410Console
             this.panelProcessCheck.Name = "panelProcessCheck";
             this.panelProcessCheck.Size = new System.Drawing.Size(198, 300);
             this.panelProcessCheck.TabIndex = 2;
+            // 
+            // label_Check_BCharacterSelect
+            // 
+            this.label_Check_BCharacterSelect.BackColor = System.Drawing.Color.Transparent;
+            this.label_Check_BCharacterSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_BCharacterSelect.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_BCharacterSelect.Location = new System.Drawing.Point(92, 251);
+            this.label_Check_BCharacterSelect.Name = "label_Check_BCharacterSelect";
+            this.label_Check_BCharacterSelect.Size = new System.Drawing.Size(90, 48);
+            this.label_Check_BCharacterSelect.TabIndex = 57;
+            this.label_Check_BCharacterSelect.Text = "B CHARACTER SELECT";
+            this.label_Check_BCharacterSelect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_ACharacterSelect
+            // 
+            this.label_Check_ACharacterSelect.BackColor = System.Drawing.Color.Transparent;
+            this.label_Check_ACharacterSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_ACharacterSelect.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_ACharacterSelect.Location = new System.Drawing.Point(92, 205);
+            this.label_Check_ACharacterSelect.Name = "label_Check_ACharacterSelect";
+            this.label_Check_ACharacterSelect.Size = new System.Drawing.Size(90, 48);
+            this.label_Check_ACharacterSelect.TabIndex = 56;
+            this.label_Check_ACharacterSelect.Text = "A CHARACTER SELECT";
+            this.label_Check_ACharacterSelect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_OPModifierSet
+            // 
+            this.label_Check_OPModifierSet.BackColor = System.Drawing.Color.Transparent;
+            this.label_Check_OPModifierSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_OPModifierSet.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_OPModifierSet.Location = new System.Drawing.Point(97, 159);
+            this.label_Check_OPModifierSet.Name = "label_Check_OPModifierSet";
+            this.label_Check_OPModifierSet.Size = new System.Drawing.Size(83, 48);
+            this.label_Check_OPModifierSet.TabIndex = 55;
+            this.label_Check_OPModifierSet.Text = "OP MODIFIER SET";
+            this.label_Check_OPModifierSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_OPRegisterSet
+            // 
+            this.label_Check_OPRegisterSet.BackColor = System.Drawing.Color.Transparent;
+            this.label_Check_OPRegisterSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_OPRegisterSet.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_OPRegisterSet.Location = new System.Drawing.Point(97, 112);
+            this.label_Check_OPRegisterSet.Name = "label_Check_OPRegisterSet";
+            this.label_Check_OPRegisterSet.Size = new System.Drawing.Size(83, 48);
+            this.label_Check_OPRegisterSet.TabIndex = 54;
+            this.label_Check_OPRegisterSet.Text = "OP REGISTER SET";
+            this.label_Check_OPRegisterSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_BRegisterSet
+            // 
+            this.label_Check_BRegisterSet.BackColor = System.Drawing.Color.Transparent;
+            this.label_Check_BRegisterSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_BRegisterSet.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_BRegisterSet.Location = new System.Drawing.Point(99, 64);
+            this.label_Check_BRegisterSet.Name = "label_Check_BRegisterSet";
+            this.label_Check_BRegisterSet.Size = new System.Drawing.Size(83, 48);
+            this.label_Check_BRegisterSet.TabIndex = 53;
+            this.label_Check_BRegisterSet.Text = "B REGISTER SET";
+            this.label_Check_BRegisterSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_ARegisterSet
+            // 
+            this.label_Check_ARegisterSet.BackColor = System.Drawing.Color.Transparent;
+            this.label_Check_ARegisterSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_ARegisterSet.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_ARegisterSet.Location = new System.Drawing.Point(99, 17);
+            this.label_Check_ARegisterSet.Name = "label_Check_ARegisterSet";
+            this.label_Check_ARegisterSet.Size = new System.Drawing.Size(83, 48);
+            this.label_Check_ARegisterSet.TabIndex = 52;
+            this.label_Check_ARegisterSet.Text = "A REGISTER SET";
+            this.label_Check_ARegisterSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_AddressExit
+            // 
+            this.label_Check_AddressExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_AddressExit.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_AddressExit.Location = new System.Drawing.Point(3, 204);
+            this.label_Check_AddressExit.Name = "label_Check_AddressExit";
+            this.label_Check_AddressExit.Size = new System.Drawing.Size(88, 37);
+            this.label_Check_AddressExit.TabIndex = 51;
+            this.label_Check_AddressExit.Text = "ADDRESS EXIT";
+            this.label_Check_AddressExit.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_AddressChannel
+            // 
+            this.label_Check_AddressChannel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_AddressChannel.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_AddressChannel.Location = new System.Drawing.Point(3, 156);
+            this.label_Check_AddressChannel.Name = "label_Check_AddressChannel";
+            this.label_Check_AddressChannel.Size = new System.Drawing.Size(88, 37);
+            this.label_Check_AddressChannel.TabIndex = 50;
+            this.label_Check_AddressChannel.Text = "ADDRESS CHANNEL";
+            this.label_Check_AddressChannel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_Assembly
+            // 
+            this.label_Check_Assembly.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_Assembly.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_Assembly.Location = new System.Drawing.Point(5, 108);
+            this.label_Check_Assembly.Name = "label_Check_Assembly";
+            this.label_Check_Assembly.Size = new System.Drawing.Size(88, 37);
+            this.label_Check_Assembly.TabIndex = 49;
+            this.label_Check_Assembly.Text = "ASSEMBLY CHANNEL";
+            this.label_Check_Assembly.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_BChannel
+            // 
+            this.label_Check_BChannel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_BChannel.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_BChannel.Location = new System.Drawing.Point(9, 64);
+            this.label_Check_BChannel.Name = "label_Check_BChannel";
+            this.label_Check_BChannel.Size = new System.Drawing.Size(76, 37);
+            this.label_Check_BChannel.TabIndex = 48;
+            this.label_Check_BChannel.Text = "B CHANNEL";
+            this.label_Check_BChannel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Check_AChannel
+            // 
+            this.label_Check_AChannel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Check_AChannel.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Check_AChannel.Location = new System.Drawing.Point(9, 24);
+            this.label_Check_AChannel.Name = "label_Check_AChannel";
+            this.label_Check_AChannel.Size = new System.Drawing.Size(76, 37);
+            this.label_Check_AChannel.TabIndex = 47;
+            this.label_Check_AChannel.Text = "A CHANNEL";
+            this.label_Check_AChannel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label_ProcessCheck
             // 
@@ -1613,13 +1806,151 @@ namespace IBM1410Console
             // 
             // tabPowerSystemControls
             // 
+            this.tabPowerSystemControls.BackColor = System.Drawing.Color.DarkGray;
+            this.tabPowerSystemControls.Controls.Add(this.panelSystemControlsBackground);
+            this.tabPowerSystemControls.Controls.Add(this.panelPowerControlsBackground);
             this.tabPowerSystemControls.Location = new System.Drawing.Point(4, 24);
             this.tabPowerSystemControls.Name = "tabPowerSystemControls";
             this.tabPowerSystemControls.Padding = new System.Windows.Forms.Padding(3);
             this.tabPowerSystemControls.Size = new System.Drawing.Size(563, 346);
             this.tabPowerSystemControls.TabIndex = 3;
             this.tabPowerSystemControls.Text = "POWER / SYSTEM CONTROLS";
-            this.tabPowerSystemControls.UseVisualStyleBackColor = true;
+            // 
+            // panelSystemControlsBackground
+            // 
+            this.panelSystemControlsBackground.BackColor = System.Drawing.Color.White;
+            this.panelSystemControlsBackground.Controls.Add(this.panelSystemControls);
+            this.panelSystemControlsBackground.Controls.Add(this.panelSystemControlsHeader);
+            this.panelSystemControlsBackground.Location = new System.Drawing.Point(269, 68);
+            this.panelSystemControlsBackground.Name = "panelSystemControlsBackground";
+            this.panelSystemControlsBackground.Size = new System.Drawing.Size(185, 164);
+            this.panelSystemControlsBackground.TabIndex = 1;
+            // 
+            // panelSystemControls
+            // 
+            this.panelSystemControls.BackColor = System.Drawing.Color.DarkGray;
+            this.panelSystemControls.Location = new System.Drawing.Point(4, 39);
+            this.panelSystemControls.Name = "panelSystemControls";
+            this.panelSystemControls.Size = new System.Drawing.Size(177, 121);
+            this.panelSystemControls.TabIndex = 1;
+            // 
+            // panelSystemControlsHeader
+            // 
+            this.panelSystemControlsHeader.BackColor = System.Drawing.Color.DarkGray;
+            this.panelSystemControlsHeader.Controls.Add(this.label_SystemControls);
+            this.panelSystemControlsHeader.Location = new System.Drawing.Point(4, 4);
+            this.panelSystemControlsHeader.Name = "panelSystemControlsHeader";
+            this.panelSystemControlsHeader.Size = new System.Drawing.Size(177, 33);
+            this.panelSystemControlsHeader.TabIndex = 0;
+            // 
+            // label_SystemControls
+            // 
+            this.label_SystemControls.AutoSize = true;
+            this.label_SystemControls.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_SystemControls.ForeColor = System.Drawing.Color.White;
+            this.label_SystemControls.Location = new System.Drawing.Point(30, 9);
+            this.label_SystemControls.Name = "label_SystemControls";
+            this.label_SystemControls.Size = new System.Drawing.Size(117, 15);
+            this.label_SystemControls.TabIndex = 23;
+            this.label_SystemControls.Text = "SYSTEM CONTROLS";
+            // 
+            // panelPowerControlsBackground
+            // 
+            this.panelPowerControlsBackground.BackColor = System.Drawing.Color.White;
+            this.panelPowerControlsBackground.Controls.Add(this.panelPowerControls);
+            this.panelPowerControlsBackground.Controls.Add(this.panelPowerControlsHeader);
+            this.panelPowerControlsBackground.Location = new System.Drawing.Point(45, 68);
+            this.panelPowerControlsBackground.Name = "panelPowerControlsBackground";
+            this.panelPowerControlsBackground.Size = new System.Drawing.Size(185, 204);
+            this.panelPowerControlsBackground.TabIndex = 0;
+            // 
+            // panelPowerControls
+            // 
+            this.panelPowerControls.BackColor = System.Drawing.Color.DarkGray;
+            this.panelPowerControls.Controls.Add(this.label_Power_DiskOffline);
+            this.panelPowerControls.Controls.Add(this.label_Power_TapeOffline);
+            this.panelPowerControls.Controls.Add(this.label_Power_IOOffline);
+            this.panelPowerControls.Controls.Add(this.label_Power_CBTrip);
+            this.panelPowerControls.Controls.Add(this.label_Power_Thermal);
+            this.panelPowerControls.Location = new System.Drawing.Point(4, 39);
+            this.panelPowerControls.Name = "panelPowerControls";
+            this.panelPowerControls.Size = new System.Drawing.Size(177, 161);
+            this.panelPowerControls.TabIndex = 1;
+            // 
+            // label_Power_DiskOffline
+            // 
+            this.label_Power_DiskOffline.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Power_DiskOffline.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Power_DiskOffline.Location = new System.Drawing.Point(90, 110);
+            this.label_Power_DiskOffline.Name = "label_Power_DiskOffline";
+            this.label_Power_DiskOffline.Size = new System.Drawing.Size(78, 37);
+            this.label_Power_DiskOffline.TabIndex = 51;
+            this.label_Power_DiskOffline.Text = "DISK OFFLINE";
+            this.label_Power_DiskOffline.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Power_TapeOffline
+            // 
+            this.label_Power_TapeOffline.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Power_TapeOffline.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Power_TapeOffline.Location = new System.Drawing.Point(91, 65);
+            this.label_Power_TapeOffline.Name = "label_Power_TapeOffline";
+            this.label_Power_TapeOffline.Size = new System.Drawing.Size(78, 37);
+            this.label_Power_TapeOffline.TabIndex = 50;
+            this.label_Power_TapeOffline.Text = "TAPE OFFLINE";
+            this.label_Power_TapeOffline.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Power_IOOffline
+            // 
+            this.label_Power_IOOffline.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Power_IOOffline.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Power_IOOffline.Location = new System.Drawing.Point(91, 24);
+            this.label_Power_IOOffline.Name = "label_Power_IOOffline";
+            this.label_Power_IOOffline.Size = new System.Drawing.Size(78, 37);
+            this.label_Power_IOOffline.TabIndex = 49;
+            this.label_Power_IOOffline.Text = "I/O OFFLINE";
+            this.label_Power_IOOffline.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Power_CBTrip
+            // 
+            this.label_Power_CBTrip.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Power_CBTrip.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Power_CBTrip.Location = new System.Drawing.Point(17, 64);
+            this.label_Power_CBTrip.Name = "label_Power_CBTrip";
+            this.label_Power_CBTrip.Size = new System.Drawing.Size(43, 37);
+            this.label_Power_CBTrip.TabIndex = 48;
+            this.label_Power_CBTrip.Text = "CB TRIP";
+            this.label_Power_CBTrip.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label_Power_Thermal
+            // 
+            this.label_Power_Thermal.AutoSize = true;
+            this.label_Power_Thermal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Power_Thermal.ForeColor = System.Drawing.Color.DimGray;
+            this.label_Power_Thermal.Location = new System.Drawing.Point(9, 32);
+            this.label_Power_Thermal.Name = "label_Power_Thermal";
+            this.label_Power_Thermal.Size = new System.Drawing.Size(72, 15);
+            this.label_Power_Thermal.TabIndex = 34;
+            this.label_Power_Thermal.Text = "THERMAL";
+            // 
+            // panelPowerControlsHeader
+            // 
+            this.panelPowerControlsHeader.BackColor = System.Drawing.Color.DarkGray;
+            this.panelPowerControlsHeader.Controls.Add(this.label_Power);
+            this.panelPowerControlsHeader.Location = new System.Drawing.Point(4, 4);
+            this.panelPowerControlsHeader.Name = "panelPowerControlsHeader";
+            this.panelPowerControlsHeader.Size = new System.Drawing.Size(177, 33);
+            this.panelPowerControlsHeader.TabIndex = 0;
+            // 
+            // label_Power
+            // 
+            this.label_Power.AutoSize = true;
+            this.label_Power.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_Power.ForeColor = System.Drawing.Color.White;
+            this.label_Power.Location = new System.Drawing.Point(64, 9);
+            this.label_Power.Name = "label_Power";
+            this.label_Power.Size = new System.Drawing.Size(49, 15);
+            this.label_Power.TabIndex = 22;
+            this.label_Power.Text = "POWER";
             // 
             // tabCEPanel
             // 
@@ -1630,180 +1961,6 @@ namespace IBM1410Console
             this.tabCEPanel.TabIndex = 4;
             this.tabCEPanel.Text = "CE PANEL";
             this.tabCEPanel.UseVisualStyleBackColor = true;
-            // 
-            // label_Check_AChannel
-            // 
-            this.label_Check_AChannel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_AChannel.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_AChannel.Location = new System.Drawing.Point(9, 24);
-            this.label_Check_AChannel.Name = "label_Check_AChannel";
-            this.label_Check_AChannel.Size = new System.Drawing.Size(76, 37);
-            this.label_Check_AChannel.TabIndex = 47;
-            this.label_Check_AChannel.Text = "A CHANNEL";
-            this.label_Check_AChannel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_BChannel
-            // 
-            this.label_Check_BChannel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_BChannel.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_BChannel.Location = new System.Drawing.Point(9, 64);
-            this.label_Check_BChannel.Name = "label_Check_BChannel";
-            this.label_Check_BChannel.Size = new System.Drawing.Size(76, 37);
-            this.label_Check_BChannel.TabIndex = 48;
-            this.label_Check_BChannel.Text = "B CHANNEL";
-            this.label_Check_BChannel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_Assembly
-            // 
-            this.label_Check_Assembly.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_Assembly.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_Assembly.Location = new System.Drawing.Point(5, 108);
-            this.label_Check_Assembly.Name = "label_Check_Assembly";
-            this.label_Check_Assembly.Size = new System.Drawing.Size(88, 37);
-            this.label_Check_Assembly.TabIndex = 49;
-            this.label_Check_Assembly.Text = "ASSEMBLY CHANNEL";
-            this.label_Check_Assembly.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_AddressChannel
-            // 
-            this.label_Check_AddressChannel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_AddressChannel.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_AddressChannel.Location = new System.Drawing.Point(3, 156);
-            this.label_Check_AddressChannel.Name = "label_Check_AddressChannel";
-            this.label_Check_AddressChannel.Size = new System.Drawing.Size(88, 37);
-            this.label_Check_AddressChannel.TabIndex = 50;
-            this.label_Check_AddressChannel.Text = "ADDRESS CHANNEL";
-            this.label_Check_AddressChannel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_AddressExit
-            // 
-            this.label_Check_AddressExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_AddressExit.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_AddressExit.Location = new System.Drawing.Point(3, 204);
-            this.label_Check_AddressExit.Name = "label_Check_AddressExit";
-            this.label_Check_AddressExit.Size = new System.Drawing.Size(88, 37);
-            this.label_Check_AddressExit.TabIndex = 51;
-            this.label_Check_AddressExit.Text = "ADDRESS EXIT";
-            this.label_Check_AddressExit.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_ARegisterSet
-            // 
-            this.label_Check_ARegisterSet.BackColor = System.Drawing.Color.Transparent;
-            this.label_Check_ARegisterSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_ARegisterSet.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_ARegisterSet.Location = new System.Drawing.Point(99, 17);
-            this.label_Check_ARegisterSet.Name = "label_Check_ARegisterSet";
-            this.label_Check_ARegisterSet.Size = new System.Drawing.Size(83, 48);
-            this.label_Check_ARegisterSet.TabIndex = 52;
-            this.label_Check_ARegisterSet.Text = "A REGISTER SET";
-            this.label_Check_ARegisterSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_BRegisterSet
-            // 
-            this.label_Check_BRegisterSet.BackColor = System.Drawing.Color.Transparent;
-            this.label_Check_BRegisterSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_BRegisterSet.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_BRegisterSet.Location = new System.Drawing.Point(99, 64);
-            this.label_Check_BRegisterSet.Name = "label_Check_BRegisterSet";
-            this.label_Check_BRegisterSet.Size = new System.Drawing.Size(83, 48);
-            this.label_Check_BRegisterSet.TabIndex = 53;
-            this.label_Check_BRegisterSet.Text = "B REGISTER SET";
-            this.label_Check_BRegisterSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_OPRegisterSet
-            // 
-            this.label_Check_OPRegisterSet.BackColor = System.Drawing.Color.Transparent;
-            this.label_Check_OPRegisterSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_OPRegisterSet.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_OPRegisterSet.Location = new System.Drawing.Point(97, 112);
-            this.label_Check_OPRegisterSet.Name = "label_Check_OPRegisterSet";
-            this.label_Check_OPRegisterSet.Size = new System.Drawing.Size(83, 48);
-            this.label_Check_OPRegisterSet.TabIndex = 54;
-            this.label_Check_OPRegisterSet.Text = "OP REGISTER SET";
-            this.label_Check_OPRegisterSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_OPModifierSet
-            // 
-            this.label_Check_OPModifierSet.BackColor = System.Drawing.Color.Transparent;
-            this.label_Check_OPModifierSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_OPModifierSet.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_OPModifierSet.Location = new System.Drawing.Point(97, 159);
-            this.label_Check_OPModifierSet.Name = "label_Check_OPModifierSet";
-            this.label_Check_OPModifierSet.Size = new System.Drawing.Size(83, 48);
-            this.label_Check_OPModifierSet.TabIndex = 55;
-            this.label_Check_OPModifierSet.Text = "OP MODIFIER SET";
-            this.label_Check_OPModifierSet.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_ACharacterSelect
-            // 
-            this.label_Check_ACharacterSelect.BackColor = System.Drawing.Color.Transparent;
-            this.label_Check_ACharacterSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_ACharacterSelect.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_ACharacterSelect.Location = new System.Drawing.Point(92, 205);
-            this.label_Check_ACharacterSelect.Name = "label_Check_ACharacterSelect";
-            this.label_Check_ACharacterSelect.Size = new System.Drawing.Size(90, 48);
-            this.label_Check_ACharacterSelect.TabIndex = 56;
-            this.label_Check_ACharacterSelect.Text = "A CHARACTER SELECT";
-            this.label_Check_ACharacterSelect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_BCharacterSelect
-            // 
-            this.label_Check_BCharacterSelect.BackColor = System.Drawing.Color.Transparent;
-            this.label_Check_BCharacterSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_BCharacterSelect.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_BCharacterSelect.Location = new System.Drawing.Point(92, 251);
-            this.label_Check_BCharacterSelect.Name = "label_Check_BCharacterSelect";
-            this.label_Check_BCharacterSelect.Size = new System.Drawing.Size(90, 48);
-            this.label_Check_BCharacterSelect.TabIndex = 57;
-            this.label_Check_BCharacterSelect.Text = "B CHARACTER SELECT";
-            this.label_Check_BCharacterSelect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_IOInterlock
-            // 
-            this.label_Check_IOInterlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_IOInterlock.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_IOInterlock.Location = new System.Drawing.Point(4, 24);
-            this.label_Check_IOInterlock.Name = "label_Check_IOInterlock";
-            this.label_Check_IOInterlock.Size = new System.Drawing.Size(88, 37);
-            this.label_Check_IOInterlock.TabIndex = 50;
-            this.label_Check_IOInterlock.Text = "I/O INTERLOCK";
-            this.label_Check_IOInterlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Check_Address
-            // 
-            this.label_Check_Address.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_Address.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_Address.Location = new System.Drawing.Point(4, 66);
-            this.label_Check_Address.Name = "label_Check_Address";
-            this.label_Check_Address.Size = new System.Drawing.Size(88, 37);
-            this.label_Check_Address.TabIndex = 51;
-            this.label_Check_Address.Text = "ADDRESS CHECK";
-            this.label_Check_Address.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label_Check_Address.Visible = false;
-            // 
-            // label_Check_RBCInterlock
-            // 
-            this.label_Check_RBCInterlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_RBCInterlock.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_RBCInterlock.Location = new System.Drawing.Point(4, 108);
-            this.label_Check_RBCInterlock.Name = "label_Check_RBCInterlock";
-            this.label_Check_RBCInterlock.Size = new System.Drawing.Size(88, 37);
-            this.label_Check_RBCInterlock.TabIndex = 52;
-            this.label_Check_RBCInterlock.Text = "RBC INTERLOCK";
-            this.label_Check_RBCInterlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label_Check_RBCInterlock.Visible = false;
-            // 
-            // label_Check_Instruction
-            // 
-            this.label_Check_Instruction.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_Check_Instruction.ForeColor = System.Drawing.Color.DimGray;
-            this.label_Check_Instruction.Location = new System.Drawing.Point(-7, 158);
-            this.label_Check_Instruction.Name = "label_Check_Instruction";
-            this.label_Check_Instruction.Size = new System.Drawing.Size(110, 37);
-            this.label_Check_Instruction.TabIndex = 53;
-            this.label_Check_Instruction.Text = "INSTRUCTION CHECK";
-            this.label_Check_Instruction.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label_Check_Instruction.Visible = false;
             // 
             // UI1415LForm
             // 
@@ -1855,6 +2012,15 @@ namespace IBM1410Console
             this.panelProcessCheck.PerformLayout();
             this.panelSystemCheckHeader.ResumeLayout(false);
             this.panelSystemCheckHeader.PerformLayout();
+            this.tabPowerSystemControls.ResumeLayout(false);
+            this.panelSystemControlsBackground.ResumeLayout(false);
+            this.panelSystemControlsHeader.ResumeLayout(false);
+            this.panelSystemControlsHeader.PerformLayout();
+            this.panelPowerControlsBackground.ResumeLayout(false);
+            this.panelPowerControls.ResumeLayout(false);
+            this.panelPowerControls.PerformLayout();
+            this.panelPowerControlsHeader.ResumeLayout(false);
+            this.panelPowerControlsHeader.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2000,5 +2166,18 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_Check_RBCInterlock;
         private System.Windows.Forms.Label label_Check_Address;
         private System.Windows.Forms.Label label_Check_Instruction;
+        private System.Windows.Forms.Panel panelPowerControlsBackground;
+        private System.Windows.Forms.Panel panelPowerControls;
+        private System.Windows.Forms.Panel panelPowerControlsHeader;
+        private System.Windows.Forms.Panel panelSystemControlsBackground;
+        private System.Windows.Forms.Panel panelSystemControls;
+        private System.Windows.Forms.Panel panelSystemControlsHeader;
+        private System.Windows.Forms.Label label_SystemControls;
+        private System.Windows.Forms.Label label_Power;
+        private System.Windows.Forms.Label label_Power_CBTrip;
+        private System.Windows.Forms.Label label_Power_Thermal;
+        private System.Windows.Forms.Label label_Power_DiskOffline;
+        private System.Windows.Forms.Label label_Power_TapeOffline;
+        private System.Windows.Forms.Label label_Power_IOOffline;
     }
 }

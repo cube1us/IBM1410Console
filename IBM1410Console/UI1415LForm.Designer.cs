@@ -300,6 +300,24 @@ namespace IBM1410Console
             this.label_CE_STAR_U_1 = new System.Windows.Forms.Label();
             this.label_CE_STAR_U_4 = new System.Windows.Forms.Label();
             this.label_CE_STAR_U_8 = new System.Windows.Forms.Label();
+            this.panelCEMatrixBackground = new System.Windows.Forms.Panel();
+            this.panelCEIndexBackground = new System.Windows.Forms.Panel();
+            this.panelCEMatrixHeader = new System.Windows.Forms.Panel();
+            this.panelCEIndexHeader = new System.Windows.Forms.Panel();
+            this.panelCEMatrixLeft = new System.Windows.Forms.Panel();
+            this.panelCEMatrixRight = new System.Windows.Forms.Panel();
+            this.panelCEIndexH = new System.Windows.Forms.Panel();
+            this.panelCEIndexRight = new System.Windows.Forms.Panel();
+            this.label_CE_Matrix_32 = new System.Windows.Forms.Label();
+            this.label_CE_Matrix_H = new System.Windows.Forms.Label();
+            this.label_CE_Matrix_Header = new System.Windows.Forms.Label();
+            this.label_CE_Matrix_33 = new System.Windows.Forms.Label();
+            this.label_CE_Matrix_X1A = new System.Windows.Forms.Label();
+            this.label_CE_Index_Header = new System.Windows.Forms.Label();
+            this.label_CE_Index_H_A = new System.Windows.Forms.Label();
+            this.label_CE_Index_H_B = new System.Windows.Forms.Label();
+            this.label_CE_Index_T_A = new System.Windows.Forms.Label();
+            this.label_CE_Index_T_B = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -350,6 +368,14 @@ namespace IBM1410Console
             this.panelCEAChSel.SuspendLayout();
             this.panelCECycle.SuspendLayout();
             this.panelCERegistersHeader.SuspendLayout();
+            this.panelCEMatrixBackground.SuspendLayout();
+            this.panelCEIndexBackground.SuspendLayout();
+            this.panelCEMatrixHeader.SuspendLayout();
+            this.panelCEIndexHeader.SuspendLayout();
+            this.panelCEMatrixLeft.SuspendLayout();
+            this.panelCEMatrixRight.SuspendLayout();
+            this.panelCEIndexH.SuspendLayout();
+            this.panelCEIndexRight.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageControl
@@ -2146,6 +2172,8 @@ namespace IBM1410Console
             // tabCEPanel
             // 
             this.tabCEPanel.BackColor = System.Drawing.Color.DarkGray;
+            this.tabCEPanel.Controls.Add(this.panelCEIndexBackground);
+            this.tabCEPanel.Controls.Add(this.panelCEMatrixBackground);
             this.tabCEPanel.Controls.Add(this.panelCEStoreAddrRegBackground);
             this.tabCEPanel.Controls.Add(this.panelCERegistersBackground);
             this.tabCEPanel.Location = new System.Drawing.Point(4, 24);
@@ -3510,6 +3538,196 @@ namespace IBM1410Console
             this.label_CE_STAR_U_8.TabIndex = 49;
             this.label_CE_STAR_U_8.Text = "8";
             // 
+            // panelCEMatrixBackground
+            // 
+            this.panelCEMatrixBackground.BackColor = System.Drawing.Color.White;
+            this.panelCEMatrixBackground.Controls.Add(this.panelCEMatrixRight);
+            this.panelCEMatrixBackground.Controls.Add(this.panelCEMatrixLeft);
+            this.panelCEMatrixBackground.Controls.Add(this.panelCEMatrixHeader);
+            this.panelCEMatrixBackground.Location = new System.Drawing.Point(344, 4);
+            this.panelCEMatrixBackground.Name = "panelCEMatrixBackground";
+            this.panelCEMatrixBackground.Size = new System.Drawing.Size(74, 108);
+            this.panelCEMatrixBackground.TabIndex = 2;
+            // 
+            // panelCEIndexBackground
+            // 
+            this.panelCEIndexBackground.BackColor = System.Drawing.Color.White;
+            this.panelCEIndexBackground.Controls.Add(this.panelCEIndexRight);
+            this.panelCEIndexBackground.Controls.Add(this.panelCEIndexH);
+            this.panelCEIndexBackground.Controls.Add(this.panelCEIndexHeader);
+            this.panelCEIndexBackground.Location = new System.Drawing.Point(446, 4);
+            this.panelCEIndexBackground.Name = "panelCEIndexBackground";
+            this.panelCEIndexBackground.Size = new System.Drawing.Size(74, 108);
+            this.panelCEIndexBackground.TabIndex = 3;
+            // 
+            // panelCEMatrixHeader
+            // 
+            this.panelCEMatrixHeader.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEMatrixHeader.Controls.Add(this.label_CE_Matrix_Header);
+            this.panelCEMatrixHeader.Location = new System.Drawing.Point(4, 4);
+            this.panelCEMatrixHeader.Name = "panelCEMatrixHeader";
+            this.panelCEMatrixHeader.Size = new System.Drawing.Size(66, 33);
+            this.panelCEMatrixHeader.TabIndex = 0;
+            // 
+            // panelCEIndexHeader
+            // 
+            this.panelCEIndexHeader.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEIndexHeader.Controls.Add(this.label_CE_Index_Header);
+            this.panelCEIndexHeader.Location = new System.Drawing.Point(4, 4);
+            this.panelCEIndexHeader.Name = "panelCEIndexHeader";
+            this.panelCEIndexHeader.Size = new System.Drawing.Size(66, 33);
+            this.panelCEIndexHeader.TabIndex = 1;
+            // 
+            // panelCEMatrixLeft
+            // 
+            this.panelCEMatrixLeft.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEMatrixLeft.Controls.Add(this.label_CE_Matrix_32);
+            this.panelCEMatrixLeft.Controls.Add(this.label_CE_Matrix_H);
+            this.panelCEMatrixLeft.Location = new System.Drawing.Point(4, 39);
+            this.panelCEMatrixLeft.Name = "panelCEMatrixLeft";
+            this.panelCEMatrixLeft.Size = new System.Drawing.Size(32, 65);
+            this.panelCEMatrixLeft.TabIndex = 1;
+            // 
+            // panelCEMatrixRight
+            // 
+            this.panelCEMatrixRight.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEMatrixRight.Controls.Add(this.label_CE_Matrix_33);
+            this.panelCEMatrixRight.Controls.Add(this.label_CE_Matrix_X1A);
+            this.panelCEMatrixRight.Location = new System.Drawing.Point(38, 39);
+            this.panelCEMatrixRight.Name = "panelCEMatrixRight";
+            this.panelCEMatrixRight.Size = new System.Drawing.Size(32, 65);
+            this.panelCEMatrixRight.TabIndex = 2;
+            // 
+            // panelCEIndexH
+            // 
+            this.panelCEIndexH.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEIndexH.Controls.Add(this.label_CE_Index_H_A);
+            this.panelCEIndexH.Controls.Add(this.label_CE_Index_H_B);
+            this.panelCEIndexH.Location = new System.Drawing.Point(4, 39);
+            this.panelCEIndexH.Name = "panelCEIndexH";
+            this.panelCEIndexH.Size = new System.Drawing.Size(32, 65);
+            this.panelCEIndexH.TabIndex = 2;
+            // 
+            // panelCEIndexRight
+            // 
+            this.panelCEIndexRight.BackColor = System.Drawing.Color.DarkGray;
+            this.panelCEIndexRight.Controls.Add(this.label_CE_Index_T_A);
+            this.panelCEIndexRight.Controls.Add(this.label_CE_Index_T_B);
+            this.panelCEIndexRight.Location = new System.Drawing.Point(38, 39);
+            this.panelCEIndexRight.Name = "panelCEIndexRight";
+            this.panelCEIndexRight.Size = new System.Drawing.Size(32, 65);
+            this.panelCEIndexRight.TabIndex = 3;
+            // 
+            // label_CE_Matrix_32
+            // 
+            this.label_CE_Matrix_32.AutoSize = true;
+            this.label_CE_Matrix_32.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Matrix_32.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Matrix_32.Location = new System.Drawing.Point(4, 37);
+            this.label_CE_Matrix_32.Name = "label_CE_Matrix_32";
+            this.label_CE_Matrix_32.Size = new System.Drawing.Size(23, 15);
+            this.label_CE_Matrix_32.TabIndex = 42;
+            this.label_CE_Matrix_32.Text = "32";
+            // 
+            // label_CE_Matrix_H
+            // 
+            this.label_CE_Matrix_H.AutoSize = true;
+            this.label_CE_Matrix_H.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Matrix_H.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Matrix_H.Location = new System.Drawing.Point(8, 8);
+            this.label_CE_Matrix_H.Name = "label_CE_Matrix_H";
+            this.label_CE_Matrix_H.Size = new System.Drawing.Size(17, 15);
+            this.label_CE_Matrix_H.TabIndex = 41;
+            this.label_CE_Matrix_H.Text = "H";
+            // 
+            // label_CE_Matrix_Header
+            // 
+            this.label_CE_Matrix_Header.AutoSize = true;
+            this.label_CE_Matrix_Header.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Matrix_Header.ForeColor = System.Drawing.Color.White;
+            this.label_CE_Matrix_Header.Location = new System.Drawing.Point(7, 9);
+            this.label_CE_Matrix_Header.Name = "label_CE_Matrix_Header";
+            this.label_CE_Matrix_Header.Size = new System.Drawing.Size(52, 15);
+            this.label_CE_Matrix_Header.TabIndex = 53;
+            this.label_CE_Matrix_Header.Text = "MATRIX";
+            // 
+            // label_CE_Matrix_33
+            // 
+            this.label_CE_Matrix_33.AutoSize = true;
+            this.label_CE_Matrix_33.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Matrix_33.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Matrix_33.Location = new System.Drawing.Point(4, 37);
+            this.label_CE_Matrix_33.Name = "label_CE_Matrix_33";
+            this.label_CE_Matrix_33.Size = new System.Drawing.Size(23, 15);
+            this.label_CE_Matrix_33.TabIndex = 44;
+            this.label_CE_Matrix_33.Text = "33";
+            // 
+            // label_CE_Matrix_X1A
+            // 
+            this.label_CE_Matrix_X1A.AutoSize = true;
+            this.label_CE_Matrix_X1A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Matrix_X1A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Matrix_X1A.Location = new System.Drawing.Point(0, 8);
+            this.label_CE_Matrix_X1A.Name = "label_CE_Matrix_X1A";
+            this.label_CE_Matrix_X1A.Size = new System.Drawing.Size(32, 15);
+            this.label_CE_Matrix_X1A.TabIndex = 43;
+            this.label_CE_Matrix_X1A.Text = "X1A";
+            // 
+            // label_CE_Index_Header
+            // 
+            this.label_CE_Index_Header.AutoSize = true;
+            this.label_CE_Index_Header.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Index_Header.ForeColor = System.Drawing.Color.White;
+            this.label_CE_Index_Header.Location = new System.Drawing.Point(11, 9);
+            this.label_CE_Index_Header.Name = "label_CE_Index_Header";
+            this.label_CE_Index_Header.Size = new System.Drawing.Size(43, 15);
+            this.label_CE_Index_Header.TabIndex = 54;
+            this.label_CE_Index_Header.Text = "INDEX";
+            // 
+            // label_CE_Index_H_A
+            // 
+            this.label_CE_Index_H_A.AutoSize = true;
+            this.label_CE_Index_H_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Index_H_A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Index_H_A.Location = new System.Drawing.Point(8, 38);
+            this.label_CE_Index_H_A.Name = "label_CE_Index_H_A";
+            this.label_CE_Index_H_A.Size = new System.Drawing.Size(15, 15);
+            this.label_CE_Index_H_A.TabIndex = 44;
+            this.label_CE_Index_H_A.Text = "A";
+            // 
+            // label_CE_Index_H_B
+            // 
+            this.label_CE_Index_H_B.AutoSize = true;
+            this.label_CE_Index_H_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Index_H_B.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Index_H_B.Location = new System.Drawing.Point(8, 9);
+            this.label_CE_Index_H_B.Name = "label_CE_Index_H_B";
+            this.label_CE_Index_H_B.Size = new System.Drawing.Size(16, 15);
+            this.label_CE_Index_H_B.TabIndex = 43;
+            this.label_CE_Index_H_B.Text = "B";
+            // 
+            // label_CE_Index_T_A
+            // 
+            this.label_CE_Index_T_A.AutoSize = true;
+            this.label_CE_Index_T_A.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Index_T_A.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Index_T_A.Location = new System.Drawing.Point(8, 38);
+            this.label_CE_Index_T_A.Name = "label_CE_Index_T_A";
+            this.label_CE_Index_T_A.Size = new System.Drawing.Size(15, 15);
+            this.label_CE_Index_T_A.TabIndex = 46;
+            this.label_CE_Index_T_A.Text = "A";
+            // 
+            // label_CE_Index_T_B
+            // 
+            this.label_CE_Index_T_B.AutoSize = true;
+            this.label_CE_Index_T_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_Index_T_B.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_Index_T_B.Location = new System.Drawing.Point(8, 9);
+            this.label_CE_Index_T_B.Name = "label_CE_Index_T_B";
+            this.label_CE_Index_T_B.Size = new System.Drawing.Size(16, 15);
+            this.label_CE_Index_T_B.TabIndex = 45;
+            this.label_CE_Index_T_B.Text = "B";
+            // 
             // UI1415LForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -3603,6 +3821,20 @@ namespace IBM1410Console
             this.panelCECycle.PerformLayout();
             this.panelCERegistersHeader.ResumeLayout(false);
             this.panelCERegistersHeader.PerformLayout();
+            this.panelCEMatrixBackground.ResumeLayout(false);
+            this.panelCEIndexBackground.ResumeLayout(false);
+            this.panelCEMatrixHeader.ResumeLayout(false);
+            this.panelCEMatrixHeader.PerformLayout();
+            this.panelCEIndexHeader.ResumeLayout(false);
+            this.panelCEIndexHeader.PerformLayout();
+            this.panelCEMatrixLeft.ResumeLayout(false);
+            this.panelCEMatrixLeft.PerformLayout();
+            this.panelCEMatrixRight.ResumeLayout(false);
+            this.panelCEMatrixRight.PerformLayout();
+            this.panelCEIndexH.ResumeLayout(false);
+            this.panelCEIndexH.PerformLayout();
+            this.panelCEIndexRight.ResumeLayout(false);
+            this.panelCEIndexRight.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3803,8 +4035,8 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_B_C;
         private System.Windows.Forms.Label label_CE_B_WM;
         private System.Windows.Forms.Label label_CE_B_ER;
-        private System.Windows.Forms.Label l;
-        private System.Windows.Forms.Label ab;
+        // private System.Windows.Forms.Label l;
+        // private System.Windows.Forms.Label ab;
         private System.Windows.Forms.Label label_CE_B_4;
         private System.Windows.Forms.Label label_CE_ADDR_2;
         private System.Windows.Forms.Label label_CE_ADDR_0;
@@ -3852,7 +4084,7 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_Assem_B;
         private System.Windows.Forms.Label label_CE_Assem_C;
         private System.Windows.Forms.Label label_CE_Assem_WM;
-        private System.Windows.Forms.Label C;
+        // private System.Windows.Forms.Label C;
         private System.Windows.Forms.Panel panelCEStoreAddrRegBackground;
         private System.Windows.Forms.Panel panelCEStoreAddrRegUnits;
         private System.Windows.Forms.Panel panelCEStoreAddrRegTens;
@@ -3876,7 +4108,7 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_STAR_H_1;
         private System.Windows.Forms.Label label_CE_STAR_H_4;
         private System.Windows.Forms.Label label_CE_STAR_H_8;
-        private System.Windows.Forms.Label E;
+        // private System.Windows.Forms.Label E;
         private System.Windows.Forms.Label label_CE_STAR_T_2;
         private System.Windows.Forms.Label label_CE_STAR_T_0;
         private System.Windows.Forms.Label label_CE_STAR_T_1;
@@ -3887,5 +4119,23 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_STAR_U_1;
         private System.Windows.Forms.Label label_CE_STAR_U_4;
         private System.Windows.Forms.Label label_CE_STAR_U_8;
+        private System.Windows.Forms.Panel panelCEIndexBackground;
+        private System.Windows.Forms.Panel panelCEIndexHeader;
+        private System.Windows.Forms.Panel panelCEMatrixBackground;
+        private System.Windows.Forms.Panel panelCEMatrixHeader;
+        private System.Windows.Forms.Panel panelCEIndexRight;
+        private System.Windows.Forms.Panel panelCEIndexH;
+        private System.Windows.Forms.Panel panelCEMatrixRight;
+        private System.Windows.Forms.Label label_CE_Matrix_33;
+        private System.Windows.Forms.Label label_CE_Matrix_X1A;
+        private System.Windows.Forms.Panel panelCEMatrixLeft;
+        private System.Windows.Forms.Label label_CE_Matrix_32;
+        private System.Windows.Forms.Label label_CE_Matrix_H;
+        private System.Windows.Forms.Label label_CE_Matrix_Header;
+        private System.Windows.Forms.Label label_CE_Index_T_A;
+        private System.Windows.Forms.Label label_CE_Index_T_B;
+        private System.Windows.Forms.Label label_CE_Index_H_A;
+        private System.Windows.Forms.Label label_CE_Index_H_B;
+        private System.Windows.Forms.Label label_CE_Index_Header;
     }
 }

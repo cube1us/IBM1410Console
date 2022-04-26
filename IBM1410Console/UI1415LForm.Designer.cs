@@ -267,9 +267,9 @@ namespace IBM1410Console
             this.label_CE_B_Header = new System.Windows.Forms.Label();
             this.label_CE_AChSel_Header = new System.Windows.Forms.Label();
             this.label_CE_CycHeader = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            // this.label6 = new System.Windows.Forms.Label();
+            // this.label7 = new System.Windows.Forms.Label();
+            // this.label8 = new System.Windows.Forms.Label();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -3100,26 +3100,26 @@ namespace IBM1410Console
             // 
             // label6
             // 
-            this.label6.ForeColor = System.Drawing.Color.DarkRed;
-            this.label6.Location = new System.Drawing.Point(400, 400);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(100, 23);
-            this.label6.TabIndex = 0;
+            // this.label6.ForeColor = System.Drawing.Color.DarkRed;
+            // this.label6.Location = new System.Drawing.Point(400, 400);
+            // this.label6.Name = "label6";
+            // this.label6.Size = new System.Drawing.Size(100, 23);
+            // this.label6.TabIndex = 0;
             // 
             // label7
             // 
-            this.label7.ForeColor = System.Drawing.Color.Maroon;
-            this.label7.Location = new System.Drawing.Point(400, 400);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(100, 23);
-            this.label7.TabIndex = 0;
+            // this.label7.ForeColor = System.Drawing.Color.Maroon;
+            // this.label7.Location = new System.Drawing.Point(400, 400);
+            // this.label7.Name = "label7";
+            // this.label7.Size = new System.Drawing.Size(100, 23);
+            // this.label7.TabIndex = 0;
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(0, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 23);
-            this.label8.TabIndex = 0;
+            // this.label8.Location = new System.Drawing.Point(0, 0);
+            // this.label8.Name = "label8";
+            // this.label8.Size = new System.Drawing.Size(100, 23);
+            // this.label8.TabIndex = 0;
             // 
             // UI1415LForm
             // 

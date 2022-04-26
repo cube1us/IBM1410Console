@@ -4035,8 +4035,6 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_B_C;
         private System.Windows.Forms.Label label_CE_B_WM;
         private System.Windows.Forms.Label label_CE_B_ER;
-        // private System.Windows.Forms.Label l;
-        // private System.Windows.Forms.Label ab;
         private System.Windows.Forms.Label label_CE_B_4;
         private System.Windows.Forms.Label label_CE_ADDR_2;
         private System.Windows.Forms.Label label_CE_ADDR_0;
@@ -4084,7 +4082,6 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_Assem_B;
         private System.Windows.Forms.Label label_CE_Assem_C;
         private System.Windows.Forms.Label label_CE_Assem_WM;
-        // private System.Windows.Forms.Label C;
         private System.Windows.Forms.Panel panelCEStoreAddrRegBackground;
         private System.Windows.Forms.Panel panelCEStoreAddrRegUnits;
         private System.Windows.Forms.Panel panelCEStoreAddrRegTens;
@@ -4108,7 +4105,6 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_STAR_H_1;
         private System.Windows.Forms.Label label_CE_STAR_H_4;
         private System.Windows.Forms.Label label_CE_STAR_H_8;
-        // private System.Windows.Forms.Label E;
         private System.Windows.Forms.Label label_CE_STAR_T_2;
         private System.Windows.Forms.Label label_CE_STAR_T_0;
         private System.Windows.Forms.Label label_CE_STAR_T_1;

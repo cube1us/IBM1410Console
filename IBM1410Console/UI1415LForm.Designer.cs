@@ -2048,7 +2048,7 @@ namespace IBM1410Console
             this.label_SystemControls_1401Compat.Name = "label_SystemControls_1401Compat";
             this.label_SystemControls_1401Compat.Size = new System.Drawing.Size(78, 37);
             this.label_SystemControls_1401Compat.TabIndex = 50;
-            this.label_SystemControls_1401Compat.Text = "I/O OFFLINE";
+            this.label_SystemControls_1401Compat.Text = "1401 COMPAT";
             this.label_SystemControls_1401Compat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panelSystemControlsHeader

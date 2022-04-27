@@ -265,7 +265,7 @@ namespace IBM1410Console
             this.label_CE_OP_2 = new System.Windows.Forms.Label();
             this.label_CE_OP_8 = new System.Windows.Forms.Label();
             this.label_CE_OP_A = new System.Windows.Forms.Label();
-            this.label_C_OP_B = new System.Windows.Forms.Label();
+            this.label_CE_OP_B = new System.Windows.Forms.Label();
             this.label_CE_OP_C = new System.Windows.Forms.Label();
             this.panelCEMod = new System.Windows.Forms.Panel();
             this.label_CE_MOD_4 = new System.Windows.Forms.Label();
@@ -318,6 +318,7 @@ namespace IBM1410Console
             this.label_CE_B_Header = new System.Windows.Forms.Label();
             this.label_CE_AChSel_Header = new System.Windows.Forms.Label();
             this.label_CE_CycHeader = new System.Windows.Forms.Label();
+            this.testButton = new System.Windows.Forms.Button();
             this.tabPageControl.SuspendLayout();
             this.tabCPUStatus.SuspendLayout();
             this.panel1415CPUOutline.SuspendLayout();
@@ -388,7 +389,7 @@ namespace IBM1410Console
             this.tabPageControl.Location = new System.Drawing.Point(8, 8);
             this.tabPageControl.Name = "tabPageControl";
             this.tabPageControl.SelectedIndex = 0;
-            this.tabPageControl.Size = new System.Drawing.Size(571, 374);
+            this.tabPageControl.Size = new System.Drawing.Size(567, 384);
             this.tabPageControl.TabIndex = 0;
             this.tabPageControl.Tag = "";
             // 
@@ -399,7 +400,7 @@ namespace IBM1410Console
             this.tabCPUStatus.Location = new System.Drawing.Point(4, 24);
             this.tabCPUStatus.Name = "tabCPUStatus";
             this.tabCPUStatus.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCPUStatus.Size = new System.Drawing.Size(563, 346);
+            this.tabCPUStatus.Size = new System.Drawing.Size(559, 356);
             this.tabCPUStatus.TabIndex = 0;
             this.tabCPUStatus.Text = "CPU / STATUS";
             // 
@@ -1274,7 +1275,7 @@ namespace IBM1410Console
             this.tabIOChannels.Location = new System.Drawing.Point(4, 24);
             this.tabIOChannels.Name = "tabIOChannels";
             this.tabIOChannels.Padding = new System.Windows.Forms.Padding(3);
-            this.tabIOChannels.Size = new System.Drawing.Size(563, 346);
+            this.tabIOChannels.Size = new System.Drawing.Size(559, 356);
             this.tabIOChannels.TabIndex = 1;
             this.tabIOChannels.Text = "I/O CHANNELS";
             // 
@@ -1707,7 +1708,7 @@ namespace IBM1410Console
             this.tabSystemCheck.Location = new System.Drawing.Point(4, 24);
             this.tabSystemCheck.Name = "tabSystemCheck";
             this.tabSystemCheck.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSystemCheck.Size = new System.Drawing.Size(563, 346);
+            this.tabSystemCheck.Size = new System.Drawing.Size(559, 356);
             this.tabSystemCheck.TabIndex = 2;
             this.tabSystemCheck.Text = "SYSTEM CHECK";
             // 
@@ -1979,7 +1980,7 @@ namespace IBM1410Console
             this.tabPowerSystemControls.Location = new System.Drawing.Point(4, 24);
             this.tabPowerSystemControls.Name = "tabPowerSystemControls";
             this.tabPowerSystemControls.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPowerSystemControls.Size = new System.Drawing.Size(563, 346);
+            this.tabPowerSystemControls.Size = new System.Drawing.Size(559, 356);
             this.tabPowerSystemControls.TabIndex = 3;
             this.tabPowerSystemControls.Text = "POWER / SYSTEM CONTROLS";
             // 
@@ -2179,7 +2180,7 @@ namespace IBM1410Console
             this.tabCEPanel.Location = new System.Drawing.Point(4, 24);
             this.tabCEPanel.Name = "tabCEPanel";
             this.tabCEPanel.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCEPanel.Size = new System.Drawing.Size(563, 346);
+            this.tabCEPanel.Size = new System.Drawing.Size(559, 356);
             this.tabCEPanel.TabIndex = 4;
             this.tabCEPanel.Text = "CE PANEL";
             // 
@@ -3056,7 +3057,7 @@ namespace IBM1410Console
             this.panelCEOp.Controls.Add(this.label_CE_OP_2);
             this.panelCEOp.Controls.Add(this.label_CE_OP_8);
             this.panelCEOp.Controls.Add(this.label_CE_OP_A);
-            this.panelCEOp.Controls.Add(this.label_C_OP_B);
+            this.panelCEOp.Controls.Add(this.label_CE_OP_B);
             this.panelCEOp.Controls.Add(this.label_CE_OP_C);
             this.panelCEOp.Location = new System.Drawing.Point(208, 39);
             this.panelCEOp.Name = "panelCEOp";
@@ -3118,16 +3119,16 @@ namespace IBM1410Console
             this.label_CE_OP_A.TabIndex = 34;
             this.label_CE_OP_A.Text = "A";
             // 
-            // label_C_OP_B
+            // label_CE_OP_B
             // 
-            this.label_C_OP_B.AutoSize = true;
-            this.label_C_OP_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label_C_OP_B.ForeColor = System.Drawing.Color.DimGray;
-            this.label_C_OP_B.Location = new System.Drawing.Point(7, 123);
-            this.label_C_OP_B.Name = "label_C_OP_B";
-            this.label_C_OP_B.Size = new System.Drawing.Size(16, 15);
-            this.label_C_OP_B.TabIndex = 33;
-            this.label_C_OP_B.Text = "B";
+            this.label_CE_OP_B.AutoSize = true;
+            this.label_CE_OP_B.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label_CE_OP_B.ForeColor = System.Drawing.Color.DimGray;
+            this.label_CE_OP_B.Location = new System.Drawing.Point(7, 123);
+            this.label_CE_OP_B.Name = "label_CE_OP_B";
+            this.label_CE_OP_B.Size = new System.Drawing.Size(16, 15);
+            this.label_CE_OP_B.TabIndex = 33;
+            this.label_CE_OP_B.Text = "B";
             // 
             // label_CE_OP_C
             // 
@@ -3728,11 +3729,22 @@ namespace IBM1410Console
             this.label_CE_CycHeader.TabIndex = 20;
             this.label_CE_CycHeader.Text = "CYC";
             // 
+            // testButton
+            // 
+            this.testButton.Location = new System.Drawing.Point(16, 411);
+            this.testButton.Name = "testButton";
+            this.testButton.Size = new System.Drawing.Size(75, 23);
+            this.testButton.TabIndex = 1;
+            this.testButton.Text = "Test Next";
+            this.testButton.UseVisualStyleBackColor = true;
+            this.testButton.Click += new System.EventHandler(this.testButton_Click);
+            // 
             // UI1415LForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1043, 604);
+            this.Controls.Add(this.testButton);
             this.Controls.Add(this.tabPageControl);
             this.Name = "UI1415LForm";
             this.Text = "IBM 1415 Indicator Lights";
@@ -4047,7 +4059,7 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_OP_2;
         private System.Windows.Forms.Label label_CE_OP_8;
         private System.Windows.Forms.Label label_CE_OP_A;
-        private System.Windows.Forms.Label label_C_OP_B;
+        private System.Windows.Forms.Label label_CE_OP_B;
         private System.Windows.Forms.Label label_CE_OP_C;
         private System.Windows.Forms.Label label_CE_MOD_4;
         private System.Windows.Forms.Label label_CE_MOD_1;
@@ -4133,5 +4145,6 @@ namespace IBM1410Console
         private System.Windows.Forms.Label label_CE_Index_H_A;
         private System.Windows.Forms.Label label_CE_Index_H_B;
         private System.Windows.Forms.Label label_CE_Index_Header;
+        private System.Windows.Forms.Button testButton;
     }
 }

@@ -10,10 +10,10 @@ namespace IBM1410Console
     public class IBM1410Lamp
     {
 
-        System.Windows.Forms.Label label { get; set; }
-            bool setBackground { get; set; } = false;
-            Color onColor { get; set; }
-            Color offColor { get; set; }
+        public System.Windows.Forms.Label label { get; set; }
+        public bool setBackground { get; set; } = false;
+        public Color onColor { get; set; }
+        public Color offColor { get; set; }
 
         //  Constructor
         public IBM1410Lamp(Label label, bool setBackground, Color onColor, Color offColor) {
@@ -35,6 +35,7 @@ namespace IBM1410Console
 
 
 		public const int lampVectorBits = 203;
+		public const int minLampVector = 1;
 
 		public const int LAMP_11C8A01_INDEX = 202;  // TP B TAG 14.50.02.1
 		public const int LAMP_11C8A02_INDEX = 201;  // HP B TAG 14.50.01.1

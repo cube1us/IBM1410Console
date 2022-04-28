@@ -36,6 +36,7 @@ namespace IBM1410Console
 
 		public const int lampVectorBits = 203;
 		public const int minLampVector = 1;
+		public const int lampBytes = lampVectorBits / 7;
 
 		public const int LAMP_11C8A01_INDEX = 202;  // TP B TAG 14.50.02.1
 		public const int LAMP_11C8A02_INDEX = 201;  // HP B TAG 14.50.01.1

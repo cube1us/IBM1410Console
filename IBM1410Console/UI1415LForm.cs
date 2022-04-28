@@ -13,7 +13,10 @@ namespace IBM1410Console
     {
 
         private IBM1410Lamp[] lamps = new IBM1410Lamp[IBM1410Lamp.lampVectorBits];
-        
+        bool[] oldLamps = new bool[IBM1410Lamp.lampVectorBits];
+        bool[] newLamps = new bool[IBM1410Lamp.lampVectorBits];
+        int lampByte = 0;
+
         private Color onWhite = Color.White;
         private Color onRed = Color.FromArgb(0xa0,0,0);
         private Color offDimGray = Color.DimGray;
@@ -251,6 +254,31 @@ namespace IBM1410Console
             lamps[IBM1410Lamp.LAMPS_B_CH_INDEX + 5] = new IBM1410Lamp(label_CE_B_B, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMPS_B_CH_INDEX + 6] = new IBM1410Lamp(label_CE_B_WM, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMPS_B_CH_INDEX + 7] = new IBM1410Lamp(label_CE_B_C, false, onWhite, offDimGray);
+
+            for(int i=0; i < IBM1410Lamp.lampVectorBits; ++i) {
+                oldLamps[0] = newLamps[i] = false;
+            }
+        }
+
+        //  This routine is invoked when we receive a byte of serial data
+
+        void lampOutputAvailable(object sender, SerialDataEventArgs e ) {
+
+            const int lampCodeByte = 0x80;
+            int c = e.SerialByte;       // Contains 7 bits of lamp data
+
+            //  Is this data really for us?
+
+            if(e.DispatchCode != lampCodeByte) {
+                return;
+            }
+
+            //  Move this set of data into the lamp array.  If the lamp array is full, 
+            //  Then send a message to process any changes.  Don't do that on this thread
+            //  thread coming from serial input!
+
+            // TODO
+
         }
 
         private void testButton_Click(object sender, EventArgs e) {

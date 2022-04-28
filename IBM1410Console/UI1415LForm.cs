@@ -42,8 +42,8 @@ namespace IBM1410Console
             lamps[IBM1410Lamp.LAMP_11C8A13_INDEX] = new IBM1410Lamp(label_CE_B_ER, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_11C8B01_INDEX] = new IBM1410Lamp(label_CE_Index_T_A, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_11C8B02_INDEX] = new IBM1410Lamp(label_CE_Index_H_A, false, onWhite, offDimGray);
-            lamps[IBM1410Lamp.LAMP_11C8B04_INDEX] = new IBM1410Lamp(label_CE_Matrix_32, false, onWhite, offDimGray);
-            lamps[IBM1410Lamp.LAMP_11C8B05_INDEX] = new IBM1410Lamp(label_CE_Index_T_B, false, onWhite, offDimGray);
+            lamps[IBM1410Lamp.LAMP_11C8B04_INDEX] = new IBM1410Lamp(label_CE_Matrix_33, false, onWhite, offDimGray);
+            lamps[IBM1410Lamp.LAMP_11C8B05_INDEX] = new IBM1410Lamp(label_CE_Matrix_32, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_11C8C14_INDEX] = new IBM1410Lamp(label_CE_AChSel_A, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_11C8D14_INDEX] = new IBM1410Lamp(label_CE_AChSel_d, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_11C8E14_INDEX] = new IBM1410Lamp(label_CE_AChSel_E, false, onWhite, offDimGray);
@@ -62,8 +62,8 @@ namespace IBM1410Console
             lamps[IBM1410Lamp.LAMP_15A1A17_INDEX] = new IBM1410Lamp(label_NotReady_CH2, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1A19_INDEX] = new IBM1410Lamp(label_Check_AChannel, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1B14_INDEX] = new IBM1410Lamp(label_RBCInterlock_CH1, false, onWhite, offDimGray);
-            lamps[IBM1410Lamp.LAMP_15A1B15_INDEX] = new IBM1410Lamp(label_Check_Address, false, onWhite, offDimGray);
-            lamps[IBM1410Lamp.LAMP_15A1B19_INDEX] = new IBM1410Lamp(label_Check_Assembly, false, onWhite, offDimGray);
+            lamps[IBM1410Lamp.LAMP_15A1B15_INDEX] = new IBM1410Lamp(label_Check_Address, false, onRed, offDimGray);
+            lamps[IBM1410Lamp.LAMP_15A1B19_INDEX] = new IBM1410Lamp(label_Check_Assembly, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1C11_INDEX] = new IBM1410Lamp(label_Carry_Out, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1C12_INDEX] = new IBM1410Lamp(label_B_EQ_A, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1C15_INDEX] = new IBM1410Lamp(label_RBCInterlock_CH2, false, onWhite, offDimGray);
@@ -106,7 +106,7 @@ namespace IBM1410Console
             lamps[IBM1410Lamp.LAMP_15A1K20_INDEX] = new IBM1410Lamp(label_Check_BCharacterSelect, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1K21_INDEX] = new IBM1410Lamp(label_SystemControls_OffNormal, true, onRed, bgRed);
             lamps[IBM1410Lamp.LAMP_15A1K22_INDEX] = new IBM1410Lamp(label_SystemControls_PriorityAlert, false, onRed, offDimGray);
-            lamps[IBM1410Lamp.LAMP_15A1K23_INDEX] = new IBM1410Lamp(label_SystemControls_1401Compat, false, onWhite, offDimGray);
+            lamps[IBM1410Lamp.LAMP_15A1K23_INDEX] = new IBM1410Lamp(label_SystemControls_1401Compat, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1K24_INDEX] = new IBM1410Lamp(label_SystemControls_Stop, true, onRed, bgRed);
             lamps[IBM1410Lamp.LAMP_15A1V01_INDEX] = new IBM1410Lamp(label_Check_ARegisterSet, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1W01_INDEX] = new IBM1410Lamp(label_Check_IOInterlock, false, onRed, offDimGray);
@@ -143,7 +143,7 @@ namespace IBM1410Console
             lamps[IBM1410Lamp.LAMPS_IRING_INDEX + 9] = new IBM1410Lamp(label_I_9, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMPS_IRING_INDEX + 10] = new IBM1410Lamp(label_I_10, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMPS_IRING_INDEX + 11] = new IBM1410Lamp(label_I_11, false, onWhite, offDimGray);
-            lamps[IBM1410Lamp.LAMPS_IRING_INDEX + 12] = new IBM1410Lamp(label_I_11, false, onWhite, offDimGray);
+            lamps[IBM1410Lamp.LAMPS_IRING_INDEX + 12] = new IBM1410Lamp(label_I_12, false, onWhite, offDimGray);
 
             lamps[IBM1410Lamp.LAMPS_LOGIC_GATE_RING_INDEX + 0] = new IBM1410Lamp(label_CLK_A, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMPS_LOGIC_GATE_RING_INDEX + 1] = new IBM1410Lamp(label_CLK_B, false, onWhite, offDimGray);
@@ -262,7 +262,7 @@ namespace IBM1410Console
             IBM1410Lamp lamp;
 
             lamp = lamps[previous];
-            if(lamp.label != null) {
+            if(lamp != null && lamp.label != null) {
                 if (lamp.setBackground) {
                     lamp.label.BackColor = lamp.offColor;
                 }
@@ -274,17 +274,17 @@ namespace IBM1410Console
             //  Turn on this lamp.
 
             lamp = lamps[testIndex];
-            if(lamp.label != null) {
+            if (lamp != null && lamp.label != null) {
                 if (lamp.setBackground) {
                     lamp.label.BackColor = lamp.onColor;
                 }
                 else {
                     lamp.label.ForeColor = lamp.onColor;
                 }
+            }
 
-                if (--testIndex < IBM1410Lamp.minLampVector) {
-                    testIndex = IBM1410Lamp.lampVectorBits - 1;
-                }
+            if (--testIndex < IBM1410Lamp.minLampVector) {
+                testIndex = IBM1410Lamp.lampVectorBits - 1;
             }
         }
     }

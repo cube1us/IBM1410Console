@@ -1746,7 +1746,6 @@ namespace IBM1410Console
             this.label_Check_Instruction.TabIndex = 53;
             this.label_Check_Instruction.Text = "INSTRUCTION CHECK";
             this.label_Check_Instruction.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label_Check_Instruction.Visible = false;
             // 
             // label_Check_RBCInterlock
             // 
@@ -1758,7 +1757,6 @@ namespace IBM1410Console
             this.label_Check_RBCInterlock.TabIndex = 52;
             this.label_Check_RBCInterlock.Text = "RBC INTERLOCK";
             this.label_Check_RBCInterlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label_Check_RBCInterlock.Visible = false;
             // 
             // label_Check_Address
             // 
@@ -1770,7 +1768,6 @@ namespace IBM1410Console
             this.label_Check_Address.TabIndex = 51;
             this.label_Check_Address.Text = "ADDRESS CHECK";
             this.label_Check_Address.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label_Check_Address.Visible = false;
             // 
             // label_Check_IOInterlock
             // 

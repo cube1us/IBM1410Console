@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace IBM1410Console
 {
@@ -29,6 +30,8 @@ namespace IBM1410Console
             this.CreateHandle();    // This ensures that controls are created before receiving data from the FPGA 
             this.initLamps();
 
+            lightOutputPublisher.SerialLightOutputEvent += new EventHandler<SerialLightDataEventArgs>(lampOutputAvailable);
+            Debug.WriteLine("Event Handler for SerialDataPublisher (Lamps) Registered.");
         }
 
         //  Initialize lamp arrays
@@ -258,14 +261,17 @@ namespace IBM1410Console
             for(int i=0; i < IBM1410Lamp.lampVectorBits; ++i) {
                 oldLamps[0] = newLamps[i] = false;
             }
+
+
         }
 
         //  This routine is invoked when we receive a byte of serial data
 
-        void lampOutputAvailable(object sender, SerialDataEventArgs e ) {
+        void lampOutputAvailable(object sender, SerialLightDataEventArgs e ) {
 
-            const int lampCodeByte = 0x80;
+            const int lampCodeByte = 0x81;
             int c = e.SerialByte;       // Contains 7 bits of lamp data
+            int currentOffset = lampByte * 7;
 
             //  Is this data really for us?
 
@@ -273,16 +279,46 @@ namespace IBM1410Console
                 return;
             }
 
-            //  Move this set of data into the lamp array.  If the lamp array is full, 
-            //  Then send a message to process any changes.  Don't do that on this thread
-            //  thread coming from serial input!
+            for (int i = 0; i < 7; ++i) {
+                newLamps[i + currentOffset] = ((c & 1) == 1 ? true : false);
+                c >>= 1;
+            }
 
-            // TODO
+            ++lampByte;
+            if(lampByte == IBM1410Lamp.lampBytes) {
+                Debug.WriteLine("UI1415LForm: Updating lamps on form...");
+                updateLampForm();
+                lampByte = 0;
+            }
+        }
 
+        private void updateLampForm() {
+            IBM1410Lamp lamp;
+
+            //  Run through the updated lamp bits.  If a bit has changed, update
+            //  the corresponding label on the lamp user interface form.
+
+            for(int i = 0; i < IBM1410Lamp.lampVectorBits; ++i) {
+                if(newLamps[i] != oldLamps[i]) {
+                    lamp = lamps[i];
+                    bool setOn = newLamps[i];
+                    if(lamp != null && lamp.label != null) {
+                        if(lamp.setBackground) {
+                            lamp.label.BackColor = setOn ? lamp.onColor : lamp.offColor;
+                        }
+                        else {
+                            lamp.label.ForeColor = setOn ? lamp.onColor : lamp.offColor;
+                        }
+                    }
+                }
+
+                //  Remember current setting, to use for next time lamps are updated.
+
+                oldLamps[i] = newLamps[i];
+            }
         }
 
         private void testButton_Click(object sender, EventArgs e) {
-
 
             //  Locate the previous  lamp to turn off
 

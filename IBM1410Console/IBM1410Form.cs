@@ -59,7 +59,7 @@ namespace IBM1410Console
             if (IBM1415ConsoleForm == null) {
                 IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher);
             }
-            IBM1415ConsoleForm.ShowDialog();
+            IBM1415ConsoleForm.Show();
         }
 
         private void windowsStripMenuItem_Click(object sender, EventArgs e) {
@@ -69,7 +69,7 @@ namespace IBM1410Console
             if (UI1415LForm == null) {
                 UI1415LForm = new UI1415LForm(serialDataPublisher);
             }
-            UI1415LForm.ShowDialog();
+            UI1415LForm.Show();
 
         }
     }

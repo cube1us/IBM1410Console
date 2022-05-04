@@ -56,7 +56,7 @@ namespace IBM1410Console
             this.windowsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lightStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.switchesStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -262,7 +262,7 @@ namespace IBM1410Console
             this.windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.consoleStripMenuItem,
             this.lightStripMenuItem,
-            this.customizeToolStripMenuItem,
+            this.switchesStripMenuItem,
             this.optionsToolStripMenuItem});
             this.windowsStripMenuItem.Name = "windowsStripMenuItem";
             this.windowsStripMenuItem.Size = new System.Drawing.Size(68, 20);
@@ -273,27 +273,28 @@ namespace IBM1410Console
             // consoleStripMenuItem
             // 
             this.consoleStripMenuItem.Name = "consoleStripMenuItem";
-            this.consoleStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.consoleStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.consoleStripMenuItem.Text = "Console";
             this.consoleStripMenuItem.Click += new System.EventHandler(this.consoleStripMenuItem_Click);
             // 
             // lightStripMenuItem
             // 
             this.lightStripMenuItem.Name = "lightStripMenuItem";
-            this.lightStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.lightStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.lightStripMenuItem.Text = "Console Lights";
             this.lightStripMenuItem.Click += new System.EventHandler(this.lightStripMenuItem_Click);
             // 
-            // customizeToolStripMenuItem
+            // switchesStripMenuItem
             // 
-            this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.customizeToolStripMenuItem.Text = "&Customize";
+            this.switchesStripMenuItem.Name = "switchesStripMenuItem";
+            this.switchesStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.switchesStripMenuItem.Text = "&Switches";
+            this.switchesStripMenuItem.Click += new System.EventHandler(this.switchesStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // helpToolStripMenuItem
@@ -379,7 +380,7 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem windowsStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem customizeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem switchesStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;

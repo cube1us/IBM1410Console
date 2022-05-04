@@ -18,6 +18,7 @@ namespace IBM1410Console
         
         IBM1415ConsoleForm IBM1415ConsoleForm = null;
         UI1415LForm UI1415LForm = null;
+        IBM1410SwitchForm IBM1410SwitchForm = null;
 
         SerialPort serialPort;
         SerialDataPublisher serialDataPublisher;
@@ -71,6 +72,13 @@ namespace IBM1410Console
             }
             UI1415LForm.Show();
 
+        }
+
+        private void switchesStripMenuItem_Click(object sender, EventArgs e) {
+            if(IBM1410SwitchForm == null) {
+                IBM1410SwitchForm = new IBM1410SwitchForm();
+            }
+            IBM1410SwitchForm.Show();
         }
     }
 }

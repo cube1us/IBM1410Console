@@ -50,7 +50,17 @@ namespace IBM1410Console
             this.checkTest3Button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.asteriskInsertCheckBox = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.inhibitPrintOutCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseACheckBox = new System.Windows.Forms.CheckBox();
+            this.senseBCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseCCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseDCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseECheckBox = new System.Windows.Forms.CheckBox();
+            this.senseFCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseGCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseWMCheckBox = new System.Windows.Forms.CheckBox();
+            this.senseBitLabel = new System.Windows.Forms.Label();
+            this.senseBitLabel2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // addressEntryComboBox
@@ -228,7 +238,7 @@ namespace IBM1410Console
             // 
             // compat1401CheckBox
             // 
-            this.compat1401CheckBox.Location = new System.Drawing.Point(307, 32);
+            this.compat1401CheckBox.Location = new System.Drawing.Point(307, 14);
             this.compat1401CheckBox.Name = "compat1401CheckBox";
             this.compat1401CheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.compat1401CheckBox.Size = new System.Drawing.Size(70, 59);
@@ -238,7 +248,7 @@ namespace IBM1410Console
             // 
             // IOCheckReset1401Button
             // 
-            this.IOCheckReset1401Button.Location = new System.Drawing.Point(364, 115);
+            this.IOCheckReset1401Button.Location = new System.Drawing.Point(368, 96);
             this.IOCheckReset1401Button.Name = "IOCheckReset1401Button";
             this.IOCheckReset1401Button.Size = new System.Drawing.Size(21, 21);
             this.IOCheckReset1401Button.TabIndex = 16;
@@ -246,7 +256,7 @@ namespace IBM1410Console
             // 
             // IOCheckReset1401Label
             // 
-            this.IOCheckReset1401Label.Location = new System.Drawing.Point(307, 94);
+            this.IOCheckReset1401Label.Location = new System.Drawing.Point(307, 75);
             this.IOCheckReset1401Label.Name = "IOCheckReset1401Label";
             this.IOCheckReset1401Label.Size = new System.Drawing.Size(55, 63);
             this.IOCheckReset1401Label.TabIndex = 17;
@@ -255,7 +265,7 @@ namespace IBM1410Console
             // 
             // IOCheckStop1401CheckBox
             // 
-            this.IOCheckStop1401CheckBox.Location = new System.Drawing.Point(307, 160);
+            this.IOCheckStop1401CheckBox.Location = new System.Drawing.Point(307, 144);
             this.IOCheckStop1401CheckBox.Name = "IOCheckStop1401CheckBox";
             this.IOCheckStop1401CheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.IOCheckStop1401CheckBox.Size = new System.Drawing.Size(70, 59);
@@ -265,7 +275,7 @@ namespace IBM1410Console
             // 
             // checkTest1Button
             // 
-            this.checkTest1Button.Location = new System.Drawing.Point(364, 228);
+            this.checkTest1Button.Location = new System.Drawing.Point(364, 212);
             this.checkTest1Button.Name = "checkTest1Button";
             this.checkTest1Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest1Button.TabIndex = 19;
@@ -274,7 +284,7 @@ namespace IBM1410Console
             // 
             // checkTest2Button
             // 
-            this.checkTest2Button.Location = new System.Drawing.Point(364, 259);
+            this.checkTest2Button.Location = new System.Drawing.Point(364, 243);
             this.checkTest2Button.Name = "checkTest2Button";
             this.checkTest2Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest2Button.TabIndex = 20;
@@ -283,7 +293,7 @@ namespace IBM1410Console
             // 
             // checkTest3Button
             // 
-            this.checkTest3Button.Location = new System.Drawing.Point(364, 290);
+            this.checkTest3Button.Location = new System.Drawing.Point(364, 274);
             this.checkTest3Button.Name = "checkTest3Button";
             this.checkTest3Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest3Button.TabIndex = 21;
@@ -292,7 +302,7 @@ namespace IBM1410Console
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(303, 238);
+            this.label1.Location = new System.Drawing.Point(303, 222);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 63);
             this.label1.TabIndex = 22;
@@ -303,7 +313,7 @@ namespace IBM1410Console
             // 
             this.asteriskInsertCheckBox.Checked = true;
             this.asteriskInsertCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.asteriskInsertCheckBox.Location = new System.Drawing.Point(295, 329);
+            this.asteriskInsertCheckBox.Location = new System.Drawing.Point(295, 313);
             this.asteriskInsertCheckBox.Name = "asteriskInsertCheckBox";
             this.asteriskInsertCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.asteriskInsertCheckBox.Size = new System.Drawing.Size(82, 39);
@@ -311,23 +321,130 @@ namespace IBM1410Console
             this.asteriskInsertCheckBox.Text = "ASTERISK INSERT";
             this.asteriskInsertCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // inhibitPrintOutCheckBox
             // 
-            this.checkBox1.Location = new System.Drawing.Point(284, 374);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox1.Size = new System.Drawing.Size(93, 64);
-            this.checkBox1.TabIndex = 24;
-            this.checkBox1.Text = "INHIBIT PRINT OUT CONTROL";
-            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.inhibitPrintOutCheckBox.Location = new System.Drawing.Point(284, 358);
+            this.inhibitPrintOutCheckBox.Name = "inhibitPrintOutCheckBox";
+            this.inhibitPrintOutCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.inhibitPrintOutCheckBox.Size = new System.Drawing.Size(93, 64);
+            this.inhibitPrintOutCheckBox.TabIndex = 24;
+            this.inhibitPrintOutCheckBox.Text = "INHIBIT PRINT OUT CONTROL";
+            this.inhibitPrintOutCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.inhibitPrintOutCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseACheckBox
+            // 
+            this.senseACheckBox.AutoSize = true;
+            this.senseACheckBox.Location = new System.Drawing.Point(442, 64);
+            this.senseACheckBox.Name = "senseACheckBox";
+            this.senseACheckBox.Size = new System.Drawing.Size(69, 19);
+            this.senseACheckBox.TabIndex = 25;
+            this.senseACheckBox.Text = "A         C";
+            this.senseACheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseBCheckBox
+            // 
+            this.senseBCheckBox.AutoSize = true;
+            this.senseBCheckBox.Location = new System.Drawing.Point(442, 107);
+            this.senseBCheckBox.Name = "senseBCheckBox";
+            this.senseBCheckBox.Size = new System.Drawing.Size(70, 19);
+            this.senseBCheckBox.TabIndex = 26;
+            this.senseBCheckBox.Text = "B          B";
+            this.senseBCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseCCheckBox
+            // 
+            this.senseCCheckBox.AutoSize = true;
+            this.senseCCheckBox.Location = new System.Drawing.Point(442, 150);
+            this.senseCCheckBox.Name = "senseCCheckBox";
+            this.senseCCheckBox.Size = new System.Drawing.Size(72, 19);
+            this.senseCCheckBox.TabIndex = 27;
+            this.senseCCheckBox.Text = "C          A";
+            this.senseCCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseDCheckBox
+            // 
+            this.senseDCheckBox.AutoSize = true;
+            this.senseDCheckBox.Location = new System.Drawing.Point(442, 193);
+            this.senseDCheckBox.Name = "senseDCheckBox";
+            this.senseDCheckBox.Size = new System.Drawing.Size(70, 19);
+            this.senseDCheckBox.TabIndex = 28;
+            this.senseDCheckBox.Text = "D          8";
+            this.senseDCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseECheckBox
+            // 
+            this.senseECheckBox.AutoSize = true;
+            this.senseECheckBox.Location = new System.Drawing.Point(442, 236);
+            this.senseECheckBox.Name = "senseECheckBox";
+            this.senseECheckBox.Size = new System.Drawing.Size(71, 19);
+            this.senseECheckBox.TabIndex = 29;
+            this.senseECheckBox.Text = "E           4";
+            this.senseECheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseFCheckBox
+            // 
+            this.senseFCheckBox.AutoSize = true;
+            this.senseFCheckBox.Location = new System.Drawing.Point(442, 279);
+            this.senseFCheckBox.Name = "senseFCheckBox";
+            this.senseFCheckBox.Size = new System.Drawing.Size(71, 19);
+            this.senseFCheckBox.TabIndex = 30;
+            this.senseFCheckBox.Text = "F           2";
+            this.senseFCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseGCheckBox
+            // 
+            this.senseGCheckBox.AutoSize = true;
+            this.senseGCheckBox.Location = new System.Drawing.Point(442, 322);
+            this.senseGCheckBox.Name = "senseGCheckBox";
+            this.senseGCheckBox.Size = new System.Drawing.Size(70, 19);
+            this.senseGCheckBox.TabIndex = 31;
+            this.senseGCheckBox.Text = "G          1";
+            this.senseGCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseWMCheckBox
+            // 
+            this.senseWMCheckBox.AutoSize = true;
+            this.senseWMCheckBox.Location = new System.Drawing.Point(442, 365);
+            this.senseWMCheckBox.Name = "senseWMCheckBox";
+            this.senseWMCheckBox.Size = new System.Drawing.Size(81, 19);
+            this.senseWMCheckBox.TabIndex = 32;
+            this.senseWMCheckBox.Text = "           WM";
+            this.senseWMCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // senseBitLabel
+            // 
+            this.senseBitLabel.AutoSize = true;
+            this.senseBitLabel.Location = new System.Drawing.Point(441, 34);
+            this.senseBitLabel.Name = "senseBitLabel";
+            this.senseBitLabel.Size = new System.Drawing.Size(71, 15);
+            this.senseBitLabel.TabIndex = 33;
+            this.senseBitLabel.Text = "SENSE     BIT";
+            // 
+            // senseBitLabel2
+            // 
+            this.senseBitLabel2.Location = new System.Drawing.Point(445, 398);
+            this.senseBitLabel2.Name = "senseBitLabel2";
+            this.senseBitLabel2.Size = new System.Drawing.Size(67, 33);
+            this.senseBitLabel2.TabIndex = 34;
+            this.senseBitLabel2.Text = "SENSE-BIT SWITCHES";
             // 
             // IBM1410SwitchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.checkBox1);
+            this.ClientSize = new System.Drawing.Size(800, 545);
+            this.Controls.Add(this.senseBitLabel2);
+            this.Controls.Add(this.senseBitLabel);
+            this.Controls.Add(this.senseWMCheckBox);
+            this.Controls.Add(this.senseGCheckBox);
+            this.Controls.Add(this.senseFCheckBox);
+            this.Controls.Add(this.senseECheckBox);
+            this.Controls.Add(this.senseDCheckBox);
+            this.Controls.Add(this.senseCCheckBox);
+            this.Controls.Add(this.senseBCheckBox);
+            this.Controls.Add(this.senseACheckBox);
+            this.Controls.Add(this.inhibitPrintOutCheckBox);
             this.Controls.Add(this.asteriskInsertCheckBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkTest3Button);
@@ -386,6 +503,16 @@ namespace IBM1410Console
         private System.Windows.Forms.Button checkTest3Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox asteriskInsertCheckBox;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox inhibitPrintOutCheckBox;
+        private System.Windows.Forms.CheckBox senseACheckBox;
+        private System.Windows.Forms.CheckBox senseBCheckBox;
+        private System.Windows.Forms.CheckBox senseCCheckBox;
+        private System.Windows.Forms.CheckBox senseDCheckBox;
+        private System.Windows.Forms.CheckBox senseECheckBox;
+        private System.Windows.Forms.CheckBox senseFCheckBox;
+        private System.Windows.Forms.CheckBox senseGCheckBox;
+        private System.Windows.Forms.CheckBox senseWMCheckBox;
+        private System.Windows.Forms.Label senseBitLabel;
+        private System.Windows.Forms.Label senseBitLabel2;
     }
 }

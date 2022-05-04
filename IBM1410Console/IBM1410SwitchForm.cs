@@ -12,6 +12,18 @@ namespace IBM1410Console
     {
         public IBM1410SwitchForm() {
             InitializeComponent();
+            this.CreateHandle();
+
+            addressEntryComboBox.SelectedIndex = 0;
+            storageScanComboBox.SelectedIndex = 0;
+            cycleControlComboBox.SelectedIndex = 0;
+            checkControlComboBox.SelectedIndex = 0;
+            densityCh1ComboBox.SelectedIndex = 0;
+            densityCh2ComboBox.SelectedIndex = 0;
+        }
+
+        private void IBM1410SwitchForm_Load(object sender, EventArgs e) {
+
         }
     }
 }

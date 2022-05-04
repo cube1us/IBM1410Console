@@ -24,7 +24,7 @@ namespace IBM1410Console
             this.offColor = offColor;
         }
 
-		//	Default constrocutr
+		//	Default constructor
 
 		public IBM1410Lamp() {
 			this.label = null;

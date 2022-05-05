@@ -61,6 +61,11 @@ namespace IBM1410Console
             this.senseWMCheckBox = new System.Windows.Forms.CheckBox();
             this.senseBitLabel = new System.Windows.Forms.Label();
             this.senseBitLabel2 = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.consoleSwitchTab = new System.Windows.Forms.TabPage();
+            this.cpuSwitchTab = new System.Windows.Forms.TabPage();
+            this.tabControl1.SuspendLayout();
+            this.consoleSwitchTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // addressEntryComboBox
@@ -76,7 +81,7 @@ namespace IBM1410Console
             "D",
             "E",
             "F"});
-            this.addressEntryComboBox.Location = new System.Drawing.Point(22, 32);
+            this.addressEntryComboBox.Location = new System.Drawing.Point(15, 33);
             this.addressEntryComboBox.Name = "addressEntryComboBox";
             this.addressEntryComboBox.Size = new System.Drawing.Size(120, 23);
             this.addressEntryComboBox.TabIndex = 0;
@@ -84,7 +89,7 @@ namespace IBM1410Console
             // addressEntryLabel
             // 
             this.addressEntryLabel.AutoSize = true;
-            this.addressEntryLabel.Location = new System.Drawing.Point(35, 58);
+            this.addressEntryLabel.Location = new System.Drawing.Point(28, 59);
             this.addressEntryLabel.Name = "addressEntryLabel";
             this.addressEntryLabel.Size = new System.Drawing.Size(94, 15);
             this.addressEntryLabel.TabIndex = 1;
@@ -93,7 +98,7 @@ namespace IBM1410Console
             // storageScanLabel
             // 
             this.storageScanLabel.AutoSize = true;
-            this.storageScanLabel.Location = new System.Drawing.Point(37, 135);
+            this.storageScanLabel.Location = new System.Drawing.Point(30, 136);
             this.storageScanLabel.Name = "storageScanLabel";
             this.storageScanLabel.Size = new System.Drawing.Size(90, 15);
             this.storageScanLabel.TabIndex = 3;
@@ -110,7 +115,7 @@ namespace IBM1410Console
             "LOAD  0",
             "REGEN 0",
             "REGEN +1"});
-            this.storageScanComboBox.Location = new System.Drawing.Point(22, 109);
+            this.storageScanComboBox.Location = new System.Drawing.Point(15, 110);
             this.storageScanComboBox.Name = "storageScanComboBox";
             this.storageScanComboBox.Size = new System.Drawing.Size(120, 23);
             this.storageScanComboBox.TabIndex = 2;
@@ -118,7 +123,7 @@ namespace IBM1410Console
             // cycleControlLabel
             // 
             this.cycleControlLabel.AutoSize = true;
-            this.cycleControlLabel.Location = new System.Drawing.Point(33, 213);
+            this.cycleControlLabel.Location = new System.Drawing.Point(26, 214);
             this.cycleControlLabel.Name = "cycleControlLabel";
             this.cycleControlLabel.Size = new System.Drawing.Size(99, 15);
             this.cycleControlLabel.TabIndex = 5;
@@ -133,7 +138,7 @@ namespace IBM1410Console
             "OFF",
             "LOGIC STEP",
             "STORAGE CYCLE"});
-            this.cycleControlComboBox.Location = new System.Drawing.Point(22, 187);
+            this.cycleControlComboBox.Location = new System.Drawing.Point(15, 188);
             this.cycleControlComboBox.Name = "cycleControlComboBox";
             this.cycleControlComboBox.Size = new System.Drawing.Size(120, 23);
             this.cycleControlComboBox.TabIndex = 4;
@@ -141,7 +146,7 @@ namespace IBM1410Console
             // checkControlLabel
             // 
             this.checkControlLabel.AutoSize = true;
-            this.checkControlLabel.Location = new System.Drawing.Point(31, 293);
+            this.checkControlLabel.Location = new System.Drawing.Point(24, 294);
             this.checkControlLabel.Name = "checkControlLabel";
             this.checkControlLabel.Size = new System.Drawing.Size(102, 15);
             this.checkControlLabel.TabIndex = 7;
@@ -156,7 +161,7 @@ namespace IBM1410Console
             "STOP NORMAL",
             "RESTART",
             "RESET & RESTART"});
-            this.checkControlComboBox.Location = new System.Drawing.Point(22, 267);
+            this.checkControlComboBox.Location = new System.Drawing.Point(15, 268);
             this.checkControlComboBox.Name = "checkControlComboBox";
             this.checkControlComboBox.Size = new System.Drawing.Size(120, 23);
             this.checkControlComboBox.TabIndex = 6;
@@ -164,7 +169,7 @@ namespace IBM1410Console
             // diskWrInhibitCheckBox
             // 
             this.diskWrInhibitCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.diskWrInhibitCheckBox.Location = new System.Drawing.Point(182, 120);
+            this.diskWrInhibitCheckBox.Location = new System.Drawing.Point(175, 121);
             this.diskWrInhibitCheckBox.Name = "diskWrInhibitCheckBox";
             this.diskWrInhibitCheckBox.Size = new System.Drawing.Size(71, 46);
             this.diskWrInhibitCheckBox.TabIndex = 8;
@@ -176,7 +181,7 @@ namespace IBM1410Console
             // densityCH1Label
             // 
             this.densityCH1Label.AutoSize = true;
-            this.densityCH1Label.Location = new System.Drawing.Point(178, 198);
+            this.densityCH1Label.Location = new System.Drawing.Point(171, 199);
             this.densityCH1Label.Name = "densityCH1Label";
             this.densityCH1Label.Size = new System.Drawing.Size(78, 15);
             this.densityCH1Label.TabIndex = 10;
@@ -191,7 +196,7 @@ namespace IBM1410Console
             "200/556",
             "200/800",
             "556/800"});
-            this.densityCh1ComboBox.Location = new System.Drawing.Point(177, 172);
+            this.densityCh1ComboBox.Location = new System.Drawing.Point(170, 173);
             this.densityCh1ComboBox.Name = "densityCh1ComboBox";
             this.densityCh1ComboBox.Size = new System.Drawing.Size(80, 23);
             this.densityCh1ComboBox.TabIndex = 9;
@@ -199,7 +204,7 @@ namespace IBM1410Console
             // densityCh2Label
             // 
             this.densityCh2Label.AutoSize = true;
-            this.densityCh2Label.Location = new System.Drawing.Point(178, 252);
+            this.densityCh2Label.Location = new System.Drawing.Point(171, 253);
             this.densityCh2Label.Name = "densityCh2Label";
             this.densityCh2Label.Size = new System.Drawing.Size(78, 15);
             this.densityCh2Label.TabIndex = 12;
@@ -214,14 +219,14 @@ namespace IBM1410Console
             "200/556",
             "200/800",
             "556/800"});
-            this.densityCh2ComboBox.Location = new System.Drawing.Point(177, 226);
+            this.densityCh2ComboBox.Location = new System.Drawing.Point(170, 227);
             this.densityCh2ComboBox.Name = "densityCh2ComboBox";
             this.densityCh2ComboBox.Size = new System.Drawing.Size(80, 23);
             this.densityCh2ComboBox.TabIndex = 11;
             // 
             // startPrintOutButton
             // 
-            this.startPrintOutButton.Location = new System.Drawing.Point(218, 313);
+            this.startPrintOutButton.Location = new System.Drawing.Point(211, 314);
             this.startPrintOutButton.Name = "startPrintOutButton";
             this.startPrintOutButton.Size = new System.Drawing.Size(21, 21);
             this.startPrintOutButton.TabIndex = 13;
@@ -229,7 +234,7 @@ namespace IBM1410Console
             // 
             // startPrintOutLabel
             // 
-            this.startPrintOutLabel.Location = new System.Drawing.Point(166, 293);
+            this.startPrintOutLabel.Location = new System.Drawing.Point(159, 294);
             this.startPrintOutLabel.Name = "startPrintOutLabel";
             this.startPrintOutLabel.Size = new System.Drawing.Size(46, 63);
             this.startPrintOutLabel.TabIndex = 14;
@@ -238,7 +243,7 @@ namespace IBM1410Console
             // 
             // compat1401CheckBox
             // 
-            this.compat1401CheckBox.Location = new System.Drawing.Point(307, 14);
+            this.compat1401CheckBox.Location = new System.Drawing.Point(300, 15);
             this.compat1401CheckBox.Name = "compat1401CheckBox";
             this.compat1401CheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.compat1401CheckBox.Size = new System.Drawing.Size(70, 59);
@@ -248,7 +253,7 @@ namespace IBM1410Console
             // 
             // IOCheckReset1401Button
             // 
-            this.IOCheckReset1401Button.Location = new System.Drawing.Point(368, 96);
+            this.IOCheckReset1401Button.Location = new System.Drawing.Point(361, 97);
             this.IOCheckReset1401Button.Name = "IOCheckReset1401Button";
             this.IOCheckReset1401Button.Size = new System.Drawing.Size(21, 21);
             this.IOCheckReset1401Button.TabIndex = 16;
@@ -256,7 +261,7 @@ namespace IBM1410Console
             // 
             // IOCheckReset1401Label
             // 
-            this.IOCheckReset1401Label.Location = new System.Drawing.Point(307, 75);
+            this.IOCheckReset1401Label.Location = new System.Drawing.Point(300, 76);
             this.IOCheckReset1401Label.Name = "IOCheckReset1401Label";
             this.IOCheckReset1401Label.Size = new System.Drawing.Size(55, 63);
             this.IOCheckReset1401Label.TabIndex = 17;
@@ -265,7 +270,7 @@ namespace IBM1410Console
             // 
             // IOCheckStop1401CheckBox
             // 
-            this.IOCheckStop1401CheckBox.Location = new System.Drawing.Point(307, 144);
+            this.IOCheckStop1401CheckBox.Location = new System.Drawing.Point(300, 145);
             this.IOCheckStop1401CheckBox.Name = "IOCheckStop1401CheckBox";
             this.IOCheckStop1401CheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.IOCheckStop1401CheckBox.Size = new System.Drawing.Size(70, 59);
@@ -275,7 +280,7 @@ namespace IBM1410Console
             // 
             // checkTest1Button
             // 
-            this.checkTest1Button.Location = new System.Drawing.Point(364, 212);
+            this.checkTest1Button.Location = new System.Drawing.Point(357, 213);
             this.checkTest1Button.Name = "checkTest1Button";
             this.checkTest1Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest1Button.TabIndex = 19;
@@ -284,7 +289,7 @@ namespace IBM1410Console
             // 
             // checkTest2Button
             // 
-            this.checkTest2Button.Location = new System.Drawing.Point(364, 243);
+            this.checkTest2Button.Location = new System.Drawing.Point(357, 244);
             this.checkTest2Button.Name = "checkTest2Button";
             this.checkTest2Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest2Button.TabIndex = 20;
@@ -293,7 +298,7 @@ namespace IBM1410Console
             // 
             // checkTest3Button
             // 
-            this.checkTest3Button.Location = new System.Drawing.Point(364, 274);
+            this.checkTest3Button.Location = new System.Drawing.Point(357, 275);
             this.checkTest3Button.Name = "checkTest3Button";
             this.checkTest3Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest3Button.TabIndex = 21;
@@ -302,7 +307,7 @@ namespace IBM1410Console
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(303, 222);
+            this.label1.Location = new System.Drawing.Point(296, 223);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 63);
             this.label1.TabIndex = 22;
@@ -313,7 +318,7 @@ namespace IBM1410Console
             // 
             this.asteriskInsertCheckBox.Checked = true;
             this.asteriskInsertCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.asteriskInsertCheckBox.Location = new System.Drawing.Point(295, 313);
+            this.asteriskInsertCheckBox.Location = new System.Drawing.Point(288, 314);
             this.asteriskInsertCheckBox.Name = "asteriskInsertCheckBox";
             this.asteriskInsertCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.asteriskInsertCheckBox.Size = new System.Drawing.Size(82, 39);
@@ -323,7 +328,7 @@ namespace IBM1410Console
             // 
             // inhibitPrintOutCheckBox
             // 
-            this.inhibitPrintOutCheckBox.Location = new System.Drawing.Point(284, 358);
+            this.inhibitPrintOutCheckBox.Location = new System.Drawing.Point(277, 359);
             this.inhibitPrintOutCheckBox.Name = "inhibitPrintOutCheckBox";
             this.inhibitPrintOutCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.inhibitPrintOutCheckBox.Size = new System.Drawing.Size(93, 64);
@@ -335,7 +340,7 @@ namespace IBM1410Console
             // senseACheckBox
             // 
             this.senseACheckBox.AutoSize = true;
-            this.senseACheckBox.Location = new System.Drawing.Point(442, 64);
+            this.senseACheckBox.Location = new System.Drawing.Point(435, 65);
             this.senseACheckBox.Name = "senseACheckBox";
             this.senseACheckBox.Size = new System.Drawing.Size(69, 19);
             this.senseACheckBox.TabIndex = 25;
@@ -345,7 +350,7 @@ namespace IBM1410Console
             // senseBCheckBox
             // 
             this.senseBCheckBox.AutoSize = true;
-            this.senseBCheckBox.Location = new System.Drawing.Point(442, 107);
+            this.senseBCheckBox.Location = new System.Drawing.Point(435, 108);
             this.senseBCheckBox.Name = "senseBCheckBox";
             this.senseBCheckBox.Size = new System.Drawing.Size(70, 19);
             this.senseBCheckBox.TabIndex = 26;
@@ -355,7 +360,7 @@ namespace IBM1410Console
             // senseCCheckBox
             // 
             this.senseCCheckBox.AutoSize = true;
-            this.senseCCheckBox.Location = new System.Drawing.Point(442, 150);
+            this.senseCCheckBox.Location = new System.Drawing.Point(435, 151);
             this.senseCCheckBox.Name = "senseCCheckBox";
             this.senseCCheckBox.Size = new System.Drawing.Size(72, 19);
             this.senseCCheckBox.TabIndex = 27;
@@ -365,7 +370,7 @@ namespace IBM1410Console
             // senseDCheckBox
             // 
             this.senseDCheckBox.AutoSize = true;
-            this.senseDCheckBox.Location = new System.Drawing.Point(442, 193);
+            this.senseDCheckBox.Location = new System.Drawing.Point(435, 194);
             this.senseDCheckBox.Name = "senseDCheckBox";
             this.senseDCheckBox.Size = new System.Drawing.Size(70, 19);
             this.senseDCheckBox.TabIndex = 28;
@@ -375,7 +380,7 @@ namespace IBM1410Console
             // senseECheckBox
             // 
             this.senseECheckBox.AutoSize = true;
-            this.senseECheckBox.Location = new System.Drawing.Point(442, 236);
+            this.senseECheckBox.Location = new System.Drawing.Point(435, 237);
             this.senseECheckBox.Name = "senseECheckBox";
             this.senseECheckBox.Size = new System.Drawing.Size(71, 19);
             this.senseECheckBox.TabIndex = 29;
@@ -385,7 +390,7 @@ namespace IBM1410Console
             // senseFCheckBox
             // 
             this.senseFCheckBox.AutoSize = true;
-            this.senseFCheckBox.Location = new System.Drawing.Point(442, 279);
+            this.senseFCheckBox.Location = new System.Drawing.Point(435, 280);
             this.senseFCheckBox.Name = "senseFCheckBox";
             this.senseFCheckBox.Size = new System.Drawing.Size(71, 19);
             this.senseFCheckBox.TabIndex = 30;
@@ -395,7 +400,7 @@ namespace IBM1410Console
             // senseGCheckBox
             // 
             this.senseGCheckBox.AutoSize = true;
-            this.senseGCheckBox.Location = new System.Drawing.Point(442, 322);
+            this.senseGCheckBox.Location = new System.Drawing.Point(435, 323);
             this.senseGCheckBox.Name = "senseGCheckBox";
             this.senseGCheckBox.Size = new System.Drawing.Size(70, 19);
             this.senseGCheckBox.TabIndex = 31;
@@ -405,7 +410,7 @@ namespace IBM1410Console
             // senseWMCheckBox
             // 
             this.senseWMCheckBox.AutoSize = true;
-            this.senseWMCheckBox.Location = new System.Drawing.Point(442, 365);
+            this.senseWMCheckBox.Location = new System.Drawing.Point(435, 366);
             this.senseWMCheckBox.Name = "senseWMCheckBox";
             this.senseWMCheckBox.Size = new System.Drawing.Size(81, 19);
             this.senseWMCheckBox.TabIndex = 32;
@@ -415,7 +420,7 @@ namespace IBM1410Console
             // senseBitLabel
             // 
             this.senseBitLabel.AutoSize = true;
-            this.senseBitLabel.Location = new System.Drawing.Point(441, 34);
+            this.senseBitLabel.Location = new System.Drawing.Point(434, 35);
             this.senseBitLabel.Name = "senseBitLabel";
             this.senseBitLabel.Size = new System.Drawing.Size(71, 15);
             this.senseBitLabel.TabIndex = 33;
@@ -423,57 +428,90 @@ namespace IBM1410Console
             // 
             // senseBitLabel2
             // 
-            this.senseBitLabel2.Location = new System.Drawing.Point(445, 398);
+            this.senseBitLabel2.Location = new System.Drawing.Point(438, 399);
             this.senseBitLabel2.Name = "senseBitLabel2";
             this.senseBitLabel2.Size = new System.Drawing.Size(67, 33);
             this.senseBitLabel2.TabIndex = 34;
             this.senseBitLabel2.Text = "SENSE-BIT SWITCHES";
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.consoleSwitchTab);
+            this.tabControl1.Controls.Add(this.cpuSwitchTab);
+            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(853, 497);
+            this.tabControl1.TabIndex = 35;
+            // 
+            // consoleSwitchTab
+            // 
+            this.consoleSwitchTab.Controls.Add(this.storageScanComboBox);
+            this.consoleSwitchTab.Controls.Add(this.senseBitLabel2);
+            this.consoleSwitchTab.Controls.Add(this.addressEntryComboBox);
+            this.consoleSwitchTab.Controls.Add(this.senseBitLabel);
+            this.consoleSwitchTab.Controls.Add(this.addressEntryLabel);
+            this.consoleSwitchTab.Controls.Add(this.senseWMCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.storageScanLabel);
+            this.consoleSwitchTab.Controls.Add(this.senseGCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.cycleControlComboBox);
+            this.consoleSwitchTab.Controls.Add(this.senseFCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.cycleControlLabel);
+            this.consoleSwitchTab.Controls.Add(this.senseECheckBox);
+            this.consoleSwitchTab.Controls.Add(this.checkControlComboBox);
+            this.consoleSwitchTab.Controls.Add(this.senseDCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.checkControlLabel);
+            this.consoleSwitchTab.Controls.Add(this.senseCCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.diskWrInhibitCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.senseBCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.densityCh1ComboBox);
+            this.consoleSwitchTab.Controls.Add(this.senseACheckBox);
+            this.consoleSwitchTab.Controls.Add(this.densityCH1Label);
+            this.consoleSwitchTab.Controls.Add(this.inhibitPrintOutCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.densityCh2ComboBox);
+            this.consoleSwitchTab.Controls.Add(this.asteriskInsertCheckBox);
+            this.consoleSwitchTab.Controls.Add(this.densityCh2Label);
+            this.consoleSwitchTab.Controls.Add(this.label1);
+            this.consoleSwitchTab.Controls.Add(this.startPrintOutButton);
+            this.consoleSwitchTab.Controls.Add(this.checkTest3Button);
+            this.consoleSwitchTab.Controls.Add(this.startPrintOutLabel);
+            this.consoleSwitchTab.Controls.Add(this.checkTest2Button);
+            this.consoleSwitchTab.Controls.Add(this.compat1401CheckBox);
+            this.consoleSwitchTab.Controls.Add(this.checkTest1Button);
+            this.consoleSwitchTab.Controls.Add(this.IOCheckReset1401Button);
+            this.consoleSwitchTab.Controls.Add(this.IOCheckStop1401CheckBox);
+            this.consoleSwitchTab.Controls.Add(this.IOCheckReset1401Label);
+            this.consoleSwitchTab.Location = new System.Drawing.Point(4, 24);
+            this.consoleSwitchTab.Name = "consoleSwitchTab";
+            this.consoleSwitchTab.Padding = new System.Windows.Forms.Padding(3);
+            this.consoleSwitchTab.Size = new System.Drawing.Size(845, 469);
+            this.consoleSwitchTab.TabIndex = 0;
+            this.consoleSwitchTab.Text = "1415 Console Switches";
+            this.consoleSwitchTab.UseVisualStyleBackColor = true;
+            // 
+            // cpuSwitchTab
+            // 
+            this.cpuSwitchTab.Location = new System.Drawing.Point(4, 24);
+            this.cpuSwitchTab.Name = "cpuSwitchTab";
+            this.cpuSwitchTab.Padding = new System.Windows.Forms.Padding(3);
+            this.cpuSwitchTab.Size = new System.Drawing.Size(702, 469);
+            this.cpuSwitchTab.TabIndex = 1;
+            this.cpuSwitchTab.Text = "1411 CPU Switches";
+            this.cpuSwitchTab.UseVisualStyleBackColor = true;
+            // 
             // IBM1410SwitchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 545);
-            this.Controls.Add(this.senseBitLabel2);
-            this.Controls.Add(this.senseBitLabel);
-            this.Controls.Add(this.senseWMCheckBox);
-            this.Controls.Add(this.senseGCheckBox);
-            this.Controls.Add(this.senseFCheckBox);
-            this.Controls.Add(this.senseECheckBox);
-            this.Controls.Add(this.senseDCheckBox);
-            this.Controls.Add(this.senseCCheckBox);
-            this.Controls.Add(this.senseBCheckBox);
-            this.Controls.Add(this.senseACheckBox);
-            this.Controls.Add(this.inhibitPrintOutCheckBox);
-            this.Controls.Add(this.asteriskInsertCheckBox);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.checkTest3Button);
-            this.Controls.Add(this.checkTest2Button);
-            this.Controls.Add(this.checkTest1Button);
-            this.Controls.Add(this.IOCheckStop1401CheckBox);
-            this.Controls.Add(this.IOCheckReset1401Label);
-            this.Controls.Add(this.IOCheckReset1401Button);
-            this.Controls.Add(this.compat1401CheckBox);
-            this.Controls.Add(this.startPrintOutLabel);
-            this.Controls.Add(this.startPrintOutButton);
-            this.Controls.Add(this.densityCh2Label);
-            this.Controls.Add(this.densityCh2ComboBox);
-            this.Controls.Add(this.densityCH1Label);
-            this.Controls.Add(this.densityCh1ComboBox);
-            this.Controls.Add(this.diskWrInhibitCheckBox);
-            this.Controls.Add(this.checkControlLabel);
-            this.Controls.Add(this.checkControlComboBox);
-            this.Controls.Add(this.cycleControlLabel);
-            this.Controls.Add(this.cycleControlComboBox);
-            this.Controls.Add(this.storageScanLabel);
-            this.Controls.Add(this.storageScanComboBox);
-            this.Controls.Add(this.addressEntryLabel);
-            this.Controls.Add(this.addressEntryComboBox);
+            this.ClientSize = new System.Drawing.Size(1054, 550);
+            this.Controls.Add(this.tabControl1);
             this.Name = "IBM1410SwitchForm";
             this.Text = "IBM1410SwitchForm";
             this.Load += new System.EventHandler(this.IBM1410SwitchForm_Load);
+            this.tabControl1.ResumeLayout(false);
+            this.consoleSwitchTab.ResumeLayout(false);
+            this.consoleSwitchTab.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -514,5 +552,8 @@ namespace IBM1410Console
         private System.Windows.Forms.CheckBox senseWMCheckBox;
         private System.Windows.Forms.Label senseBitLabel;
         private System.Windows.Forms.Label senseBitLabel2;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage consoleSwitchTab;
+        private System.Windows.Forms.TabPage cpuSwitchTab;
     }
 }

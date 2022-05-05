@@ -48,7 +48,7 @@ namespace IBM1410Console
             this.checkTest1Button = new System.Windows.Forms.Button();
             this.checkTest2Button = new System.Windows.Forms.Button();
             this.checkTest3Button = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.checkTestLabel = new System.Windows.Forms.Label();
             this.asteriskInsertCheckBox = new System.Windows.Forms.CheckBox();
             this.inhibitPrintOutCheckBox = new System.Windows.Forms.CheckBox();
             this.senseACheckBox = new System.Windows.Forms.CheckBox();
@@ -61,11 +61,25 @@ namespace IBM1410Console
             this.senseWMCheckBox = new System.Windows.Forms.CheckBox();
             this.senseBitLabel = new System.Windows.Forms.Label();
             this.senseBitLabel2 = new System.Windows.Forms.Label();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControlSwitches = new System.Windows.Forms.TabControl();
             this.consoleSwitchTab = new System.Windows.Forms.TabPage();
+            this.programResetButton = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
+            this.modeLabel = new System.Windows.Forms.Label();
+            this.modeComboBox = new System.Windows.Forms.ComboBox();
+            this.powerOnButton = new System.Windows.Forms.Button();
+            this.powerOffButton = new System.Windows.Forms.Button();
+            this.readyButton = new System.Windows.Forms.Button();
+            this.DCOffButton = new System.Windows.Forms.Button();
+            this.computerResetButton = new System.Windows.Forms.Button();
+            this.emergencyOffPanel = new System.Windows.Forms.Panel();
+            this.emergencyOffLabel = new System.Windows.Forms.Label();
+            this.emergencyOffButton = new System.Windows.Forms.Button();
             this.cpuSwitchTab = new System.Windows.Forms.TabPage();
-            this.tabControl1.SuspendLayout();
+            this.tabControlSwitches.SuspendLayout();
             this.consoleSwitchTab.SuspendLayout();
+            this.emergencyOffPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // addressEntryComboBox
@@ -305,14 +319,14 @@ namespace IBM1410Console
             this.checkTest3Button.Text = "3";
             this.checkTest3Button.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // checkTestLabel
             // 
-            this.label1.Location = new System.Drawing.Point(296, 223);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(55, 63);
-            this.label1.TabIndex = 22;
-            this.label1.Text = "CHECK TEST";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkTestLabel.Location = new System.Drawing.Point(296, 223);
+            this.checkTestLabel.Name = "checkTestLabel";
+            this.checkTestLabel.Size = new System.Drawing.Size(55, 63);
+            this.checkTestLabel.TabIndex = 22;
+            this.checkTestLabel.Text = "CHECK TEST";
+            this.checkTestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // asteriskInsertCheckBox
             // 
@@ -434,21 +448,33 @@ namespace IBM1410Console
             this.senseBitLabel2.TabIndex = 34;
             this.senseBitLabel2.Text = "SENSE-BIT SWITCHES";
             // 
-            // tabControl1
+            // tabControlSwitches
             // 
-            this.tabControl1.Controls.Add(this.consoleSwitchTab);
-            this.tabControl1.Controls.Add(this.cpuSwitchTab);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(853, 497);
-            this.tabControl1.TabIndex = 35;
+            this.tabControlSwitches.Controls.Add(this.consoleSwitchTab);
+            this.tabControlSwitches.Controls.Add(this.cpuSwitchTab);
+            this.tabControlSwitches.Location = new System.Drawing.Point(12, 12);
+            this.tabControlSwitches.Name = "tabControlSwitches";
+            this.tabControlSwitches.SelectedIndex = 0;
+            this.tabControlSwitches.Size = new System.Drawing.Size(898, 497);
+            this.tabControlSwitches.TabIndex = 35;
             // 
             // consoleSwitchTab
             // 
+            this.consoleSwitchTab.BackColor = System.Drawing.Color.DarkGray;
+            this.consoleSwitchTab.Controls.Add(this.programResetButton);
+            this.consoleSwitchTab.Controls.Add(this.stopButton);
+            this.consoleSwitchTab.Controls.Add(this.modeLabel);
+            this.consoleSwitchTab.Controls.Add(this.modeComboBox);
+            this.consoleSwitchTab.Controls.Add(this.startButton);
+            this.consoleSwitchTab.Controls.Add(this.powerOnButton);
+            this.consoleSwitchTab.Controls.Add(this.powerOffButton);
+            this.consoleSwitchTab.Controls.Add(this.readyButton);
+            this.consoleSwitchTab.Controls.Add(this.DCOffButton);
             this.consoleSwitchTab.Controls.Add(this.storageScanComboBox);
             this.consoleSwitchTab.Controls.Add(this.senseBitLabel2);
+            this.consoleSwitchTab.Controls.Add(this.computerResetButton);
             this.consoleSwitchTab.Controls.Add(this.addressEntryComboBox);
+            this.consoleSwitchTab.Controls.Add(this.emergencyOffPanel);
             this.consoleSwitchTab.Controls.Add(this.senseBitLabel);
             this.consoleSwitchTab.Controls.Add(this.addressEntryLabel);
             this.consoleSwitchTab.Controls.Add(this.senseWMCheckBox);
@@ -471,7 +497,7 @@ namespace IBM1410Console
             this.consoleSwitchTab.Controls.Add(this.densityCh2ComboBox);
             this.consoleSwitchTab.Controls.Add(this.asteriskInsertCheckBox);
             this.consoleSwitchTab.Controls.Add(this.densityCh2Label);
-            this.consoleSwitchTab.Controls.Add(this.label1);
+            this.consoleSwitchTab.Controls.Add(this.checkTestLabel);
             this.consoleSwitchTab.Controls.Add(this.startPrintOutButton);
             this.consoleSwitchTab.Controls.Add(this.checkTest3Button);
             this.consoleSwitchTab.Controls.Add(this.startPrintOutLabel);
@@ -484,33 +510,171 @@ namespace IBM1410Console
             this.consoleSwitchTab.Location = new System.Drawing.Point(4, 24);
             this.consoleSwitchTab.Name = "consoleSwitchTab";
             this.consoleSwitchTab.Padding = new System.Windows.Forms.Padding(3);
-            this.consoleSwitchTab.Size = new System.Drawing.Size(845, 469);
+            this.consoleSwitchTab.Size = new System.Drawing.Size(890, 469);
             this.consoleSwitchTab.TabIndex = 0;
             this.consoleSwitchTab.Text = "1415 Console Switches";
-            this.consoleSwitchTab.UseVisualStyleBackColor = true;
+            // 
+            // programResetButton
+            // 
+            this.programResetButton.Location = new System.Drawing.Point(783, 379);
+            this.programResetButton.Name = "programResetButton";
+            this.programResetButton.Size = new System.Drawing.Size(82, 53);
+            this.programResetButton.TabIndex = 45;
+            this.programResetButton.Text = "PROGRAM RESET";
+            this.programResetButton.UseVisualStyleBackColor = true;
+            // 
+            // stopButton
+            // 
+            this.stopButton.BackColor = System.Drawing.Color.Crimson;
+            this.stopButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.stopButton.Location = new System.Drawing.Point(639, 379);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(82, 53);
+            this.stopButton.TabIndex = 44;
+            this.stopButton.Text = "STOP";
+            this.stopButton.UseVisualStyleBackColor = false;
+            // 
+            // startButton
+            // 
+            this.startButton.BackColor = System.Drawing.Color.SeaGreen;
+            this.startButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.startButton.Location = new System.Drawing.Point(551, 380);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(82, 53);
+            this.startButton.TabIndex = 43;
+            this.startButton.Text = "START";
+            this.startButton.UseVisualStyleBackColor = false;
+            // 
+            // modeLabel
+            // 
+            this.modeLabel.AutoSize = true;
+            this.modeLabel.Location = new System.Drawing.Point(632, 305);
+            this.modeLabel.Name = "modeLabel";
+            this.modeLabel.Size = new System.Drawing.Size(41, 15);
+            this.modeLabel.TabIndex = 42;
+            this.modeLabel.Text = "MODE";
+            // 
+            // modeComboBox
+            // 
+            this.modeComboBox.AllowDrop = true;
+            this.modeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.modeComboBox.FormattingEnabled = true;
+            this.modeComboBox.Items.AddRange(new object[] {
+            "C.E.",
+            "I/E CYCLE",
+            "ADDRESS SET",
+            "RUN",
+            "DISPLAY",
+            "ALTER"});
+            this.modeComboBox.Location = new System.Drawing.Point(592, 323);
+            this.modeComboBox.Name = "modeComboBox";
+            this.modeComboBox.Size = new System.Drawing.Size(120, 23);
+            this.modeComboBox.TabIndex = 41;
+            // 
+            // powerOnButton
+            // 
+            this.powerOnButton.Enabled = false;
+            this.powerOnButton.Location = new System.Drawing.Point(666, 224);
+            this.powerOnButton.Name = "powerOnButton";
+            this.powerOnButton.Size = new System.Drawing.Size(82, 53);
+            this.powerOnButton.TabIndex = 40;
+            this.powerOnButton.Text = "POWER    ON";
+            this.powerOnButton.UseVisualStyleBackColor = true;
+            // 
+            // powerOffButton
+            // 
+            this.powerOffButton.BackColor = System.Drawing.Color.Crimson;
+            this.powerOffButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.powerOffButton.Location = new System.Drawing.Point(552, 224);
+            this.powerOffButton.Name = "powerOffButton";
+            this.powerOffButton.Size = new System.Drawing.Size(82, 53);
+            this.powerOffButton.TabIndex = 39;
+            this.powerOffButton.Text = "POWER   OFF";
+            this.powerOffButton.UseVisualStyleBackColor = false;
+            // 
+            // readyButton
+            // 
+            this.readyButton.BackColor = System.Drawing.Color.SeaGreen;
+            this.readyButton.Enabled = false;
+            this.readyButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.readyButton.Location = new System.Drawing.Point(666, 146);
+            this.readyButton.Name = "readyButton";
+            this.readyButton.Size = new System.Drawing.Size(82, 53);
+            this.readyButton.TabIndex = 38;
+            this.readyButton.Text = "READY";
+            this.readyButton.UseVisualStyleBackColor = false;
+            // 
+            // DCOffButton
+            // 
+            this.DCOffButton.Enabled = false;
+            this.DCOffButton.Location = new System.Drawing.Point(552, 146);
+            this.DCOffButton.Name = "DCOffButton";
+            this.DCOffButton.Size = new System.Drawing.Size(82, 53);
+            this.DCOffButton.TabIndex = 37;
+            this.DCOffButton.Text = "DC OFF";
+            this.DCOffButton.UseVisualStyleBackColor = true;
+            // 
+            // computerResetButton
+            // 
+            this.computerResetButton.Location = new System.Drawing.Point(666, 47);
+            this.computerResetButton.Name = "computerResetButton";
+            this.computerResetButton.Size = new System.Drawing.Size(82, 53);
+            this.computerResetButton.TabIndex = 36;
+            this.computerResetButton.Text = "COMPUTER RESET";
+            this.computerResetButton.UseVisualStyleBackColor = true;
+            // 
+            // emergencyOffPanel
+            // 
+            this.emergencyOffPanel.Controls.Add(this.emergencyOffLabel);
+            this.emergencyOffPanel.Controls.Add(this.emergencyOffButton);
+            this.emergencyOffPanel.Location = new System.Drawing.Point(552, 15);
+            this.emergencyOffPanel.Name = "emergencyOffPanel";
+            this.emergencyOffPanel.Size = new System.Drawing.Size(82, 117);
+            this.emergencyOffPanel.TabIndex = 35;
+            // 
+            // emergencyOffLabel
+            // 
+            this.emergencyOffLabel.Location = new System.Drawing.Point(4, 2);
+            this.emergencyOffLabel.Name = "emergencyOffLabel";
+            this.emergencyOffLabel.Size = new System.Drawing.Size(77, 33);
+            this.emergencyOffLabel.TabIndex = 1;
+            this.emergencyOffLabel.Text = "Emergency Off";
+            this.emergencyOffLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // emergencyOffButton
+            // 
+            this.emergencyOffButton.BackColor = System.Drawing.Color.Crimson;
+            this.emergencyOffButton.ForeColor = System.Drawing.Color.White;
+            this.emergencyOffButton.Location = new System.Drawing.Point(31, 38);
+            this.emergencyOffButton.Name = "emergencyOffButton";
+            this.emergencyOffButton.Size = new System.Drawing.Size(23, 72);
+            this.emergencyOffButton.TabIndex = 0;
+            this.emergencyOffButton.Text = "PULL";
+            this.emergencyOffButton.UseVisualStyleBackColor = false;
             // 
             // cpuSwitchTab
             // 
+            this.cpuSwitchTab.BackColor = System.Drawing.Color.DarkGray;
             this.cpuSwitchTab.Location = new System.Drawing.Point(4, 24);
             this.cpuSwitchTab.Name = "cpuSwitchTab";
             this.cpuSwitchTab.Padding = new System.Windows.Forms.Padding(3);
-            this.cpuSwitchTab.Size = new System.Drawing.Size(702, 469);
+            this.cpuSwitchTab.Size = new System.Drawing.Size(890, 469);
             this.cpuSwitchTab.TabIndex = 1;
             this.cpuSwitchTab.Text = "1411 CPU Switches";
-            this.cpuSwitchTab.UseVisualStyleBackColor = true;
             // 
             // IBM1410SwitchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1054, 550);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControlSwitches);
             this.Name = "IBM1410SwitchForm";
             this.Text = "IBM1410SwitchForm";
             this.Load += new System.EventHandler(this.IBM1410SwitchForm_Load);
-            this.tabControl1.ResumeLayout(false);
+            this.tabControlSwitches.ResumeLayout(false);
             this.consoleSwitchTab.ResumeLayout(false);
             this.consoleSwitchTab.PerformLayout();
+            this.emergencyOffPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -539,7 +703,7 @@ namespace IBM1410Console
         private System.Windows.Forms.Button checkTest1Button;
         private System.Windows.Forms.Button checkTest2Button;
         private System.Windows.Forms.Button checkTest3Button;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label checkTestLabel;
         private System.Windows.Forms.CheckBox asteriskInsertCheckBox;
         private System.Windows.Forms.CheckBox inhibitPrintOutCheckBox;
         private System.Windows.Forms.CheckBox senseACheckBox;
@@ -552,8 +716,21 @@ namespace IBM1410Console
         private System.Windows.Forms.CheckBox senseWMCheckBox;
         private System.Windows.Forms.Label senseBitLabel;
         private System.Windows.Forms.Label senseBitLabel2;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControlSwitches;
         private System.Windows.Forms.TabPage consoleSwitchTab;
         private System.Windows.Forms.TabPage cpuSwitchTab;
+        private System.Windows.Forms.Button computerResetButton;
+        private System.Windows.Forms.Panel emergencyOffPanel;
+        private System.Windows.Forms.Label emergencyOffLabel;
+        private System.Windows.Forms.Button emergencyOffButton;
+        private System.Windows.Forms.ComboBox modeComboBox;
+        private System.Windows.Forms.Button powerOnButton;
+        private System.Windows.Forms.Button powerOffButton;
+        private System.Windows.Forms.Button readyButton;
+        private System.Windows.Forms.Button DCOffButton;
+        private System.Windows.Forms.Label modeLabel;
+        private System.Windows.Forms.Button programResetButton;
+        private System.Windows.Forms.Button stopButton;
+        private System.Windows.Forms.Button startButton;
     }
 }

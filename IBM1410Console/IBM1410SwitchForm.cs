@@ -20,6 +20,7 @@ namespace IBM1410Console
             checkControlComboBox.SelectedIndex = 0;
             densityCh1ComboBox.SelectedIndex = 0;
             densityCh2ComboBox.SelectedIndex = 0;
+            modeComboBox.SelectedIndex = 3;
         }
 
         private void IBM1410SwitchForm_Load(object sender, EventArgs e) {

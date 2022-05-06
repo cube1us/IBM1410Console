@@ -21,6 +21,7 @@ namespace IBM1410Console
             densityCh1ComboBox.SelectedIndex = 0;
             densityCh2ComboBox.SelectedIndex = 0;
             modeComboBox.SelectedIndex = 3;
+            priorityUnitSelectcomboBox.SelectedIndex = 0;
         }
 
         private void IBM1410SwitchForm_Load(object sender, EventArgs e) {

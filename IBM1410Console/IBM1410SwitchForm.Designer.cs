@@ -65,9 +65,9 @@ namespace IBM1410Console
             this.consoleSwitchTab = new System.Windows.Forms.TabPage();
             this.programResetButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
-            this.startButton = new System.Windows.Forms.Button();
             this.modeLabel = new System.Windows.Forms.Label();
             this.modeComboBox = new System.Windows.Forms.ComboBox();
+            this.startButton = new System.Windows.Forms.Button();
             this.powerOnButton = new System.Windows.Forms.Button();
             this.powerOffButton = new System.Windows.Forms.Button();
             this.readyButton = new System.Windows.Forms.Button();
@@ -76,10 +76,14 @@ namespace IBM1410Console
             this.emergencyOffPanel = new System.Windows.Forms.Panel();
             this.emergencyOffLabel = new System.Windows.Forms.Label();
             this.emergencyOffButton = new System.Windows.Forms.Button();
-            this.cpuSwitchTab = new System.Windows.Forms.TabPage();
+            this.CESwitchTab = new System.Windows.Forms.TabPage();
+            this.priorityProcessingTab = new System.Windows.Forms.TabPage();
+            this.priorityUnitSelectcomboBox = new System.Windows.Forms.ComboBox();
+            this.priorityOnButton = new System.Windows.Forms.Button();
             this.tabControlSwitches.SuspendLayout();
             this.consoleSwitchTab.SuspendLayout();
             this.emergencyOffPanel.SuspendLayout();
+            this.priorityProcessingTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // addressEntryComboBox
@@ -451,7 +455,8 @@ namespace IBM1410Console
             // tabControlSwitches
             // 
             this.tabControlSwitches.Controls.Add(this.consoleSwitchTab);
-            this.tabControlSwitches.Controls.Add(this.cpuSwitchTab);
+            this.tabControlSwitches.Controls.Add(this.CESwitchTab);
+            this.tabControlSwitches.Controls.Add(this.priorityProcessingTab);
             this.tabControlSwitches.Location = new System.Drawing.Point(12, 12);
             this.tabControlSwitches.Name = "tabControlSwitches";
             this.tabControlSwitches.SelectedIndex = 0;
@@ -534,17 +539,6 @@ namespace IBM1410Console
             this.stopButton.Text = "STOP";
             this.stopButton.UseVisualStyleBackColor = false;
             // 
-            // startButton
-            // 
-            this.startButton.BackColor = System.Drawing.Color.SeaGreen;
-            this.startButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.startButton.Location = new System.Drawing.Point(551, 380);
-            this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(82, 53);
-            this.startButton.TabIndex = 43;
-            this.startButton.Text = "START";
-            this.startButton.UseVisualStyleBackColor = false;
-            // 
             // modeLabel
             // 
             this.modeLabel.AutoSize = true;
@@ -570,6 +564,17 @@ namespace IBM1410Console
             this.modeComboBox.Name = "modeComboBox";
             this.modeComboBox.Size = new System.Drawing.Size(120, 23);
             this.modeComboBox.TabIndex = 41;
+            // 
+            // startButton
+            // 
+            this.startButton.BackColor = System.Drawing.Color.SeaGreen;
+            this.startButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.startButton.Location = new System.Drawing.Point(551, 380);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(82, 53);
+            this.startButton.TabIndex = 43;
+            this.startButton.Text = "START";
+            this.startButton.UseVisualStyleBackColor = false;
             // 
             // powerOnButton
             // 
@@ -652,15 +657,54 @@ namespace IBM1410Console
             this.emergencyOffButton.Text = "PULL";
             this.emergencyOffButton.UseVisualStyleBackColor = false;
             // 
-            // cpuSwitchTab
+            // CESwitchTab
             // 
-            this.cpuSwitchTab.BackColor = System.Drawing.Color.DarkGray;
-            this.cpuSwitchTab.Location = new System.Drawing.Point(4, 24);
-            this.cpuSwitchTab.Name = "cpuSwitchTab";
-            this.cpuSwitchTab.Padding = new System.Windows.Forms.Padding(3);
-            this.cpuSwitchTab.Size = new System.Drawing.Size(890, 469);
-            this.cpuSwitchTab.TabIndex = 1;
-            this.cpuSwitchTab.Text = "1411 CPU Switches";
+            this.CESwitchTab.BackColor = System.Drawing.Color.DarkGray;
+            this.CESwitchTab.Location = new System.Drawing.Point(4, 24);
+            this.CESwitchTab.Name = "CESwitchTab";
+            this.CESwitchTab.Padding = new System.Windows.Forms.Padding(3);
+            this.CESwitchTab.Size = new System.Drawing.Size(890, 469);
+            this.CESwitchTab.TabIndex = 1;
+            this.CESwitchTab.Text = "1411 CE Switches";
+            // 
+            // priorityProcessingTab
+            // 
+            this.priorityProcessingTab.BackColor = System.Drawing.Color.DarkGray;
+            this.priorityProcessingTab.Controls.Add(this.priorityUnitSelectcomboBox);
+            this.priorityProcessingTab.Controls.Add(this.priorityOnButton);
+            this.priorityProcessingTab.Location = new System.Drawing.Point(4, 24);
+            this.priorityProcessingTab.Name = "priorityProcessingTab";
+            this.priorityProcessingTab.Padding = new System.Windows.Forms.Padding(3);
+            this.priorityProcessingTab.Size = new System.Drawing.Size(890, 469);
+            this.priorityProcessingTab.TabIndex = 2;
+            this.priorityProcessingTab.Text = "Priority Processing";
+            // 
+            // priorityUnitSelectcomboBox
+            // 
+            this.priorityUnitSelectcomboBox.AllowDrop = true;
+            this.priorityUnitSelectcomboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.priorityUnitSelectcomboBox.FormattingEnabled = true;
+            this.priorityUnitSelectcomboBox.Items.AddRange(new object[] {
+            "OFF",
+            "CARD READER",
+            "PRINTER",
+            "CARD PUNCH",
+            "PAPER TAPE READER"});
+            this.priorityUnitSelectcomboBox.Location = new System.Drawing.Point(118, 157);
+            this.priorityUnitSelectcomboBox.Name = "priorityUnitSelectcomboBox";
+            this.priorityUnitSelectcomboBox.Size = new System.Drawing.Size(150, 23);
+            this.priorityUnitSelectcomboBox.TabIndex = 47;
+            // 
+            // priorityOnButton
+            // 
+            this.priorityOnButton.BackColor = System.Drawing.Color.Gray;
+            this.priorityOnButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.priorityOnButton.Location = new System.Drawing.Point(153, 71);
+            this.priorityOnButton.Name = "priorityOnButton";
+            this.priorityOnButton.Size = new System.Drawing.Size(82, 53);
+            this.priorityOnButton.TabIndex = 46;
+            this.priorityOnButton.Text = "PRIORITY ON";
+            this.priorityOnButton.UseVisualStyleBackColor = false;
             // 
             // IBM1410SwitchForm
             // 
@@ -675,6 +719,7 @@ namespace IBM1410Console
             this.consoleSwitchTab.ResumeLayout(false);
             this.consoleSwitchTab.PerformLayout();
             this.emergencyOffPanel.ResumeLayout(false);
+            this.priorityProcessingTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -718,7 +763,7 @@ namespace IBM1410Console
         private System.Windows.Forms.Label senseBitLabel2;
         private System.Windows.Forms.TabControl tabControlSwitches;
         private System.Windows.Forms.TabPage consoleSwitchTab;
-        private System.Windows.Forms.TabPage cpuSwitchTab;
+        private System.Windows.Forms.TabPage CESwitchTab;
         private System.Windows.Forms.Button computerResetButton;
         private System.Windows.Forms.Panel emergencyOffPanel;
         private System.Windows.Forms.Label emergencyOffLabel;
@@ -732,5 +777,8 @@ namespace IBM1410Console
         private System.Windows.Forms.Button programResetButton;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.Button startButton;
+        private System.Windows.Forms.TabPage priorityProcessingTab;
+        private System.Windows.Forms.ComboBox priorityUnitSelectcomboBox;
+        private System.Windows.Forms.Button priorityOnButton;
     }
 }

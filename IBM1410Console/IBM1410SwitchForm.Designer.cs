@@ -26,6 +26,7 @@ namespace IBM1410Console
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IBM1410SwitchForm));
             this.addressEntryComboBox = new System.Windows.Forms.ComboBox();
             this.addressEntryLabel = new System.Windows.Forms.Label();
             this.storageScanLabel = new System.Windows.Forms.Label();
@@ -77,12 +78,35 @@ namespace IBM1410Console
             this.emergencyOffLabel = new System.Windows.Forms.Label();
             this.emergencyOffButton = new System.Windows.Forms.Button();
             this.CESwitchTab = new System.Windows.Forms.TabPage();
+            this.addrStopScopeSyncLabel = new System.Windows.Forms.Label();
+            this.unitsLabel = new System.Windows.Forms.Label();
+            this.unitsNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.tensLabel = new System.Windows.Forms.Label();
+            this.tensNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.hundredsLabel = new System.Windows.Forms.Label();
+            this.hundredsNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.thousandsLabel = new System.Windows.Forms.Label();
+            this.thousandsNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.scanGateLabel = new System.Windows.Forms.Label();
+            this.scanGateComboBox = new System.Windows.Forms.ComboBox();
+            this.addrTransferLabel = new System.Windows.Forms.Label();
+            this.addrTransferButton = new System.Windows.Forms.Button();
+            this.addrTransferComboBox = new System.Windows.Forms.ComboBox();
+            this.BCharSelLabel = new System.Windows.Forms.Label();
+            this.BCharSelComboBox = new System.Windows.Forms.ComboBox();
+            this.addrStopCheckBox = new System.Windows.Forms.CheckBox();
             this.priorityProcessingTab = new System.Windows.Forms.TabPage();
+            this.priorityProcessingLabel = new System.Windows.Forms.Label();
             this.priorityUnitSelectcomboBox = new System.Windows.Forms.ComboBox();
             this.priorityOnButton = new System.Windows.Forms.Button();
             this.tabControlSwitches.SuspendLayout();
             this.consoleSwitchTab.SuspendLayout();
             this.emergencyOffPanel.SuspendLayout();
+            this.CESwitchTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.unitsNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tensNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hundredsNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.thousandsNumericUpDown)).BeginInit();
             this.priorityProcessingTab.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,11 +116,11 @@ namespace IBM1410Console
             this.addressEntryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.addressEntryComboBox.FormattingEnabled = true;
             this.addressEntryComboBox.Items.AddRange(new object[] {
-            "I/NORMAL",
             "A",
             "B",
             "C",
             "D",
+            "NORMAL",
             "E",
             "F"});
             this.addressEntryComboBox.Location = new System.Drawing.Point(15, 33);
@@ -128,9 +152,9 @@ namespace IBM1410Console
             this.storageScanComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.storageScanComboBox.FormattingEnabled = true;
             this.storageScanComboBox.Items.AddRange(new object[] {
-            "OFF",
             "LOAD +1",
             "LOAD  0",
+            "OFF",
             "REGEN 0",
             "REGEN +1"});
             this.storageScanComboBox.Location = new System.Drawing.Point(15, 110);
@@ -153,8 +177,8 @@ namespace IBM1410Console
             this.cycleControlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cycleControlComboBox.FormattingEnabled = true;
             this.cycleControlComboBox.Items.AddRange(new object[] {
-            "OFF",
             "LOGIC STEP",
+            "OFF",
             "STORAGE CYCLE"});
             this.cycleControlComboBox.Location = new System.Drawing.Point(15, 188);
             this.cycleControlComboBox.Name = "cycleControlComboBox";
@@ -176,8 +200,8 @@ namespace IBM1410Console
             this.checkControlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.checkControlComboBox.FormattingEnabled = true;
             this.checkControlComboBox.Items.AddRange(new object[] {
-            "STOP NORMAL",
             "RESTART",
+            "STOP NORMAL",
             "RESET & RESTART"});
             this.checkControlComboBox.Location = new System.Drawing.Point(15, 268);
             this.checkControlComboBox.Name = "checkControlComboBox";
@@ -660,6 +684,23 @@ namespace IBM1410Console
             // CESwitchTab
             // 
             this.CESwitchTab.BackColor = System.Drawing.Color.DarkGray;
+            this.CESwitchTab.Controls.Add(this.addrStopScopeSyncLabel);
+            this.CESwitchTab.Controls.Add(this.unitsLabel);
+            this.CESwitchTab.Controls.Add(this.unitsNumericUpDown);
+            this.CESwitchTab.Controls.Add(this.tensLabel);
+            this.CESwitchTab.Controls.Add(this.tensNumericUpDown);
+            this.CESwitchTab.Controls.Add(this.hundredsLabel);
+            this.CESwitchTab.Controls.Add(this.hundredsNumericUpDown);
+            this.CESwitchTab.Controls.Add(this.thousandsLabel);
+            this.CESwitchTab.Controls.Add(this.thousandsNumericUpDown);
+            this.CESwitchTab.Controls.Add(this.scanGateLabel);
+            this.CESwitchTab.Controls.Add(this.scanGateComboBox);
+            this.CESwitchTab.Controls.Add(this.addrTransferLabel);
+            this.CESwitchTab.Controls.Add(this.addrTransferButton);
+            this.CESwitchTab.Controls.Add(this.addrTransferComboBox);
+            this.CESwitchTab.Controls.Add(this.BCharSelLabel);
+            this.CESwitchTab.Controls.Add(this.BCharSelComboBox);
+            this.CESwitchTab.Controls.Add(this.addrStopCheckBox);
             this.CESwitchTab.Location = new System.Drawing.Point(4, 24);
             this.CESwitchTab.Name = "CESwitchTab";
             this.CESwitchTab.Padding = new System.Windows.Forms.Padding(3);
@@ -667,9 +708,209 @@ namespace IBM1410Console
             this.CESwitchTab.TabIndex = 1;
             this.CESwitchTab.Text = "1411 CE Switches";
             // 
+            // addrStopScopeSyncLabel
+            // 
+            this.addrStopScopeSyncLabel.ForeColor = System.Drawing.Color.White;
+            this.addrStopScopeSyncLabel.Location = new System.Drawing.Point(58, 308);
+            this.addrStopScopeSyncLabel.Name = "addrStopScopeSyncLabel";
+            this.addrStopScopeSyncLabel.Size = new System.Drawing.Size(440, 74);
+            this.addrStopScopeSyncLabel.TabIndex = 16;
+            this.addrStopScopeSyncLabel.Text = resources.GetString("addrStopScopeSyncLabel.Text");
+            this.addrStopScopeSyncLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // unitsLabel
+            // 
+            this.unitsLabel.AutoSize = true;
+            this.unitsLabel.ForeColor = System.Drawing.Color.White;
+            this.unitsLabel.Location = new System.Drawing.Point(478, 252);
+            this.unitsLabel.Name = "unitsLabel";
+            this.unitsLabel.Size = new System.Drawing.Size(39, 15);
+            this.unitsLabel.TabIndex = 15;
+            this.unitsLabel.Text = "UNITS";
+            // 
+            // unitsNumericUpDown
+            // 
+            this.unitsNumericUpDown.Location = new System.Drawing.Point(465, 280);
+            this.unitsNumericUpDown.Maximum = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            this.unitsNumericUpDown.Name = "unitsNumericUpDown";
+            this.unitsNumericUpDown.Size = new System.Drawing.Size(63, 23);
+            this.unitsNumericUpDown.TabIndex = 14;
+            // 
+            // tensLabel
+            // 
+            this.tensLabel.AutoSize = true;
+            this.tensLabel.ForeColor = System.Drawing.Color.White;
+            this.tensLabel.Location = new System.Drawing.Point(379, 252);
+            this.tensLabel.Name = "tensLabel";
+            this.tensLabel.Size = new System.Drawing.Size(34, 15);
+            this.tensLabel.TabIndex = 13;
+            this.tensLabel.Text = "TENS";
+            // 
+            // tensNumericUpDown
+            // 
+            this.tensNumericUpDown.Location = new System.Drawing.Point(365, 280);
+            this.tensNumericUpDown.Maximum = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            this.tensNumericUpDown.Name = "tensNumericUpDown";
+            this.tensNumericUpDown.Size = new System.Drawing.Size(63, 23);
+            this.tensNumericUpDown.TabIndex = 12;
+            // 
+            // hundredsLabel
+            // 
+            this.hundredsLabel.AutoSize = true;
+            this.hundredsLabel.ForeColor = System.Drawing.Color.White;
+            this.hundredsLabel.Location = new System.Drawing.Point(265, 252);
+            this.hundredsLabel.Name = "hundredsLabel";
+            this.hundredsLabel.Size = new System.Drawing.Size(68, 15);
+            this.hundredsLabel.TabIndex = 11;
+            this.hundredsLabel.Text = "HUNDREDS";
+            // 
+            // hundredsNumericUpDown
+            // 
+            this.hundredsNumericUpDown.Location = new System.Drawing.Point(265, 280);
+            this.hundredsNumericUpDown.Maximum = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            this.hundredsNumericUpDown.Name = "hundredsNumericUpDown";
+            this.hundredsNumericUpDown.Size = new System.Drawing.Size(63, 23);
+            this.hundredsNumericUpDown.TabIndex = 10;
+            // 
+            // thousandsLabel
+            // 
+            this.thousandsLabel.AutoSize = true;
+            this.thousandsLabel.ForeColor = System.Drawing.Color.White;
+            this.thousandsLabel.Location = new System.Drawing.Point(160, 252);
+            this.thousandsLabel.Name = "thousandsLabel";
+            this.thousandsLabel.Size = new System.Drawing.Size(76, 15);
+            this.thousandsLabel.TabIndex = 9;
+            this.thousandsLabel.Text = "THOUSANDS";
+            // 
+            // thousandsNumericUpDown
+            // 
+            this.thousandsNumericUpDown.Location = new System.Drawing.Point(165, 280);
+            this.thousandsNumericUpDown.Maximum = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            this.thousandsNumericUpDown.Name = "thousandsNumericUpDown";
+            this.thousandsNumericUpDown.Size = new System.Drawing.Size(63, 23);
+            this.thousandsNumericUpDown.TabIndex = 8;
+            // 
+            // scanGateLabel
+            // 
+            this.scanGateLabel.AutoSize = true;
+            this.scanGateLabel.ForeColor = System.Drawing.Color.White;
+            this.scanGateLabel.Location = new System.Drawing.Point(43, 252);
+            this.scanGateLabel.Name = "scanGateLabel";
+            this.scanGateLabel.Size = new System.Drawing.Size(68, 15);
+            this.scanGateLabel.TabIndex = 7;
+            this.scanGateLabel.Text = "SCAN GATE";
+            // 
+            // scanGateComboBox
+            // 
+            this.scanGateComboBox.AllowDrop = true;
+            this.scanGateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.scanGateComboBox.FormattingEnabled = true;
+            this.scanGateComboBox.Items.AddRange(new object[] {
+            "OFF",
+            "NO",
+            "1ST",
+            "2ND",
+            "3RD"});
+            this.scanGateComboBox.Location = new System.Drawing.Point(43, 280);
+            this.scanGateComboBox.Name = "scanGateComboBox";
+            this.scanGateComboBox.Size = new System.Drawing.Size(68, 23);
+            this.scanGateComboBox.TabIndex = 6;
+            // 
+            // addrTransferLabel
+            // 
+            this.addrTransferLabel.ForeColor = System.Drawing.Color.White;
+            this.addrTransferLabel.Location = new System.Drawing.Point(308, 91);
+            this.addrTransferLabel.Name = "addrTransferLabel";
+            this.addrTransferLabel.Size = new System.Drawing.Size(190, 74);
+            this.addrTransferLabel.TabIndex = 5;
+            this.addrTransferLabel.Text = "|                                          |  |_________________________|  TRANSF" +
+    "ER ADDRESS TO   STORAGE ADDRESS REGISTER";
+            this.addrTransferLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // addrTransferButton
+            // 
+            this.addrTransferButton.Location = new System.Drawing.Point(457, 67);
+            this.addrTransferButton.Name = "addrTransferButton";
+            this.addrTransferButton.Size = new System.Drawing.Size(27, 23);
+            this.addrTransferButton.TabIndex = 4;
+            this.addrTransferButton.UseVisualStyleBackColor = true;
+            // 
+            // addrTransferComboBox
+            // 
+            this.addrTransferComboBox.AllowDrop = true;
+            this.addrTransferComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.addrTransferComboBox.FormattingEnabled = true;
+            this.addrTransferComboBox.Items.AddRange(new object[] {
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "I"});
+            this.addrTransferComboBox.Location = new System.Drawing.Point(302, 68);
+            this.addrTransferComboBox.Name = "addrTransferComboBox";
+            this.addrTransferComboBox.Size = new System.Drawing.Size(68, 23);
+            this.addrTransferComboBox.TabIndex = 3;
+            // 
+            // BCharSelLabel
+            // 
+            this.BCharSelLabel.AutoSize = true;
+            this.BCharSelLabel.ForeColor = System.Drawing.Color.White;
+            this.BCharSelLabel.Location = new System.Drawing.Point(153, 43);
+            this.BCharSelLabel.Name = "BCharSelLabel";
+            this.BCharSelLabel.Size = new System.Drawing.Size(90, 15);
+            this.BCharSelLabel.TabIndex = 2;
+            this.BCharSelLabel.Text = "B CH CHAR SEL";
+            // 
+            // BCharSelComboBox
+            // 
+            this.BCharSelComboBox.AllowDrop = true;
+            this.BCharSelComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.BCharSelComboBox.FormattingEnabled = true;
+            this.BCharSelComboBox.Items.AddRange(new object[] {
+            "NORMAL",
+            "B0",
+            "B1",
+            "B2",
+            "B3"});
+            this.BCharSelComboBox.Location = new System.Drawing.Point(162, 68);
+            this.BCharSelComboBox.Name = "BCharSelComboBox";
+            this.BCharSelComboBox.Size = new System.Drawing.Size(66, 23);
+            this.BCharSelComboBox.TabIndex = 1;
+            // 
+            // addrStopCheckBox
+            // 
+            this.addrStopCheckBox.AutoSize = true;
+            this.addrStopCheckBox.CheckAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.addrStopCheckBox.ForeColor = System.Drawing.Color.White;
+            this.addrStopCheckBox.Location = new System.Drawing.Point(43, 43);
+            this.addrStopCheckBox.Name = "addrStopCheckBox";
+            this.addrStopCheckBox.Size = new System.Drawing.Size(72, 33);
+            this.addrStopCheckBox.TabIndex = 0;
+            this.addrStopCheckBox.Text = "ADDR STOP";
+            this.addrStopCheckBox.UseVisualStyleBackColor = true;
+            // 
             // priorityProcessingTab
             // 
             this.priorityProcessingTab.BackColor = System.Drawing.Color.DarkGray;
+            this.priorityProcessingTab.Controls.Add(this.priorityProcessingLabel);
             this.priorityProcessingTab.Controls.Add(this.priorityUnitSelectcomboBox);
             this.priorityProcessingTab.Controls.Add(this.priorityOnButton);
             this.priorityProcessingTab.Location = new System.Drawing.Point(4, 24);
@@ -678,6 +919,16 @@ namespace IBM1410Console
             this.priorityProcessingTab.Size = new System.Drawing.Size(890, 469);
             this.priorityProcessingTab.TabIndex = 2;
             this.priorityProcessingTab.Text = "Priority Processing";
+            // 
+            // priorityProcessingLabel
+            // 
+            this.priorityProcessingLabel.AutoSize = true;
+            this.priorityProcessingLabel.ForeColor = System.Drawing.Color.White;
+            this.priorityProcessingLabel.Location = new System.Drawing.Point(128, 198);
+            this.priorityProcessingLabel.Name = "priorityProcessingLabel";
+            this.priorityProcessingLabel.Size = new System.Drawing.Size(128, 15);
+            this.priorityProcessingLabel.TabIndex = 48;
+            this.priorityProcessingLabel.Text = "PRIORITY PROCESSING";
             // 
             // priorityUnitSelectcomboBox
             // 
@@ -714,12 +965,18 @@ namespace IBM1410Console
             this.Controls.Add(this.tabControlSwitches);
             this.Name = "IBM1410SwitchForm";
             this.Text = "IBM1410SwitchForm";
-            this.Load += new System.EventHandler(this.IBM1410SwitchForm_Load);
             this.tabControlSwitches.ResumeLayout(false);
             this.consoleSwitchTab.ResumeLayout(false);
             this.consoleSwitchTab.PerformLayout();
             this.emergencyOffPanel.ResumeLayout(false);
+            this.CESwitchTab.ResumeLayout(false);
+            this.CESwitchTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.unitsNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tensNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hundredsNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.thousandsNumericUpDown)).EndInit();
             this.priorityProcessingTab.ResumeLayout(false);
+            this.priorityProcessingTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -780,5 +1037,23 @@ namespace IBM1410Console
         private System.Windows.Forms.TabPage priorityProcessingTab;
         private System.Windows.Forms.ComboBox priorityUnitSelectcomboBox;
         private System.Windows.Forms.Button priorityOnButton;
+        private System.Windows.Forms.Label addrStopScopeSyncLabel;
+        private System.Windows.Forms.Label unitsLabel;
+        private System.Windows.Forms.NumericUpDown unitsNumericUpDown;
+        private System.Windows.Forms.Label tensLabel;
+        private System.Windows.Forms.NumericUpDown tensNumericUpDown;
+        private System.Windows.Forms.Label hundredsLabel;
+        private System.Windows.Forms.NumericUpDown hundredsNumericUpDown;
+        private System.Windows.Forms.Label thousandsLabel;
+        private System.Windows.Forms.NumericUpDown thousandsNumericUpDown;
+        private System.Windows.Forms.Label scanGateLabel;
+        private System.Windows.Forms.ComboBox scanGateComboBox;
+        private System.Windows.Forms.Label addrTransferLabel;
+        private System.Windows.Forms.Button addrTransferButton;
+        private System.Windows.Forms.ComboBox addrTransferComboBox;
+        private System.Windows.Forms.Label BCharSelLabel;
+        private System.Windows.Forms.ComboBox BCharSelComboBox;
+        private System.Windows.Forms.CheckBox addrStopCheckBox;
+        private System.Windows.Forms.Label priorityProcessingLabel;
     }
 }

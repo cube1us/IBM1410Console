@@ -25,10 +25,10 @@ namespace IBM1410Console
 
         private int testIndex = IBM1410Lamp.lampVectorBits - 1;
         
-        public UI1415LForm(SerialDataPublisher lightOutputPublisher) {
+        public UI1415LForm(SerialDataPublisher lightOutputPublisher, IBM1410SwitchForm ibm1410SwitchForm) {
             InitializeComponent();
             this.CreateHandle();    // This ensures that controls are created before receiving data from the FPGA 
-            this.initLamps();
+            this.initLamps(ibm1410SwitchForm);
 
             lightOutputPublisher.SerialLightOutputEvent += new EventHandler<SerialLightDataEventArgs>(lampOutputAvailable);
             Debug.WriteLine("Event Handler for SerialDataPublisher (Lamps) Registered.");
@@ -36,7 +36,7 @@ namespace IBM1410Console
 
         //  Initialize lamp arrays
 
-        public void initLamps() {
+        public void initLamps(IBM1410SwitchForm ibm1410SwitchForm) {
 
             lamps[IBM1410Lamp.LAMP_11C8A01_INDEX] = new IBM1410Lamp(label_CE_Index_T_B, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMP_11C8A02_INDEX] = new IBM1410Lamp(label_CE_Index_H_B, false, onWhite, offDimGray);
@@ -117,7 +117,11 @@ namespace IBM1410Console
             lamps[IBM1410Lamp.LAMP_15A1V01_INDEX] = new IBM1410Lamp(label_Check_ARegisterSet, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1W01_INDEX] = new IBM1410Lamp(label_Check_IOInterlock, false, onRed, offDimGray);
             lamps[IBM1410Lamp.LAMP_15A1W04_INDEX] = new IBM1410Lamp(label_Check_Instruction, false, onRed, offDimGray);
-            // Have not yet created the priority switch lamps 15A2K03, 15A2K05
+
+            lamps[IBM1410Lamp.LAMP_15A2K03_INDEX] = new IBM1410Lamp(ibm1410SwitchForm.priorityProcessingButtonLabel, true, 
+                Color.PaleGreen, Color.Gainsboro);
+
+            // 15A2K05 is just a parallel lamp to 15A2K03
 
             lamps[IBM1410Lamp.LAMPS_CYCLE_CE_INDEX + 0] = new IBM1410Lamp(label_CE_CYC_A, false, onWhite, offDimGray);
             lamps[IBM1410Lamp.LAMPS_CYCLE_CE_INDEX + 1] = new IBM1410Lamp(label_CE_CYC_B, false, onWhite, offDimGray);

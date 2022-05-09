@@ -42,7 +42,9 @@ namespace IBM1410Console
             serialPort.Handshake = Handshake.None;
 
             serialDataPublisher = new SerialDataPublisher(serialPort);
+
             IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher);
+            IBM1410SwitchForm = new IBM1410SwitchForm();  // Need this form during setup of lamp form...
 
             Console.WriteLine("Starting up...");
             Debug.WriteLine("Debug: Starting up...");
@@ -68,7 +70,7 @@ namespace IBM1410Console
 
         private void lightStripMenuItem_Click(object sender, EventArgs e) {
             if (UI1415LForm == null) {
-                UI1415LForm = new UI1415LForm(serialDataPublisher);
+                UI1415LForm = new UI1415LForm(serialDataPublisher, IBM1410SwitchForm);
             }
             UI1415LForm.Show();
 

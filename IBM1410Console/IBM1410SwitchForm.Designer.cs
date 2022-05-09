@@ -96,9 +96,9 @@ namespace IBM1410Console
             this.BCharSelComboBox = new System.Windows.Forms.ComboBox();
             this.addrStopCheckBox = new System.Windows.Forms.CheckBox();
             this.priorityProcessingTab = new System.Windows.Forms.TabPage();
+            this.priorityProcessingButtonLabel = new System.Windows.Forms.Label();
             this.priorityProcessingLabel = new System.Windows.Forms.Label();
             this.priorityUnitSelectcomboBox = new System.Windows.Forms.ComboBox();
-            this.priorityOnButton = new System.Windows.Forms.Button();
             this.tabControlSwitches.SuspendLayout();
             this.consoleSwitchTab.SuspendLayout();
             this.emergencyOffPanel.SuspendLayout();
@@ -910,15 +910,25 @@ namespace IBM1410Console
             // priorityProcessingTab
             // 
             this.priorityProcessingTab.BackColor = System.Drawing.Color.DarkGray;
+            this.priorityProcessingTab.Controls.Add(this.priorityProcessingButtonLabel);
             this.priorityProcessingTab.Controls.Add(this.priorityProcessingLabel);
             this.priorityProcessingTab.Controls.Add(this.priorityUnitSelectcomboBox);
-            this.priorityProcessingTab.Controls.Add(this.priorityOnButton);
             this.priorityProcessingTab.Location = new System.Drawing.Point(4, 24);
             this.priorityProcessingTab.Name = "priorityProcessingTab";
             this.priorityProcessingTab.Padding = new System.Windows.Forms.Padding(3);
             this.priorityProcessingTab.Size = new System.Drawing.Size(890, 469);
             this.priorityProcessingTab.TabIndex = 2;
             this.priorityProcessingTab.Text = "Priority Processing";
+            // 
+            // priorityProcessingButtonLabel
+            // 
+            this.priorityProcessingButtonLabel.BackColor = System.Drawing.Color.Gainsboro;
+            this.priorityProcessingButtonLabel.Location = new System.Drawing.Point(153, 71);
+            this.priorityProcessingButtonLabel.Name = "priorityProcessingButtonLabel";
+            this.priorityProcessingButtonLabel.Size = new System.Drawing.Size(82, 53);
+            this.priorityProcessingButtonLabel.TabIndex = 49;
+            this.priorityProcessingButtonLabel.Text = "PRIORITY   ON";
+            this.priorityProcessingButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // priorityProcessingLabel
             // 
@@ -945,17 +955,6 @@ namespace IBM1410Console
             this.priorityUnitSelectcomboBox.Name = "priorityUnitSelectcomboBox";
             this.priorityUnitSelectcomboBox.Size = new System.Drawing.Size(150, 23);
             this.priorityUnitSelectcomboBox.TabIndex = 47;
-            // 
-            // priorityOnButton
-            // 
-            this.priorityOnButton.BackColor = System.Drawing.Color.Gray;
-            this.priorityOnButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.priorityOnButton.Location = new System.Drawing.Point(153, 71);
-            this.priorityOnButton.Name = "priorityOnButton";
-            this.priorityOnButton.Size = new System.Drawing.Size(82, 53);
-            this.priorityOnButton.TabIndex = 46;
-            this.priorityOnButton.Text = "PRIORITY ON";
-            this.priorityOnButton.UseVisualStyleBackColor = false;
             // 
             // IBM1410SwitchForm
             // 
@@ -1036,7 +1035,6 @@ namespace IBM1410Console
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.TabPage priorityProcessingTab;
         private System.Windows.Forms.ComboBox priorityUnitSelectcomboBox;
-        private System.Windows.Forms.Button priorityOnButton;
         private System.Windows.Forms.Label addrStopScopeSyncLabel;
         private System.Windows.Forms.Label unitsLabel;
         private System.Windows.Forms.NumericUpDown unitsNumericUpDown;
@@ -1055,5 +1053,6 @@ namespace IBM1410Console
         private System.Windows.Forms.ComboBox BCharSelComboBox;
         private System.Windows.Forms.CheckBox addrStopCheckBox;
         private System.Windows.Forms.Label priorityProcessingLabel;
+        public System.Windows.Forms.Label priorityProcessingButtonLabel;
     }
 }

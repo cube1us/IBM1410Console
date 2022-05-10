@@ -3745,6 +3745,7 @@ namespace IBM1410Console
             this.Controls.Add(this.tabPageControl);
             this.Name = "UI1415LForm";
             this.Text = "IBM 1415 Indicator Lights";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UI1415LForm_FormClosing);
             this.tabPageControl.ResumeLayout(false);
             this.tabCPUStatus.ResumeLayout(false);
             this.panel1415CPUOutline.ResumeLayout(false);

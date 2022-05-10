@@ -964,6 +964,7 @@ namespace IBM1410Console
             this.Controls.Add(this.tabControlSwitches);
             this.Name = "IBM1410SwitchForm";
             this.Text = "IBM1410SwitchForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IBM1410SwitchForm_FormClosing);
             this.tabControlSwitches.ResumeLayout(false);
             this.consoleSwitchTab.ResumeLayout(false);
             this.consoleSwitchTab.PerformLayout();

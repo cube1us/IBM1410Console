@@ -324,7 +324,7 @@ namespace IBM1410Console
 
         private void testButton_Click(object sender, EventArgs e) {
 
-            //  Locate the previous  lamp to turn off
+            //  Locate the previous lamp to turn off
 
             int previous = (testIndex == IBM1410Lamp.lampVectorBits - 1 ? IBM1410Lamp.minLampVector : testIndex + 1);
             IBM1410Lamp lamp;
@@ -353,6 +353,13 @@ namespace IBM1410Console
 
             if (--testIndex < IBM1410Lamp.minLampVector) {
                 testIndex = IBM1410Lamp.lampVectorBits - 1;
+            }
+        }
+
+        private void UI1415LForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                Hide();
             }
         }
     }

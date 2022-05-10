@@ -26,5 +26,12 @@ namespace IBM1410Console
             addrTransferComboBox.SelectedIndex = 6;
             scanGateComboBox.SelectedIndex = 0;
         }
+
+        private void IBM1410SwitchForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                Hide();
+            }
+        }
     }
 }

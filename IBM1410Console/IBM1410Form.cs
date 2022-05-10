@@ -44,7 +44,7 @@ namespace IBM1410Console
             serialDataPublisher = new SerialDataPublisher(serialPort);
 
             IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher);
-            IBM1410SwitchForm = new IBM1410SwitchForm();  // Need this form during setup of lamp form...
+            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);  // Need this form during setup of lamp form...
 
             Console.WriteLine("Starting up...");
             Debug.WriteLine("Debug: Starting up...");

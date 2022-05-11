@@ -588,6 +588,7 @@ namespace IBM1410Console
             this.modeComboBox.Name = "modeComboBox";
             this.modeComboBox.Size = new System.Drawing.Size(120, 23);
             this.modeComboBox.TabIndex = 41;
+            this.modeComboBox.SelectedIndexChanged += new System.EventHandler(this.modeComboBox_SelectedIndexChanged);
             // 
             // startButton
             // 

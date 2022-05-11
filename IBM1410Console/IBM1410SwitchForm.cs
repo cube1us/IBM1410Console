@@ -92,8 +92,15 @@ namespace IBM1410Console
 		public const int SWITCH_TOG_SENSE_SW_W_PL1_INDEX = 1;   // 15.60.08.1
 		public const int SWITCH_TOG_WR_INHIBIT_PL1_INDEX = 0;   // 40.10.03.1
 
+		protected bool initalizing = true;
 		protected bool[] switchVector = new bool[switchVectorBits];
-		public Byte[] switchFlagByte = new Byte[] { 0x80 };
+		protected byte[] switchFlagByte = new byte[] { 0x80 };
+
+		protected bool[] switchRotZeroes = new bool[13];  // All false, to reset switch bits.
+
+		//	While mode switch is rotating, it hits "stop" first.
+		protected readonly bool[] modeStop = { false, false, true, false, false, false, false, false, false, false, false, false, false };
+
 
 		SerialPort serialPort = null;
 
@@ -124,7 +131,19 @@ namespace IBM1410Console
 
 			// sendSwitchVector();
 
+			//	Initialize Switch Vector
 
+			switchVector[SWITCH_MOM_STARTPRINT_INDEX] = true;			//	The Start Print switch is "backwards"
+			switchVector[SWITCH_TOG_ASTERISK_PL2_INDEX] = true;			//	Asterisk Insert on by default
+			switchVector[SWITCH_TOG_ASTERISK_PL1_INDEX] = false;		//	Ditto - this one is connected to OFF NORMAL
+			switchVector[SWITCH_TOG_AUTO_START_PL1_INDEX] = true;		//	This one also drives OFF NORMAL, and we didn't implement it
+			switchVector[SWITCH_ROT_STOR_SCAN_DK1_INDEX + 3] = true;    //	Storage Scan OFF
+            switchVector[SWITCH_ROT_CYCLE_CTRL_DK1_INDEX + 2] = true;   //	Cycle Control OFF
+			switchVector[SWITCH_ROT_CHECK_CTRL_DK1_INDEX + 2] = true;   //	Check Control STOP NORMAL
+			switchVector[SWITCH_ROT_MODE_SW_DK_INDEX + 7] = true;       //	Mode RUN
+			switchVector[SWITCH_ROT_ADDR_ENTRY_DK1_INDEX + 5] = true;   //	Address Entry NORMAL
+
+			initalizing = false;
         }
 
         private void IBM1410SwitchForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -172,5 +191,29 @@ namespace IBM1410Console
             }
 			Debug.WriteLine("/");
         }
-    }
+
+        private void modeComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+
+			bool[] modeSwitch = new bool[SWITCH_ROT_MODE_SW_DK_LEN];
+
+			//	Ignore changes while we initialize
+
+			if(initalizing) {
+				return;
+            }
+			
+			//	First, it goes to a stop position
+
+			setRotarySwitch(modeStop, SWITCH_ROT_MODE_SW_DK_INDEX, SWITCH_ROT_MODE_SW_DK_LEN);
+			sendSwitchVector();
+			System.Threading.Thread.Sleep(50);
+
+			//	Next, we set the desired mode.
+
+			modeSwitch[(modeComboBox.SelectedIndex * 2) + 1] = true;
+			setRotarySwitch(modeSwitch, SWITCH_ROT_MODE_SW_DK_INDEX, SWITCH_ROT_MODE_SW_DK_LEN);
+			sendSwitchVector();
+
+		}
+	}
 }

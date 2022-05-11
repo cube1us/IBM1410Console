@@ -78,7 +78,7 @@ namespace IBM1410Console
 
         private void switchesStripMenuItem_Click(object sender, EventArgs e) {
             if(IBM1410SwitchForm == null) {
-                IBM1410SwitchForm = new IBM1410SwitchForm();
+                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);
             }
             IBM1410SwitchForm.Show();
         }

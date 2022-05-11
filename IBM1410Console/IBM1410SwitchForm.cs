@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.Diagnostics;
+
 
 namespace IBM1410Console
 {
@@ -91,6 +93,7 @@ namespace IBM1410Console
 		public const int SWITCH_TOG_WR_INHIBIT_PL1_INDEX = 0;   // 40.10.03.1
 
 		protected bool[] switchVector = new bool[switchVectorBits];
+		public Byte[] switchFlagByte = new Byte[] { 0x80 };
 
 		SerialPort serialPort = null;
 
@@ -110,6 +113,18 @@ namespace IBM1410Console
             addrTransferComboBox.SelectedIndex = 6;
             scanGateComboBox.SelectedIndex = 0;
             this.serialPort = serialPort;
+
+			//	Testing Data
+
+			// switchVector[0] = true;
+			// switchVector[switchVectorBits - 1] = true;
+
+			// setRotarySwitch(new bool[13] { false, false, false, false, false, false, false, true, false, false, false,
+			// 	false, false}, SWITCH_ROT_MODE_SW_DK_INDEX, SWITCH_ROT_MODE_SW_DK_LEN);
+
+			// sendSwitchVector();
+
+
         }
 
         private void IBM1410SwitchForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -117,6 +132,45 @@ namespace IBM1410Console
                 e.Cancel = true;
                 Hide();
             }
+        }
+
+		private void setRotarySwitch(bool[] switchBits, int indexLowBit, int numBits) {
+			for(int i = 0; i < numBits; ++i) {
+				switchVector[indexLowBit + i] = switchBits[i];
+            }
+        }
+
+		//	Method to transmit the bits to the FPGA
+
+		private void sendSwitchVector() {
+
+			Byte[] switchBytes = new byte[switchVector.Length / 7];
+			byte tempByte = 0x00;
+			int currentByte = 0;
+
+			//	First, we send the special flag byte...
+
+			// serialPort.Write(switchFlagByte, 0, switchFlagByte.Length);
+
+			//	Next, we assemble the minions!!!
+
+			for(int i = switchVector.Length - 1; i > 0; i -= 7) {
+
+				tempByte = 0x00;
+
+				for(int j = 0; j < 7; ++j) {
+					tempByte = (byte)((tempByte << 1) | (switchVector[i - j] ? 1 : 0));
+                }
+
+				switchBytes[currentByte] = tempByte;
+				++currentByte;
+            }
+
+			Debug.Write("Sending switch data: /");
+			for(int i = 0; i < switchBytes.Length; ++i) {
+				Debug.Write(switchBytes[i].ToString("X2") + " ");
+            }
+			Debug.WriteLine("/");
         }
     }
 }

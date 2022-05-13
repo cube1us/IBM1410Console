@@ -600,6 +600,7 @@ namespace IBM1410Console
             this.startButton.TabIndex = 43;
             this.startButton.Text = "START";
             this.startButton.UseVisualStyleBackColor = false;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // powerOnButton
             // 
@@ -652,6 +653,7 @@ namespace IBM1410Console
             this.computerResetButton.TabIndex = 36;
             this.computerResetButton.Text = "COMPUTER RESET";
             this.computerResetButton.UseVisualStyleBackColor = true;
+            this.computerResetButton.Click += new System.EventHandler(this.computerResetButton_Click);
             // 
             // emergencyOffPanel
             // 
@@ -930,6 +932,7 @@ namespace IBM1410Console
             this.priorityProcessingButtonLabel.TabIndex = 49;
             this.priorityProcessingButtonLabel.Text = "PRIORITY   ON";
             this.priorityProcessingButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.priorityProcessingButtonLabel.Click += new System.EventHandler(this.priorityProcessingButtonLabel_Click);
             // 
             // priorityProcessingLabel
             // 

@@ -134,15 +134,14 @@ namespace IBM1410Console
 
 			//	Initialize Switch Vector
 
-			// switchVector[SWITCH_MOM_STARTPRINT_INDEX] = true;			//	The Start Print switch is "backwards"
-			// switchVector[SWITCH_TOG_ASTERISK_PL2_INDEX] = true;			//	Asterisk Insert on by default
-			// switchVector[SWITCH_TOG_ASTERISK_PL1_INDEX] = false;		//	Ditto - this one is connected to OFF NORMAL
-			// switchVector[SWITCH_TOG_AUTO_START_PL1_INDEX] = true;		//	This one also drives OFF NORMAL, and we didn't implement it
-			// switchVector[SWITCH_ROT_STOR_SCAN_DK1_INDEX + 3] = true;    //	Storage Scan OFF
-            // switchVector[SWITCH_ROT_CYCLE_CTRL_DK1_INDEX + 2] = true;   //	Cycle Control OFF
-			// switchVector[SWITCH_ROT_CHECK_CTRL_DK1_INDEX + 2] = true;   //	Check Control STOP NORMAL
-			// switchVector[SWITCH_ROT_MODE_SW_DK_INDEX + 7] = true;       //	Mode RUN
-			// switchVector[SWITCH_ROT_ADDR_ENTRY_DK1_INDEX + 5] = true;   //	Address Entry NORMAL
+			switchVector[SWITCH_MOM_STARTPRINT_INDEX] = true;			//	The Start Print switch is "backwards"
+			switchVector[SWITCH_TOG_ASTERISK_PL2_INDEX] = true;			//	Asterisk Insert on by default
+			switchVector[SWITCH_TOG_AUTO_START_PL1_INDEX] = true;		//	This one also drives OFF NORMAL, and we didn't implement it
+			switchVector[SWITCH_ROT_STOR_SCAN_DK1_INDEX + 3] = true;    //	Storage Scan OFF
+            switchVector[SWITCH_ROT_CYCLE_CTRL_DK1_INDEX + 2] = true;   //	Cycle Control OFF
+			switchVector[SWITCH_ROT_CHECK_CTRL_DK1_INDEX + 2] = true;   //	Check Control STOP NORMAL
+			switchVector[SWITCH_ROT_MODE_SW_DK_INDEX + 7] = true;       //	Mode RUN
+			switchVector[SWITCH_ROT_ADDR_ENTRY_DK1_INDEX + 5] = true;   //	Address Entry NORMAL
 
 			initalizing = false;
         }
@@ -244,6 +243,20 @@ namespace IBM1410Console
 
         private void startButton_Click(object sender, EventArgs e) {
 			toggleMomentarySwitch(true, SWITCH_MOM_CONS_START_INDEX);
+        }
+
+        private void cycleControlComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+
+			bool[] cycleSwitch = new bool[SWITCH_ROT_CYCLE_CTRL_DK1_LEN];
+
+			//	Ignore changes while we initialize
+
+			if (initalizing) {
+				return;
+			}
+
+			cycleSwitch[cycleControlComboBox.SelectedIndex + 1] = true;
+			setRotarySwitch(cycleSwitch, SWITCH_ROT_CYCLE_CTRL_DK1_INDEX, SWITCH_ROT_CYCLE_CTRL_DK1_LEN);
         }
     }
 }

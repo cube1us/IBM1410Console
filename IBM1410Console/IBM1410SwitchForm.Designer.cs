@@ -184,6 +184,7 @@ namespace IBM1410Console
             this.cycleControlComboBox.Name = "cycleControlComboBox";
             this.cycleControlComboBox.Size = new System.Drawing.Size(120, 23);
             this.cycleControlComboBox.TabIndex = 4;
+            this.cycleControlComboBox.SelectedIndexChanged += new System.EventHandler(this.cycleControlComboBox_SelectedIndexChanged);
             // 
             // checkControlLabel
             // 

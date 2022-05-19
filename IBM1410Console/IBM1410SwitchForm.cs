@@ -258,5 +258,44 @@ namespace IBM1410Console
 			cycleSwitch[cycleControlComboBox.SelectedIndex + 1] = true;
 			setRotarySwitch(cycleSwitch, SWITCH_ROT_CYCLE_CTRL_DK1_INDEX, SWITCH_ROT_CYCLE_CTRL_DK1_LEN);
         }
-    }
+
+        private void addressEntryComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+			bool[] addrEntrySwitch = new bool[SWITCH_ROT_ADDR_ENTRY_DK1_LEN];
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			addrEntrySwitch[addressEntryComboBox.SelectedIndex + 1] = true;
+			setRotarySwitch(addrEntrySwitch, SWITCH_ROT_ADDR_ENTRY_DK1_INDEX, SWITCH_ROT_ADDR_ENTRY_DK1_LEN);
+		}
+
+        private void checkControlComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+			bool[] checkControlSwitch = new bool[SWITCH_ROT_CHECK_CTRL_DK1_LEN];
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			checkControlSwitch[checkControlComboBox.SelectedIndex + 1] = true;
+			setRotarySwitch(checkControlSwitch, SWITCH_ROT_CHECK_CTRL_DK1_INDEX, SWITCH_ROT_CHECK_CTRL_DK1_LEN);
+		}
+
+        private void storageScanComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+			bool[] storageScanSwitch = new bool[SWITCH_ROT_STOR_SCAN_DK1_LEN];
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			storageScanSwitch[storageScanComboBox.SelectedIndex + 1] = true;
+			setRotarySwitch(storageScanSwitch, SWITCH_ROT_STOR_SCAN_DK1_INDEX, SWITCH_ROT_STOR_SCAN_DK1_LEN);
+		}
+	}
 }

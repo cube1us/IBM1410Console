@@ -127,6 +127,7 @@ namespace IBM1410Console
             this.addressEntryComboBox.Name = "addressEntryComboBox";
             this.addressEntryComboBox.Size = new System.Drawing.Size(120, 23);
             this.addressEntryComboBox.TabIndex = 0;
+            this.addressEntryComboBox.SelectedIndexChanged += new System.EventHandler(this.addressEntryComboBox_SelectedIndexChanged);
             // 
             // addressEntryLabel
             // 
@@ -161,6 +162,7 @@ namespace IBM1410Console
             this.storageScanComboBox.Name = "storageScanComboBox";
             this.storageScanComboBox.Size = new System.Drawing.Size(120, 23);
             this.storageScanComboBox.TabIndex = 2;
+            this.storageScanComboBox.SelectedIndexChanged += new System.EventHandler(this.storageScanComboBox_SelectedIndexChanged);
             // 
             // cycleControlLabel
             // 
@@ -208,6 +210,7 @@ namespace IBM1410Console
             this.checkControlComboBox.Name = "checkControlComboBox";
             this.checkControlComboBox.Size = new System.Drawing.Size(120, 23);
             this.checkControlComboBox.TabIndex = 6;
+            this.checkControlComboBox.SelectedIndexChanged += new System.EventHandler(this.checkControlComboBox_SelectedIndexChanged);
             // 
             // diskWrInhibitCheckBox
             // 

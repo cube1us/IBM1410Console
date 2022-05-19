@@ -161,6 +161,11 @@ namespace IBM1410Console
 			sendSwitchVector();
         }
 
+		private void setToggleSwitch(int indexBit, bool status) {
+			switchVector[indexBit] = status;
+			sendSwitchVector();
+        }
+
 		private void toggleAltSwitch(int indexBit) {
 
 			switchVector[indexBit] = !switchVector[indexBit];
@@ -297,5 +302,128 @@ namespace IBM1410Console
 			storageScanSwitch[storageScanComboBox.SelectedIndex + 1] = true;
 			setRotarySwitch(storageScanSwitch, SWITCH_ROT_STOR_SCAN_DK1_INDEX, SWITCH_ROT_STOR_SCAN_DK1_LEN);
 		}
-	}
+
+        private void diskWrInhibitCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_WR_INHIBIT_PL1_INDEX, diskWrInhibitCheckBox.Checked);
+        }
+
+        private void densityCh1ComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+
+			//	Really, this is a three position toggle, but I eliminated, at least temporarily,
+			//	the middle (200/800) position so as to avoid all of the switch index values changing.
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			setToggleSwitch(SWITCH_TOG_CH_1_INDEX, densityCh1ComboBox.SelectedIndex > 0);
+		}
+
+        private void densityCh2ComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+
+			//	Really, this is a three position toggle, but I eliminated, at least temporarily,
+			//	the middle (200/800) position so as to avoid all of the switch index values changing.
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			setToggleSwitch(SWITCH_TOG_CH_2_INDEX, densityCh2ComboBox.SelectedIndex > 0);
+		}
+
+        private void startPrintOutButton_Click(object sender, EventArgs e) {
+			toggleMomentarySwitch(false, SWITCH_MOM_STARTPRINT_INDEX);   // This is one of the "backwards" switches.
+        }
+
+        private void compat1401CheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_1401_MODE_PL1_INDEX, compat1401CheckBox.Checked);
+        }
+
+        private void IOCheckReset1401Button_Click(object sender, EventArgs e) {
+			toggleMomentarySwitch(true, SWITCH_MOM_IO_CHK_RST_PL1_INDEX);
+        }
+
+        private void IOCheckStop1401CheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_I_O_CHK_ST_PL1_INDEX, IOCheckStop1401CheckBox.Checked);
+        }
+
+        private void checkTest1Button_Click(object sender, EventArgs e) {
+
+			//	For ease of use, treat like an alternating switch...
+
+			checkTest1Button.BackColor = !switchVector[SWITCH_MOM_1ST_TST_SW_PL1_INDEX] ? Color.Red : Color.DarkGray;
+			toggleAltSwitch(SWITCH_MOM_1ST_TST_SW_PL1_INDEX);
+        }
+
+        private void checkTest2Button_Click(object sender, EventArgs e) {
+
+			//	For ease of use, treat like an alternating switch...
+
+			checkTest2Button.BackColor = !switchVector[SWITCH_MOM_2ND_TST_SW_PL1_INDEX] ? Color.Red : Color.DarkGray;
+			toggleAltSwitch(SWITCH_MOM_2ND_TST_SW_PL1_INDEX);
+		}
+
+        private void checkTest3Button_Click(object sender, EventArgs e) {
+
+			//	For ease of use, treat like an alternating switch...
+
+			checkTest3Button.BackColor = !switchVector[SWITCH_MOM_3RD_TST_SW_PL1_INDEX] ? Color.Red : Color.DarkGray;
+			toggleAltSwitch(SWITCH_MOM_3RD_TST_SW_PL1_INDEX);
+		}
+
+        private void asteriskInsertCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_ASTERISK_PL2_INDEX, asteriskInsertCheckBox.Checked);
+        }
+
+        private void inhibitPrintOutCheckBox_CheckedChanged(object sender, EventArgs e) {
+			switchVector[SWITCH_TOG_INHIBIT_PO_PL2_INDEX + 1] = inhibitPrintOutCheckBox.Checked;  // Two simultaneous changes
+			setToggleSwitch(SWITCH_TOG_WR_INHIBIT_PL1_INDEX, inhibitPrintOutCheckBox.Checked);
+        }
+
+		//	Note that the 1410 switch names are by BIT NUMBER, not the 1401 ABCDEFGH
+
+        private void senseACheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_C_PL1_INDEX, senseACheckBox.Checked);
+        }
+
+        private void senseBCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_B_PL1_INDEX, senseBCheckBox.Checked);
+		}
+
+        private void senseCCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_A_PL1_INDEX, senseCCheckBox.Checked);
+		}
+
+        private void senseDCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_8_PL1_INDEX, senseDCheckBox.Checked);
+		}
+
+        private void senseECheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_4_PL1_INDEX, senseECheckBox.Checked);
+		}
+
+        private void senseFCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_2_PL1_INDEX, senseFCheckBox.Checked);
+		}
+
+        private void senseGCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_1_PL1_INDEX, senseGCheckBox.Checked);
+		}
+
+        private void senseWMCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_SENSE_SW_W_PL1_INDEX, senseWMCheckBox.Checked);
+		}
+
+        private void programResetButton_Click(object sender, EventArgs e) {
+			toggleMomentarySwitch(true, SWITCH_MOM_PROG_RESET_INDEX);
+        }
+
+        private void stopButton_Click(object sender, EventArgs e) {
+			toggleMomentarySwitch(true, SWITCH_MOM_CONS_STOP_PL1_INDEX);
+        }
+    }
 }

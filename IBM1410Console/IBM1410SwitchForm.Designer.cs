@@ -223,6 +223,7 @@ namespace IBM1410Console
             this.diskWrInhibitCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.diskWrInhibitCheckBox.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.diskWrInhibitCheckBox.UseVisualStyleBackColor = true;
+            this.diskWrInhibitCheckBox.CheckedChanged += new System.EventHandler(this.diskWrInhibitCheckBox_CheckedChanged);
             // 
             // densityCH1Label
             // 
@@ -240,12 +241,12 @@ namespace IBM1410Console
             this.densityCh1ComboBox.FormattingEnabled = true;
             this.densityCh1ComboBox.Items.AddRange(new object[] {
             "200/556",
-            "200/800",
             "556/800"});
             this.densityCh1ComboBox.Location = new System.Drawing.Point(170, 173);
             this.densityCh1ComboBox.Name = "densityCh1ComboBox";
             this.densityCh1ComboBox.Size = new System.Drawing.Size(80, 23);
             this.densityCh1ComboBox.TabIndex = 9;
+            this.densityCh1ComboBox.SelectedIndexChanged += new System.EventHandler(this.densityCh1ComboBox_SelectedIndexChanged);
             // 
             // densityCh2Label
             // 
@@ -263,12 +264,12 @@ namespace IBM1410Console
             this.densityCh2ComboBox.FormattingEnabled = true;
             this.densityCh2ComboBox.Items.AddRange(new object[] {
             "200/556",
-            "200/800",
             "556/800"});
             this.densityCh2ComboBox.Location = new System.Drawing.Point(170, 227);
             this.densityCh2ComboBox.Name = "densityCh2ComboBox";
             this.densityCh2ComboBox.Size = new System.Drawing.Size(80, 23);
             this.densityCh2ComboBox.TabIndex = 11;
+            this.densityCh2ComboBox.SelectedIndexChanged += new System.EventHandler(this.densityCh2ComboBox_SelectedIndexChanged);
             // 
             // startPrintOutButton
             // 
@@ -277,6 +278,7 @@ namespace IBM1410Console
             this.startPrintOutButton.Size = new System.Drawing.Size(21, 21);
             this.startPrintOutButton.TabIndex = 13;
             this.startPrintOutButton.UseVisualStyleBackColor = true;
+            this.startPrintOutButton.Click += new System.EventHandler(this.startPrintOutButton_Click);
             // 
             // startPrintOutLabel
             // 
@@ -296,6 +298,7 @@ namespace IBM1410Console
             this.compat1401CheckBox.TabIndex = 15;
             this.compat1401CheckBox.Text = "1401 Compatibility";
             this.compat1401CheckBox.UseVisualStyleBackColor = true;
+            this.compat1401CheckBox.CheckedChanged += new System.EventHandler(this.compat1401CheckBox_CheckedChanged);
             // 
             // IOCheckReset1401Button
             // 
@@ -304,6 +307,7 @@ namespace IBM1410Console
             this.IOCheckReset1401Button.Size = new System.Drawing.Size(21, 21);
             this.IOCheckReset1401Button.TabIndex = 16;
             this.IOCheckReset1401Button.UseVisualStyleBackColor = true;
+            this.IOCheckReset1401Button.Click += new System.EventHandler(this.IOCheckReset1401Button_Click);
             // 
             // IOCheckReset1401Label
             // 
@@ -323,6 +327,7 @@ namespace IBM1410Console
             this.IOCheckStop1401CheckBox.TabIndex = 18;
             this.IOCheckStop1401CheckBox.Text = "I/O Check Stop";
             this.IOCheckStop1401CheckBox.UseVisualStyleBackColor = true;
+            this.IOCheckStop1401CheckBox.CheckedChanged += new System.EventHandler(this.IOCheckStop1401CheckBox_CheckedChanged);
             // 
             // checkTest1Button
             // 
@@ -332,6 +337,7 @@ namespace IBM1410Console
             this.checkTest1Button.TabIndex = 19;
             this.checkTest1Button.Text = "1";
             this.checkTest1Button.UseVisualStyleBackColor = true;
+            this.checkTest1Button.Click += new System.EventHandler(this.checkTest1Button_Click);
             // 
             // checkTest2Button
             // 
@@ -341,6 +347,7 @@ namespace IBM1410Console
             this.checkTest2Button.TabIndex = 20;
             this.checkTest2Button.Text = "2";
             this.checkTest2Button.UseVisualStyleBackColor = true;
+            this.checkTest2Button.Click += new System.EventHandler(this.checkTest2Button_Click);
             // 
             // checkTest3Button
             // 
@@ -350,6 +357,7 @@ namespace IBM1410Console
             this.checkTest3Button.TabIndex = 21;
             this.checkTest3Button.Text = "3";
             this.checkTest3Button.UseVisualStyleBackColor = true;
+            this.checkTest3Button.Click += new System.EventHandler(this.checkTest3Button_Click);
             // 
             // checkTestLabel
             // 
@@ -371,6 +379,7 @@ namespace IBM1410Console
             this.asteriskInsertCheckBox.TabIndex = 23;
             this.asteriskInsertCheckBox.Text = "ASTERISK INSERT";
             this.asteriskInsertCheckBox.UseVisualStyleBackColor = true;
+            this.asteriskInsertCheckBox.CheckedChanged += new System.EventHandler(this.asteriskInsertCheckBox_CheckedChanged);
             // 
             // inhibitPrintOutCheckBox
             // 
@@ -382,6 +391,7 @@ namespace IBM1410Console
             this.inhibitPrintOutCheckBox.Text = "INHIBIT PRINT OUT CONTROL";
             this.inhibitPrintOutCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.inhibitPrintOutCheckBox.UseVisualStyleBackColor = true;
+            this.inhibitPrintOutCheckBox.CheckedChanged += new System.EventHandler(this.inhibitPrintOutCheckBox_CheckedChanged);
             // 
             // senseACheckBox
             // 
@@ -392,6 +402,7 @@ namespace IBM1410Console
             this.senseACheckBox.TabIndex = 25;
             this.senseACheckBox.Text = "A         C";
             this.senseACheckBox.UseVisualStyleBackColor = true;
+            this.senseACheckBox.CheckedChanged += new System.EventHandler(this.senseACheckBox_CheckedChanged);
             // 
             // senseBCheckBox
             // 
@@ -402,6 +413,7 @@ namespace IBM1410Console
             this.senseBCheckBox.TabIndex = 26;
             this.senseBCheckBox.Text = "B          B";
             this.senseBCheckBox.UseVisualStyleBackColor = true;
+            this.senseBCheckBox.CheckedChanged += new System.EventHandler(this.senseBCheckBox_CheckedChanged);
             // 
             // senseCCheckBox
             // 
@@ -412,6 +424,7 @@ namespace IBM1410Console
             this.senseCCheckBox.TabIndex = 27;
             this.senseCCheckBox.Text = "C          A";
             this.senseCCheckBox.UseVisualStyleBackColor = true;
+            this.senseCCheckBox.CheckedChanged += new System.EventHandler(this.senseCCheckBox_CheckedChanged);
             // 
             // senseDCheckBox
             // 
@@ -422,6 +435,7 @@ namespace IBM1410Console
             this.senseDCheckBox.TabIndex = 28;
             this.senseDCheckBox.Text = "D          8";
             this.senseDCheckBox.UseVisualStyleBackColor = true;
+            this.senseDCheckBox.CheckedChanged += new System.EventHandler(this.senseDCheckBox_CheckedChanged);
             // 
             // senseECheckBox
             // 
@@ -432,6 +446,7 @@ namespace IBM1410Console
             this.senseECheckBox.TabIndex = 29;
             this.senseECheckBox.Text = "E           4";
             this.senseECheckBox.UseVisualStyleBackColor = true;
+            this.senseECheckBox.CheckedChanged += new System.EventHandler(this.senseECheckBox_CheckedChanged);
             // 
             // senseFCheckBox
             // 
@@ -442,6 +457,7 @@ namespace IBM1410Console
             this.senseFCheckBox.TabIndex = 30;
             this.senseFCheckBox.Text = "F           2";
             this.senseFCheckBox.UseVisualStyleBackColor = true;
+            this.senseFCheckBox.CheckedChanged += new System.EventHandler(this.senseFCheckBox_CheckedChanged);
             // 
             // senseGCheckBox
             // 
@@ -452,6 +468,7 @@ namespace IBM1410Console
             this.senseGCheckBox.TabIndex = 31;
             this.senseGCheckBox.Text = "G          1";
             this.senseGCheckBox.UseVisualStyleBackColor = true;
+            this.senseGCheckBox.CheckedChanged += new System.EventHandler(this.senseGCheckBox_CheckedChanged);
             // 
             // senseWMCheckBox
             // 
@@ -462,6 +479,7 @@ namespace IBM1410Console
             this.senseWMCheckBox.TabIndex = 32;
             this.senseWMCheckBox.Text = "           WM";
             this.senseWMCheckBox.UseVisualStyleBackColor = true;
+            this.senseWMCheckBox.CheckedChanged += new System.EventHandler(this.senseWMCheckBox_CheckedChanged);
             // 
             // senseBitLabel
             // 
@@ -555,6 +573,7 @@ namespace IBM1410Console
             this.programResetButton.TabIndex = 45;
             this.programResetButton.Text = "PROGRAM RESET";
             this.programResetButton.UseVisualStyleBackColor = true;
+            this.programResetButton.Click += new System.EventHandler(this.programResetButton_Click);
             // 
             // stopButton
             // 
@@ -566,6 +585,7 @@ namespace IBM1410Console
             this.stopButton.TabIndex = 44;
             this.stopButton.Text = "STOP";
             this.stopButton.UseVisualStyleBackColor = false;
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
             // modeLabel
             // 

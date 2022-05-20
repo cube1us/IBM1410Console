@@ -30,22 +30,35 @@ namespace IBM1410Console
         private void InitializeComponent()
         {
             this.ConsoleOutput = new System.Windows.Forms.RichTextBox();
+            this.keyboardLockLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ConsoleOutput
             // 
             this.ConsoleOutput.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ConsoleOutput.Location = new System.Drawing.Point(12, 224);
+            this.ConsoleOutput.Location = new System.Drawing.Point(12, 12);
             this.ConsoleOutput.Name = "ConsoleOutput";
-            this.ConsoleOutput.Size = new System.Drawing.Size(607, 214);
+            this.ConsoleOutput.Size = new System.Drawing.Size(607, 389);
             this.ConsoleOutput.TabIndex = 0;
             this.ConsoleOutput.Text = "";
+            // 
+            // keyboardLockLabel
+            // 
+            this.keyboardLockLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.keyboardLockLabel.ForeColor = System.Drawing.Color.Crimson;
+            this.keyboardLockLabel.Location = new System.Drawing.Point(34, 414);
+            this.keyboardLockLabel.Name = "keyboardLockLabel";
+            this.keyboardLockLabel.Size = new System.Drawing.Size(102, 24);
+            this.keyboardLockLabel.TabIndex = 1;
+            this.keyboardLockLabel.Text = "LOCKED";
+            this.keyboardLockLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // IBM1415ConsoleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.keyboardLockLabel);
             this.Controls.Add(this.ConsoleOutput);
             this.Name = "IBM1415ConsoleForm";
             this.Text = "IBM1415ConsoleForm";
@@ -57,5 +70,6 @@ namespace IBM1410Console
         #endregion
 
         private System.Windows.Forms.RichTextBox ConsoleOutput;
+        private System.Windows.Forms.Label keyboardLockLabel;
     }
 }

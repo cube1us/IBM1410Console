@@ -24,7 +24,7 @@ namespace IBM1410Console
         Font consoleFont = new Font("IBM1415", 12.0f, FontStyle.Regular);  // IBM 1410 1415
         Font consoleUnderlineFont = new Font("IBM1415", 12.0f, FontStyle.Underline);  // Underline (bad parity)
 
-        public IBM1415ConsoleForm(SerialDataPublisher consoleOutputPublisher)
+        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher)
         {
             InitializeComponent();
             this.CreateHandle();    // This ensures controls are created before posting data from FPGA!
@@ -42,8 +42,35 @@ namespace IBM1410Console
             //                ConsoleOutput.Text = ConsoleOutput.Text + ff.Name;
             //            }
 
-            consoleOutputPublisher.SerialOutputEvent += new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
+            serialPublisher.SerialOutputEvent += new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
+            serialPublisher.ConsoleLockOutputEvent += new EventHandler<ConsoleLockDataEventArgs>(consoleLockDataAvailable);
             Debug.WriteLine("Event Handler for SerialDataPublisher Registered.");
+        }
+
+        void consoleLockDataAvailable(object sender, ConsoleLockDataEventArgs e) {
+
+            const int consoleLockCodeByte = 0x82;
+
+            if (e.DispatchCode != consoleLockCodeByte) {
+                return;
+            }
+
+            Debug.WriteLine("Data received by 1415 Console Keyboard Lock: " + e.SerialByte.ToString("X2"));
+
+            if((e.SerialByte & 0x01) != 0) {
+                Action safeLockChange = delegate {
+                    keyboardLockLabel.ForeColor = Color.ForestGreen;
+                    keyboardLockLabel.Text = "UNLOCKED";
+                };
+                ConsoleOutput.Invoke(safeLockChange);
+            }
+            else {
+                Action safeLockChange = delegate {
+                    keyboardLockLabel.ForeColor = Color.Crimson;
+                    keyboardLockLabel.Text = "LOCKED";
+                };
+                ConsoleOutput.Invoke(safeLockChange);
+            }
         }
 
         void consoleOutputAvailable(object sender, SerialDataEventArgs e) {
@@ -56,7 +83,7 @@ namespace IBM1410Console
             }
 
             string s = Char.ToString((char)e.SerialByte);
-            Debug.WriteLine("Data received by 1415 form: " + e.SerialByte.ToString("X2") + " /" + s + "/");
+            Debug.WriteLine("Data received by 1415 Console Data: " + e.SerialByte.ToString("X2") + " /" + s + "/");
 
 
             switch (printerState) {
@@ -126,11 +153,19 @@ namespace IBM1410Console
         void doAppend(string s) { 
             if (ConsoleOutput.InvokeRequired) {
                 Debug.WriteLine("Console Output event: Delegating append of text.");
-                Action safeAppend = delegate { ConsoleOutput.AppendText(s); };
+                Action safeAppend = delegate { 
+                    ConsoleOutput.AppendText(s); 
+                    if(s.Contains("\r")) {
+                        ConsoleOutput.ScrollToCaret();
+                    }
+                };
                 ConsoleOutput.Invoke(safeAppend);
             }
             else {
                 ConsoleOutput.AppendText(s);
+                if (s.Contains("\r")) {
+                    ConsoleOutput.ScrollToCaret();
+                }
                 Debug.WriteLine("Console Output Event: Writing text directly.");
             }
         }
@@ -141,5 +176,6 @@ namespace IBM1410Console
                 Hide();
             }
         }
+
     }
 }

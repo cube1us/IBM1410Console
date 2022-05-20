@@ -35,6 +35,21 @@ namespace IBM1410Console
 
     }
 
+    // And for a change in console lock status
+
+    public class ConsoleLockDataEventArgs : EventArgs
+    {
+
+        public int DispatchCode { get; set; }
+        public int SerialByte { get; set; }
+        public ConsoleLockDataEventArgs(int dispatchCode, int serialByte) {
+            SerialByte = serialByte;
+            DispatchCode = dispatchCode;
+        }
+
+    }
+
+
     public class SerialDataPublisher
     {
 
@@ -42,11 +57,13 @@ namespace IBM1410Console
 
         public event EventHandler<SerialDataEventArgs> SerialOutputEvent;
         public event EventHandler<SerialLightDataEventArgs> SerialLightOutputEvent;
+        public event EventHandler<ConsoleLockDataEventArgs> ConsoleLockOutputEvent;
 
         //  Last received serial ID code byte
 
         private int lastCodeByte = 0x00;
         private const int lightCodeByte = 0x81;
+        private const int lockCodeByte = 0x82;
 
         public SerialDataPublisher(SerialPort serialPort) {
             serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
@@ -65,7 +82,7 @@ namespace IBM1410Console
 
             for(int i = 0; i < numBytes; ++i) {
                 readByte = sp.ReadByte();
-                Debug.WriteLine("Read byte " + readByte.ToString("X2"));
+                // Debug.WriteLine("Read byte " + readByte.ToString("X2"));
 
                 if (readByte >= 0x80) {
                     lastCodeByte = readByte;
@@ -73,6 +90,10 @@ namespace IBM1410Console
                 else if(lastCodeByte == lightCodeByte ) {
                     SerialLightDataEventArgs serialLightDataEventArgs = new SerialLightDataEventArgs(lastCodeByte, readByte);
                     OnRaiseSerialLightOutputEvent(serialLightDataEventArgs);
+                }
+                else if(lastCodeByte == lockCodeByte) {
+                    ConsoleLockDataEventArgs consoleLockDataEventArgs = new ConsoleLockDataEventArgs(lastCodeByte, readByte);
+                    OnRaiseConsoleLockOutputEvent(consoleLockDataEventArgs);
                 }
                 else {
                     SerialDataEventArgs serialDataEventArgs = new SerialDataEventArgs(lastCodeByte, readByte);
@@ -90,7 +111,7 @@ namespace IBM1410Console
 
         protected void OnRaiseSerialOutputEvent(SerialDataEventArgs e) {
             EventHandler<SerialDataEventArgs> raiseEvent = SerialOutputEvent;
-            Debug.WriteLine("Signaling event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
+            // Debug.WriteLine("Signaling event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
@@ -98,11 +119,20 @@ namespace IBM1410Console
 
         protected void OnRaiseSerialLightOutputEvent(SerialLightDataEventArgs e) {
             EventHandler<SerialLightDataEventArgs> raiseEvent = SerialLightOutputEvent;
-            Debug.WriteLine("Signaling light event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
+            // Debug.WriteLine("Signaling light event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
         }
+
+        protected void OnRaiseConsoleLockOutputEvent(ConsoleLockDataEventArgs e) {
+            EventHandler<ConsoleLockDataEventArgs> raiseEvent = ConsoleLockOutputEvent;
+            Debug.WriteLine("Signaling console lock event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
+            if (raiseEvent != null) {
+                raiseEvent(this, e);
+            }
+        }
+
 
     }
 }

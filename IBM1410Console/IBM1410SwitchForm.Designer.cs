@@ -331,32 +331,35 @@ namespace IBM1410Console
             // 
             // checkTest1Button
             // 
+            this.checkTest1Button.BackColor = System.Drawing.Color.LightGray;
             this.checkTest1Button.Location = new System.Drawing.Point(357, 213);
             this.checkTest1Button.Name = "checkTest1Button";
             this.checkTest1Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest1Button.TabIndex = 19;
             this.checkTest1Button.Text = "1";
-            this.checkTest1Button.UseVisualStyleBackColor = true;
+            this.checkTest1Button.UseVisualStyleBackColor = false;
             this.checkTest1Button.Click += new System.EventHandler(this.checkTest1Button_Click);
             // 
             // checkTest2Button
             // 
+            this.checkTest2Button.BackColor = System.Drawing.Color.LightGray;
             this.checkTest2Button.Location = new System.Drawing.Point(357, 244);
             this.checkTest2Button.Name = "checkTest2Button";
             this.checkTest2Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest2Button.TabIndex = 20;
             this.checkTest2Button.Text = "2";
-            this.checkTest2Button.UseVisualStyleBackColor = true;
+            this.checkTest2Button.UseVisualStyleBackColor = false;
             this.checkTest2Button.Click += new System.EventHandler(this.checkTest2Button_Click);
             // 
             // checkTest3Button
             // 
+            this.checkTest3Button.BackColor = System.Drawing.Color.LightGray;
             this.checkTest3Button.Location = new System.Drawing.Point(357, 275);
             this.checkTest3Button.Name = "checkTest3Button";
             this.checkTest3Button.Size = new System.Drawing.Size(21, 21);
             this.checkTest3Button.TabIndex = 21;
             this.checkTest3Button.Text = "3";
-            this.checkTest3Button.UseVisualStyleBackColor = true;
+            this.checkTest3Button.UseVisualStyleBackColor = false;
             this.checkTest3Button.Click += new System.EventHandler(this.checkTest3Button_Click);
             // 
             // checkTestLabel

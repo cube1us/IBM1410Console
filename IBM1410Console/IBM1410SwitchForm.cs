@@ -16,7 +16,7 @@ namespace IBM1410Console
     {
 
         public const int switchVectorBits = 280;
-		public const int SLEEPTIME = 50;
+		public const int SLEEPTIME = 7;
 
 		public const int SWITCH_ALT_PRIORITY_PL1_INDEX = 275;   // 19.10.01.1
 		public const int SWITCH_ALT_PRIORITY_PL2_INDEX = 274;   // 19.10.01.1
@@ -371,7 +371,7 @@ namespace IBM1410Console
 
 			//	For ease of use, treat like an alternating switch...
 
-			checkTest3Button.BackColor = !switchVector[SWITCH_MOM_3RD_TST_SW_PL1_INDEX] ? Color.Red : Color.DarkGray;
+			checkTest3Button.BackColor = !switchVector[SWITCH_MOM_3RD_TST_SW_PL1_INDEX] ? Color.Red : Color.LightGray;
 			toggleAltSwitch(SWITCH_MOM_3RD_TST_SW_PL1_INDEX);
 		}
 
@@ -381,7 +381,7 @@ namespace IBM1410Console
 
         private void inhibitPrintOutCheckBox_CheckedChanged(object sender, EventArgs e) {
 			switchVector[SWITCH_TOG_INHIBIT_PO_PL2_INDEX + 1] = inhibitPrintOutCheckBox.Checked;  // Two simultaneous changes
-			setToggleSwitch(SWITCH_TOG_WR_INHIBIT_PL1_INDEX, inhibitPrintOutCheckBox.Checked);
+			setToggleSwitch(SWITCH_TOG_INHIBIT_PO_PL1_INDEX, inhibitPrintOutCheckBox.Checked);
         }
 
 		//	Note that the 1410 switch names are by BIT NUMBER, not the 1401 ABCDEFGH

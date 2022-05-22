@@ -143,6 +143,12 @@ namespace IBM1410Console
 			switchVector[SWITCH_ROT_MODE_SW_DK_INDEX + 7] = true;       //	Mode RUN
 			switchVector[SWITCH_ROT_ADDR_ENTRY_DK1_INDEX + 5] = true;   //	Address Entry NORMAL
 
+            switchVector[SWITCH_ROT_SCAN_GATE_DK1_INDEX + 1] = true;    //	SCAN GATE OFF
+			switchVector[SWITCH_ROT_THOUS_SYNC_DK1_INDEX + 10] = true;  //	Address stop address at "0"	
+			switchVector[SWITCH_ROT_HUNDS_SYNC_DK1_INDEX + 10] = true;
+			switchVector[SWITCH_ROT_TENS_SYNC_DK1_INDEX + 10] = true;
+			switchVector[SWITCH_ROT_UNITS_SYNC_DK1_INDEX + 10] = true;
+
 			initalizing = false;
         }
 

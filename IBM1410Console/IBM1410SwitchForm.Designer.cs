@@ -684,6 +684,7 @@ namespace IBM1410Console
             // 
             // emergencyOffPanel
             // 
+            this.emergencyOffPanel.BackColor = System.Drawing.Color.WhiteSmoke;
             this.emergencyOffPanel.Controls.Add(this.emergencyOffLabel);
             this.emergencyOffPanel.Controls.Add(this.emergencyOffButton);
             this.emergencyOffPanel.Location = new System.Drawing.Point(552, 15);
@@ -769,6 +770,7 @@ namespace IBM1410Console
             this.unitsNumericUpDown.Name = "unitsNumericUpDown";
             this.unitsNumericUpDown.Size = new System.Drawing.Size(63, 23);
             this.unitsNumericUpDown.TabIndex = 14;
+            this.unitsNumericUpDown.ValueChanged += new System.EventHandler(this.unitsNumericUpDown_ValueChanged);
             // 
             // tensLabel
             // 
@@ -791,6 +793,7 @@ namespace IBM1410Console
             this.tensNumericUpDown.Name = "tensNumericUpDown";
             this.tensNumericUpDown.Size = new System.Drawing.Size(63, 23);
             this.tensNumericUpDown.TabIndex = 12;
+            this.tensNumericUpDown.ValueChanged += new System.EventHandler(this.tensNumericUpDown_ValueChanged);
             // 
             // hundredsLabel
             // 
@@ -813,6 +816,7 @@ namespace IBM1410Console
             this.hundredsNumericUpDown.Name = "hundredsNumericUpDown";
             this.hundredsNumericUpDown.Size = new System.Drawing.Size(63, 23);
             this.hundredsNumericUpDown.TabIndex = 10;
+            this.hundredsNumericUpDown.ValueChanged += new System.EventHandler(this.hundredsNumericUpDown_ValueChanged);
             // 
             // thousandsLabel
             // 
@@ -835,6 +839,7 @@ namespace IBM1410Console
             this.thousandsNumericUpDown.Name = "thousandsNumericUpDown";
             this.thousandsNumericUpDown.Size = new System.Drawing.Size(63, 23);
             this.thousandsNumericUpDown.TabIndex = 8;
+            this.thousandsNumericUpDown.ValueChanged += new System.EventHandler(this.thousandsNumericUpDown_ValueChanged);
             // 
             // scanGateLabel
             // 
@@ -861,6 +866,7 @@ namespace IBM1410Console
             this.scanGateComboBox.Name = "scanGateComboBox";
             this.scanGateComboBox.Size = new System.Drawing.Size(68, 23);
             this.scanGateComboBox.TabIndex = 6;
+            this.scanGateComboBox.SelectedIndexChanged += new System.EventHandler(this.scanGateComboBox_SelectedIndexChanged);
             // 
             // addrTransferLabel
             // 
@@ -880,6 +886,7 @@ namespace IBM1410Console
             this.addrTransferButton.Size = new System.Drawing.Size(27, 23);
             this.addrTransferButton.TabIndex = 4;
             this.addrTransferButton.UseVisualStyleBackColor = true;
+            this.addrTransferButton.Click += new System.EventHandler(this.addrTransferButton_Click);
             // 
             // addrTransferComboBox
             // 
@@ -898,6 +905,7 @@ namespace IBM1410Console
             this.addrTransferComboBox.Name = "addrTransferComboBox";
             this.addrTransferComboBox.Size = new System.Drawing.Size(68, 23);
             this.addrTransferComboBox.TabIndex = 3;
+            this.addrTransferComboBox.SelectedIndexChanged += new System.EventHandler(this.addrTransferComboBox_SelectedIndexChanged);
             // 
             // BCharSelLabel
             // 
@@ -936,6 +944,7 @@ namespace IBM1410Console
             this.addrStopCheckBox.TabIndex = 0;
             this.addrStopCheckBox.Text = "ADDR STOP";
             this.addrStopCheckBox.UseVisualStyleBackColor = true;
+            this.addrStopCheckBox.CheckedChanged += new System.EventHandler(this.addrStopCheckBox_CheckedChanged);
             // 
             // priorityProcessingTab
             // 

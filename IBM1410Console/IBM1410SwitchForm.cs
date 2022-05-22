@@ -380,7 +380,7 @@ namespace IBM1410Console
         }
 
         private void inhibitPrintOutCheckBox_CheckedChanged(object sender, EventArgs e) {
-			switchVector[SWITCH_TOG_INHIBIT_PO_PL2_INDEX + 1] = inhibitPrintOutCheckBox.Checked;  // Two simultaneous changes
+			switchVector[SWITCH_TOG_INHIBIT_PO_PL2_INDEX] = inhibitPrintOutCheckBox.Checked;  // Two simultaneous changes
 			setToggleSwitch(SWITCH_TOG_INHIBIT_PO_PL1_INDEX, inhibitPrintOutCheckBox.Checked);
         }
 
@@ -425,5 +425,90 @@ namespace IBM1410Console
         private void stopButton_Click(object sender, EventArgs e) {
 			toggleMomentarySwitch(true, SWITCH_MOM_CONS_STOP_PL1_INDEX);
         }
+
+        private void addrStopCheckBox_CheckedChanged(object sender, EventArgs e) {
+			setToggleSwitch(SWITCH_TOG_ADDR_STOP_PL1_INDEX, addrStopCheckBox.Checked);
+        }
+
+        private void addrTransferComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+			bool[] addrSelSwitch = new bool[SWITCH_ROT_ADDR_SEL_DK1_LEN];
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			addrSelSwitch[addrTransferComboBox.SelectedIndex + 1] = true;  // This switch starts at 2nd position
+			setRotarySwitch(addrSelSwitch, SWITCH_ROT_ADDR_SEL_DK1_INDEX, SWITCH_ROT_ADDR_SEL_DK1_LEN);
+		}
+
+        private void addrTransferButton_Click(object sender, EventArgs e) {
+			toggleMomentarySwitch(true, SWITCH_MOM_ADDR_DISP_INDEX);
+		}
+
+        private void scanGateComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+			bool[] scanGateSwitch = new bool[SWITCH_ROT_SCAN_GATE_DK1_LEN];
+
+			// Ignore changes while initializing.
+
+			if (initalizing) {
+				return;
+			}
+
+			//	Note:  Page 14.18.17.1 says "NOTE: SCAN GATE SWTICH IS A CIRCUIT OPENING SWITCH
+			//  (so it is "upside down).  But I decided to handle that in the FPGA itself.
+
+			scanGateSwitch[scanGateComboBox.SelectedIndex + 1] = true;
+			setRotarySwitch(scanGateSwitch, SWITCH_ROT_SCAN_GATE_DK1_INDEX, SWITCH_ROT_SCAN_GATE_DK1_LEN);
+		}
+
+        private void thousandsNumericUpDown_ValueChanged(object sender, EventArgs e) {
+			bool[] numericSwitch = new bool[SWITCH_ROT_THOUS_SYNC_DK1_LEN];
+
+			if(thousandsNumericUpDown.Value == 0) {
+				numericSwitch[10] = true;
+            }
+			else {
+				numericSwitch[(int)thousandsNumericUpDown.Value + 1] = true;
+            }
+			setRotarySwitch(numericSwitch, SWITCH_ROT_THOUS_SYNC_DK1_INDEX, SWITCH_ROT_THOUS_SYNC_DK1_LEN);
+		}
+
+        private void hundredsNumericUpDown_ValueChanged(object sender, EventArgs e) {
+			bool[] numericSwitch = new bool[SWITCH_ROT_HUNDS_SYNC_DK1_LEN];
+
+			if (hundredsNumericUpDown.Value == 0) {
+				numericSwitch[10] = true;
+			}
+			else {
+				numericSwitch[(int)hundredsNumericUpDown.Value + 1] = true;
+			}
+			setRotarySwitch(numericSwitch, SWITCH_ROT_HUNDS_SYNC_DK1_INDEX, SWITCH_ROT_HUNDS_SYNC_DK1_LEN);
+		}
+
+        private void tensNumericUpDown_ValueChanged(object sender, EventArgs e) {
+			bool[] numericSwitch = new bool[SWITCH_ROT_TENS_SYNC_DK1_LEN];
+
+			if (tensNumericUpDown.Value == 0) {
+				numericSwitch[10] = true;
+			}
+			else {
+				numericSwitch[(int)tensNumericUpDown.Value + 1] = true;
+			}
+			setRotarySwitch(numericSwitch, SWITCH_ROT_TENS_SYNC_DK1_INDEX, SWITCH_ROT_TENS_SYNC_DK1_LEN);
+		}
+
+        private void unitsNumericUpDown_ValueChanged(object sender, EventArgs e) {
+			bool[] numericSwitch = new bool[SWITCH_ROT_UNITS_SYNC_DK1_LEN];
+
+			if (unitsNumericUpDown.Value == 0) {
+				numericSwitch[10] = true;
+			}
+			else {
+				numericSwitch[(int)unitsNumericUpDown.Value + 1] = true;
+			}
+			setRotarySwitch(numericSwitch, SWITCH_ROT_UNITS_SYNC_DK1_INDEX, SWITCH_ROT_UNITS_SYNC_DK1_LEN);
+		}
     }
 }

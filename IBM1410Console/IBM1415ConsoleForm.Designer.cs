@@ -41,6 +41,7 @@ namespace IBM1410Console
             this.ConsoleOutput.Size = new System.Drawing.Size(607, 389);
             this.ConsoleOutput.TabIndex = 0;
             this.ConsoleOutput.Text = "";
+            this.ConsoleOutput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ConsoleOutput_KeyPress);
             // 
             // keyboardLockLabel
             // 

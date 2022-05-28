@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO.Ports;
 using System.Diagnostics;
 
 namespace IBM1410Console
@@ -21,10 +22,13 @@ namespace IBM1410Console
         const int WM = 0x76;
         const int UNDERSCORE = 0x5f;
 
+        protected byte[] consoleInputFlagByte = new byte[] { 0x81 };
+        SerialPort serialPort = null;
+
         Font consoleFont = new Font("IBM1415", 12.0f, FontStyle.Regular);  // IBM 1410 1415
         Font consoleUnderlineFont = new Font("IBM1415", 12.0f, FontStyle.Underline);  // Underline (bad parity)
 
-        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher)
+        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher, SerialPort serialPort)
         {
             InitializeComponent();
             this.CreateHandle();    // This ensures controls are created before posting data from FPGA!
@@ -41,6 +45,8 @@ namespace IBM1410Console
             //               ConsoleOutput.Text = ConsoleOutput.Text + Environment.NewLine;
             //                ConsoleOutput.Text = ConsoleOutput.Text + ff.Name;
             //            }
+
+            this.serialPort = serialPort;
 
             serialPublisher.SerialOutputEvent += new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
             serialPublisher.ConsoleLockOutputEvent += new EventHandler<ConsoleLockDataEventArgs>(consoleLockDataAvailable);
@@ -177,5 +183,22 @@ namespace IBM1410Console
             }
         }
 
+        private void ConsoleOutput_KeyPress(object sender, KeyPressEventArgs e) {
+            Debug.WriteLine("Console input character /" + e.KeyChar + "/");
+
+            // TODO:  Handle upper vs. lower case
+
+            //	First, we send the special flag byte...
+
+            serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
+
+            //  Then the actual character -- in BCD -- for testing, just sending a zero for now
+
+            byte[] testByte = new byte[] { 0x0a };  // BCD '0'
+
+            serialPort.Write(testByte, 0, testByte.Length);
+
+            e.Handled = true;
+        }
     }
 }

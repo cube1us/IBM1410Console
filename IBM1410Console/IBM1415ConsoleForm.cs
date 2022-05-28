@@ -125,6 +125,7 @@ namespace IBM1410Console
                     break;
                 case state.backspace:
                     if(c == UNDERSCORE) {
+                        Debug.WriteLine("received underline character...");
                         doUnderline();
                     }
                     else {
@@ -144,6 +145,8 @@ namespace IBM1410Console
                     ConsoleOutput.SelectionLength = 1;
                     ConsoleOutput.SelectionFont = consoleUnderlineFont;
                     ConsoleOutput.SelectionLength = 0;
+                    ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
+                    ConsoleOutput.SelectionFont = consoleFont;
                 };
                 ConsoleOutput.Invoke(safeUnderline);
             }
@@ -152,6 +155,8 @@ namespace IBM1410Console
                 ConsoleOutput.SelectionLength = 1;
                 ConsoleOutput.SelectionFont = consoleUnderlineFont;
                 ConsoleOutput.SelectionLength = 0;
+                ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
+                ConsoleOutput.SelectionFont = consoleFont;
             }
         }
 

@@ -190,6 +190,7 @@ namespace IBM1410Console
 
         private void ConsoleOutput_KeyPress(object sender, KeyPressEventArgs e) {
             Debug.WriteLine("Console input character /" + e.KeyChar + "/");
+            byte[] consoleByte = new byte[1];
 
             // TODO:  Handle upper vs. lower case
 
@@ -197,11 +198,12 @@ namespace IBM1410Console
 
             serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
 
-            //  Then the actual character -- in BCD -- for testing, just sending a zero for now
+            //  Eventually, check for word mark and other special keys, but for now, just send it.
 
-            byte[] testByte = new byte[] { 0x0a };  // BCD '0'
+            //  Need to check for shifted character and send shift sequence here.
 
-            serialPort.Write(testByte, 0, testByte.Length);
+            consoleByte[0] = IBM1410BCD.ASCIItoBCD(e.KeyChar);
+            serialPort.Write(consoleByte, 0, 1);
 
             e.Handled = true;
         }

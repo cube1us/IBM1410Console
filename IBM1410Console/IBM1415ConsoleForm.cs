@@ -22,6 +22,18 @@ namespace IBM1410Console
         const int WM = 0x76;
         const int UNDERSCORE = 0x5f;
 
+        public const int SLEEPTIME = 100;
+
+        const int consoleControlUpperCase = 0x01;
+        const int consoleInquiryRequest = 0x02;
+        const int consoleInquiryRelease = 0x04;
+        const int consoleInquiryCancel = 0x08;
+        const int consoleControlSpace = 0x10;
+        const int consoleControlWM = 0x20;
+        const int consoleControlFlag = 0x40;
+        const int consoleControlIndex = 0x7f;
+        const int consoleInputFlag = 0x81;
+
         protected byte[] consoleInputFlagByte = new byte[] { 0x81 };
         SerialPort serialPort = null;
 
@@ -67,6 +79,7 @@ namespace IBM1410Console
                 Action safeLockChange = delegate {
                     keyboardLockLabel.ForeColor = Color.ForestGreen;
                     keyboardLockLabel.Text = "UNLOCKED";
+                    ConsoleOutput.ScrollToCaret();
                 };
                 ConsoleOutput.Invoke(safeLockChange);
             }
@@ -191,19 +204,60 @@ namespace IBM1410Console
         private void ConsoleOutput_KeyPress(object sender, KeyPressEventArgs e) {
             Debug.WriteLine("Console input character /" + e.KeyChar + "/");
             byte[] consoleByte = new byte[1];
+            byte[] consoleControlByte = new byte[1];
+            byte inputBCDCharacter;
 
-            // TODO:  Handle upper vs. lower case
+            //  If the keyboard is locked, ignore the input
 
-            //	First, we send the special flag byte...
-
-            serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
+            if (!keyboardLockLabel.Text.Contains("UNLOCKED")) {
+                Debug.WriteLine("Keyboard locked - input ignored.");
+                e.Handled = true;
+                return;
+            }
 
             //  Eventually, check for word mark and other special keys, but for now, just send it.
 
-            //  Need to check for shifted character and send shift sequence here.
+            inputBCDCharacter = IBM1410BCD.ASCIItoBCD(e.KeyChar);
+            consoleByte[0] = inputBCDCharacter;
 
-            consoleByte[0] = IBM1410BCD.ASCIItoBCD(e.KeyChar);
+            //  Ignore illegal input characters.
+
+            if (inputBCDCharacter == 0xff) {
+                Debug.WriteLine("Unknown input character ignored...");
+                e.Handled = true;
+                return;
+            }
+
+            //  Send the flag byte telling 1410 we are doing console input
+
+            serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
+
+            //  Because we don't know what case the console typewriter is currently in,
+            //  send a shift control byte to be sure.
+
+            if (IBM1410BCD.BCDShifted(inputBCDCharacter)) {
+                consoleControlByte[0] = consoleControlFlag | consoleControlUpperCase;
+                Debug.WriteLine("Shifting to Upper case");
+            }
+            else {
+                consoleControlByte[0] = consoleControlFlag;  // Lower case
+                Debug.WriteLine("Shifting to Lower case");
+            }
+
+            serialPort.Write(consoleControlByte, 0, 1);
+            System.Threading.Thread.Sleep(SLEEPTIME);  // Give shift time
+
+            Debug.WriteLine("Console Input Sending BCD character");
             serialPort.Write(consoleByte, 0, 1);
+
+            //  Then, if we shifted to UC, shift back (as normally the operator would 
+            //  take his finger of the shift key...
+
+            // if (IBM1410BCD.BCDShifted(inputBCDCharacter)) {
+            //    consoleControlByte[0] = consoleControlFlag;
+            //    Debug.WriteLine("Shifting to lower case after upper case character");
+            //    serialPort.Write(consoleControlByte, 0, 1);
+            // }
 
             e.Handled = true;
         }

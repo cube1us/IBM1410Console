@@ -35,6 +35,9 @@ namespace IBM1410Console
             // 
             // ConsoleOutput
             // 
+            this.ConsoleOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ConsoleOutput.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ConsoleOutput.Location = new System.Drawing.Point(12, 12);
             this.ConsoleOutput.Name = "ConsoleOutput";

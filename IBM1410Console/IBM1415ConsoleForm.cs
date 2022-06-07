@@ -206,6 +206,7 @@ namespace IBM1410Console
             byte[] consoleByte = new byte[1];
             byte[] consoleControlByte = new byte[1];
             byte inputBCDCharacter;
+            bool controlKey = false;
 
             //  If the keyboard is locked, ignore the input
 
@@ -232,10 +233,17 @@ namespace IBM1410Console
 
             serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
 
-            //  Because we don't know what case the console typewriter is currently in,
-            //  send a shift control byte to be sure.
+            //  For special keys, send their control code 
 
-            if (IBM1410BCD.BCDShifted(inputBCDCharacter)) {
+            //  Otherwise, because we don't know what case the console typewriter is
+            //  currently in, send a shift control byte to be sure.
+
+            if (e.KeyChar == 0x17 || e.KeyChar == WM) {
+                Debug.WriteLine("Word Mark...");
+                consoleControlByte[0] = consoleControlFlag | consoleControlWM;
+                controlKey = true;
+            }
+            else if (IBM1410BCD.BCDShifted(inputBCDCharacter)) {
                 consoleControlByte[0] = consoleControlFlag | consoleControlUpperCase;
                 Debug.WriteLine("Shifting to Upper case");
             }
@@ -245,10 +253,22 @@ namespace IBM1410Console
             }
 
             serialPort.Write(consoleControlByte, 0, 1);
-            System.Threading.Thread.Sleep(SLEEPTIME);  // Give shift time
 
-            Debug.WriteLine("Console Input Sending BCD character");
-            serialPort.Write(consoleByte, 0, 1);
+            //  Give time for the shift or control character to register
+
+            System.Threading.Thread.Sleep(SLEEPTIME);
+
+            //  If this was a control key, now turn the control bits off now.
+            //  Otherwise, send the actual character.
+
+            if (controlKey) {
+                consoleControlByte[0] = consoleControlFlag;
+                serialPort.Write(consoleControlByte, 0, 1);
+            }
+            else { 
+                Debug.WriteLine("Console Input Sending BCD character");
+                serialPort.Write(consoleByte, 0, 1);
+            }
 
             //  Then, if we shifted to UC, shift back (as normally the operator would 
             //  take his finger of the shift key...

@@ -147,7 +147,7 @@ namespace IBM1410Console
 			47,0xff,0xff,63,			/* 04 - detla, 05, 06 illegal, 07 group mark */
 			0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,	/* 010 - 017 illegal */
 			0xff,0xff,15,31,			/* 020, 021 illegal, ctrl-r radical, ctrl-s segment mark */
-			0xff,0xff,0xff,0xff,		/* 020 - 027 illegal (027 is also ctrl-w - word mark) */
+			0xff,0xff,0xff,0x00,		/* 024 - 026 illegal (027 is also ctrl-w - word mark) */
 			0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,	/* 030 - 037 illegal */
 
 			0,				/* 040 space */
@@ -281,9 +281,9 @@ namespace IBM1410Console
 			0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,	/* 0340-0347 illegal */
 			0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,	/* 0350-0357 illegal */
 			0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,	/* 0360-0367 illegal */
-			0xff,0xff,0xff,							/* 0370-0372 illegal */
+			0xff,0xff,0xff,								/* 0370-0372 illegal */
 			15,				/* 373 radical */
-			0xff,0xff,0xff,0xff};                     /* 0374-0377 illegal */
+			0xff,0xff,0xff,0xff};						/* 0374-0377 illegal */
 
 		//	The following table is ONLY for translating CONSOLE output using
 		//	its specials set of glyphs.  (Currently not being used, as that
@@ -360,7 +360,7 @@ namespace IBM1410Console
 		//	for the console when sending BC
 
 		static bool[] bcd_shifted = {
-			false,	/* 0           - space */
+			false,	/* 0           - space (also used for special keys like WM) */
 			false,	/* 1        1  - 1 */
 			false,	/* 2       2   - 2 */
 			false,	/* 3       21  - 3 */

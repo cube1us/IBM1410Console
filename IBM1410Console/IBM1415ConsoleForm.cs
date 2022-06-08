@@ -109,6 +109,10 @@ namespace IBM1410Console
                 case state.ordinary:
                     if (c == WM) {
                         printerState = state.wordmark;
+                        // Print a naked wordmark.  Later, back up and overwrite
+                        Debug.WriteLine("Printing WM character before backspace...");
+                        s = char.ToString((char) 0xFF);
+                        doAppend(s,false);
                     }
                     else if (c == BSP) {
                         printerState = state.backspace;
@@ -116,11 +120,11 @@ namespace IBM1410Console
                     else if (wmInProgress) {
                         c |= 0x80;
                         s = Char.ToString((char)c);
-                        doAppend(s);
+                        doAppend(s,true); // This should replace the "naked" WM 
                         wmInProgress = false;
                     }
                     else {
-                        doAppend(s);
+                        doAppend(s,false);
                     }
                     break;
                 case state.wordmark:
@@ -130,9 +134,9 @@ namespace IBM1410Console
                     }
                     else {
                         s = "<naked WM>";
-                        doAppend(s);
+                        doAppend(s,false);
                         s = Char.ToString((char)c);
-                        doAppend(s);
+                        doAppend(s,false);
                         printerState = state.ordinary;
                     }
                     break;
@@ -143,7 +147,7 @@ namespace IBM1410Console
                     }
                     else {
                         s = "<overprint?>" + s;
-                        doAppend(s);
+                        doAppend(s,false);
                     }
                     printerState = state.ordinary;
                     break;
@@ -174,10 +178,14 @@ namespace IBM1410Console
         }
 
 
-        void doAppend(string s) { 
+        void doAppend(string s, bool replace) { 
             if (ConsoleOutput.InvokeRequired) {
                 Debug.WriteLine("Console Output event: Delegating append of text.");
                 Action safeAppend = delegate { 
+                    if(replace) {
+                        ConsoleOutput.Text = ConsoleOutput.Text.Substring(0, ConsoleOutput.Text.Length - 1);
+                        ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
+                    }
                     ConsoleOutput.AppendText(s); 
                     if(s.Contains("\r")) {
                         ConsoleOutput.ScrollToCaret();
@@ -186,6 +194,10 @@ namespace IBM1410Console
                 ConsoleOutput.Invoke(safeAppend);
             }
             else {
+                if (replace) {
+                    ConsoleOutput.Text = ConsoleOutput.Text.Substring(0,ConsoleOutput.Text.Length - 1);
+                    ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
+                }
                 ConsoleOutput.AppendText(s);
                 if (s.Contains("\r")) {
                     ConsoleOutput.ScrollToCaret();
@@ -210,7 +222,7 @@ namespace IBM1410Console
 
             //  If the keyboard is locked, ignore the input
 
-            if (!keyboardLockLabel.Text.Contains("UNLOCKED")) {
+            if (e.KeyChar != (char)Keys.Back && !keyboardLockLabel.Text.Contains("UNLOCKED")) {
                 Debug.WriteLine("Keyboard locked - input ignored.");
                 e.Handled = true;
                 return;
@@ -238,9 +250,22 @@ namespace IBM1410Console
             //  Otherwise, because we don't know what case the console typewriter is
             //  currently in, send a shift control byte to be sure.
 
-            if (e.KeyChar == 0x17 || e.KeyChar == WM) {
+            if (e.KeyChar == 0x17 || e.KeyChar == WM || e.KeyChar == 0x09) {
+                //  Word Mark options
                 Debug.WriteLine("Word Mark...");
                 consoleControlByte[0] = consoleControlFlag | consoleControlWM;
+                controlKey = true;
+            }
+            else if(e.KeyChar == (char) Keys.Back) {
+                //  Backspace serves as the "Index" key
+                Debug.WriteLine("Index Key...");
+                consoleControlByte[0] = consoleControlFlag | consoleControlIndex;
+                controlKey = true;
+            }
+            else if(e.KeyChar == 0x20) {
+                //  Space
+                Debug.WriteLine("Space Bar...");
+                consoleControlByte[0] = consoleControlFlag | consoleControlSpace;
                 controlKey = true;
             }
             else if (IBM1410BCD.BCDShifted(inputBCDCharacter)) {

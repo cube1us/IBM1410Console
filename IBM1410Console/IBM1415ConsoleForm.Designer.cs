@@ -35,6 +35,7 @@ namespace IBM1410Console
             // 
             // ConsoleOutput
             // 
+            this.ConsoleOutput.AcceptsTab = true;
             this.ConsoleOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));

@@ -228,9 +228,18 @@ namespace IBM1410Console
                 return;
             }
 
-            //  Eventually, check for word mark and other special keys, but for now, just send it.
+            //  Life is easier if, for keyboard, we swap b (alt. blank) and B ("B")
 
-            inputBCDCharacter = IBM1410BCD.ASCIItoBCD(e.KeyChar);
+            if (e.KeyChar == 'B') {
+                inputBCDCharacter = IBM1410BCD.ASCIItoBCD('b');
+            }
+            else if (e.KeyChar == 'b') {
+                inputBCDCharacter = IBM1410BCD.ASCIItoBCD('B');
+            }
+            else {
+                inputBCDCharacter = IBM1410BCD.ASCIItoBCD(e.KeyChar);
+            }
+
             consoleByte[0] = inputBCDCharacter;
 
             //  Ignore illegal input characters.

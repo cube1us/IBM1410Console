@@ -315,5 +315,38 @@ namespace IBM1410Console
 
             e.Handled = true;
         }
+
+        private void doInquiryKey(int inquiryFlag) {
+            byte[] consoleControlByte = new byte[1];
+
+            //  Send the flag byte telling 1410 we are doing console input
+
+            serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
+
+            Debug.WriteLine("Inquiry Key: " + inquiryFlag.ToString());
+            consoleControlByte[0] = (byte)(consoleControlFlag | inquiryFlag);
+
+            serialPort.Write(consoleControlByte, 0, 1);
+
+            //  Give time for the key to register
+
+            System.Threading.Thread.Sleep(SLEEPTIME);
+
+            //  And then release the key.
+
+            consoleControlByte[0] = consoleControlFlag;
+            serialPort.Write(consoleControlByte, 0, 1);
+        }
+        private void InquiryRequestButton_Click(object sender, EventArgs e) {
+            doInquiryKey(consoleInquiryRequest);
+        }
+
+        private void inquiryReleaseButton_Click(object sender, EventArgs e) {
+            doInquiryKey(consoleInquiryRelease);
+        }
+
+        private void inquiryCancelButton_Click(object sender, EventArgs e) {
+            doInquiryKey(consoleInquiryCancel);
+        }
     }
 }

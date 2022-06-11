@@ -1,5 +1,4 @@
-﻿
-namespace IBM1410Console
+﻿namespace IBM1410Console
 {
     partial class ComPortSettingsForm
     {

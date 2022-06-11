@@ -93,7 +93,7 @@ namespace IBM1410Console
             // comPortsSettings
             // 
             this.comPortsSettings.Name = "comPortsSettings";
-            this.comPortsSettings.Size = new System.Drawing.Size(132, 22);
+            this.comPortsSettings.Size = new System.Drawing.Size(180, 22);
             this.comPortsSettings.Text = "COM Ports";
             this.comPortsSettings.Click += new System.EventHandler(this.comPortsSettings_Click);
             // 
@@ -273,28 +273,28 @@ namespace IBM1410Console
             // consoleStripMenuItem
             // 
             this.consoleStripMenuItem.Name = "consoleStripMenuItem";
-            this.consoleStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.consoleStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.consoleStripMenuItem.Text = "Console";
             this.consoleStripMenuItem.Click += new System.EventHandler(this.consoleStripMenuItem_Click);
             // 
             // lightStripMenuItem
             // 
             this.lightStripMenuItem.Name = "lightStripMenuItem";
-            this.lightStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.lightStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.lightStripMenuItem.Text = "Console Lights";
             this.lightStripMenuItem.Click += new System.EventHandler(this.lightStripMenuItem_Click);
             // 
             // switchesStripMenuItem
             // 
             this.switchesStripMenuItem.Name = "switchesStripMenuItem";
-            this.switchesStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.switchesStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.switchesStripMenuItem.Text = "&Switches";
             this.switchesStripMenuItem.Click += new System.EventHandler(this.switchesStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // helpToolStripMenuItem
@@ -312,31 +312,32 @@ namespace IBM1410Console
             // contentsToolStripMenuItem
             // 
             this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.contentsToolStripMenuItem.Text = "&Contents";
             // 
             // indexToolStripMenuItem
             // 
             this.indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            this.indexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.indexToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.indexToolStripMenuItem.Text = "&Index";
             // 
             // searchToolStripMenuItem
             // 
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            this.searchToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.searchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.searchToolStripMenuItem.Text = "&Search";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // IBM1410Form
             // 

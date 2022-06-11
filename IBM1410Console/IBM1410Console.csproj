@@ -5,6 +5,14 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>disable</Nullable>
+    <Version>0.10.0</Version>
+    <Copyright>Copyright 2020, 2021, 2022 Jay R. Jaeger</Copyright>
+    <Description>IBM1410 Console is a program for communicating with an IBM 1410 implementation running in an FPGA via a USB serial link.  It supports console lights, switches and the console typewriter.
+
+See the Copyright page for copyright and GNU license information.</Description>
+    <PackageLicenseFile>Copyright.txt</PackageLicenseFile>
+    <Company>The Computer Collection</Company>
+    <Authors>Jay R. Jaeger</Authors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +32,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Copyright.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

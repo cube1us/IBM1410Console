@@ -24,14 +24,14 @@ namespace IBM1410Console
 {
     static class IBM1410BCD
     {
-        public const byte BITWM = 0x80;
+        public const byte BITWM = 0x40;
         public const byte BIT1 = 1;
         public const byte BIT2 = 2;
         public const byte BIT4 = 4;
         public const byte BIT8 = 8;
         public const byte BITA = 0x10;
         public const byte BITB = 0x20;
-        public const byte BITC = 0x40;
+        public const byte BITC = 0x80;
 
         public const byte BIT_NUM = 0x0f;
         public const byte BIT_ZONE = 0x30;

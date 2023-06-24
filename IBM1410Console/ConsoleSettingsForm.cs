@@ -47,10 +47,12 @@ namespace IBM1410Console
             serialPort.Parity = Parity.None;
             serialPort.StopBits = StopBits.One;
 
-            
+            //  If we get here, we know that there is at least one port...
+
             foreach (string comPort in comPorts) {
                 portsComboBox.Items.Add(comPort);
             }
+
             portsComboBox.SelectedIndex = 0;
             serialPort.Close();
             serialPort.PortName = (string) portsComboBox.SelectedItem;
@@ -58,6 +60,7 @@ namespace IBM1410Console
             foreach (int speed in serialPortSpeeds) {
                 speedComboBox.Items.Add(speed.ToString());
             }
+
             speedComboBox.SelectedIndex = 4;
             serialPort.BaudRate = serialPortSpeeds[4];
             serialPort.Open();
@@ -68,7 +71,9 @@ namespace IBM1410Console
             if (portsComboBox.SelectedItem != null) {
                 serialPort.Close();
                 serialPort.PortName = (string)portsComboBox.SelectedItem;
-                Debug.WriteLine("Com port set to " + serialPort.PortName);
+                Properties.Settings.Default.ComPort = serialPort.PortName;
+                Properties.Settings.Default.Save();
+                Debug.WriteLine("COM port set to " + serialPort.PortName + " and saved.");
                 serialPort.Open();
             }
         }

@@ -33,7 +33,7 @@ namespace IBM1410Console
     public partial class IBM1410Form : Form
     {
 
-        
+
         IBM1415ConsoleForm IBM1415ConsoleForm = null;
         UI1415LForm UI1415LForm = null;
         IBM1410SwitchForm IBM1410SwitchForm = null;
@@ -45,9 +45,9 @@ namespace IBM1410Console
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
         List<string> comPorts;
 
-        public IBM1410Form()
-        {
-            
+        public IBM1410Form() {
+            string portName = null;
+
             InitializeComponent();
 
             Debug.WriteLine("Enumerating Serial Ports...");
@@ -57,14 +57,33 @@ namespace IBM1410Console
             comPorts = Helpers.getComPorts();
 
             serialPort = new SerialPort();
-
-            //  TODO: This stuff should really come from remembered settings, but for now...
-
             serialPort.BaudRate = serialPortSpeeds[4];
             serialPort.Parity = Parity.None;
             serialPort.StopBits = StopBits.One;
-            // serialPort.PortName = "COM15";
-            serialPort.PortName = comPorts.Count > 0 ? comPorts[0] : "COM1";
+
+            //  See if there is a remembered setting that is in the list.  If so, use
+            //  that.  Otherwise, use the first one in the list.  If the list is emppy,
+            //  set arbitrarily to COM1
+
+            foreach (string comPort in comPorts) {
+                if (comPort.Equals(Properties.Settings.Default.ComPort)) {
+                    portName = comPort;
+                    break;
+                }
+            }
+
+            //  If we didn't find one and if none were saved save this one...
+
+            if (portName == null) {
+                portName = comPorts.Count > 0 ? comPorts[0] : "COM1";
+                if (Properties.Settings.Default.ComPort.Length == 0) {
+                    Properties.Settings.Default.ComPort = portName;
+                    Properties.Settings.Default.Save();
+                    Debug.WriteLine("Initialzied ComPort setting to " + portName);
+                }
+            }
+
+            serialPort.PortName = portName;
             Debug.WriteLine("Serial port is " + serialPort.PortName);
             serialPort.Handshake = Handshake.None;
 
@@ -73,18 +92,53 @@ namespace IBM1410Console
             IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort);
             IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);  // Need this form during setup of lamp form...
 
+            //  Warn the user if there were no suitable serial ports found...
+
+            if (comPorts.Count == 0) {
+                MessageBox.Show("There are no available suitable USB COM ports",
+                    "No USB COM Ports");
+            }
+
             Console.WriteLine("Starting up...");
             Debug.WriteLine("Debug: Starting up...");
+
+            //  Come up with Switches showing...
+
+            if (IBM1410SwitchForm == null) {
+                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);
+            }
+            IBM1410SwitchForm.Show();
+
+            //  And the console typewriter...  put in front.
+
+            if (IBM1415ConsoleForm == null) {
+                IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort);
+            }
+            IBM1415ConsoleForm.Show();
+            IBM1415ConsoleForm.BringToFront();
+
+            //  And back this main form out of the way...
+
+            this.SendToBack();
         }
 
-        private void comPortsSettings_Click(object sender, EventArgs e)
-        {
+        private void comPortsSettings_Click(object sender, EventArgs e) {
+
+            //  Repopulate the COM ports list...
+
+            comPorts = Helpers.getComPorts();
+
+            if (comPorts.Count == 0) {
+                MessageBox.Show("There are no available suitable USB COM ports",
+                    "No USB COM Ports");
+                return;
+            }
+
             ComPortSettingsForm comPortSettingsForm = new ComPortSettingsForm(serialPort, comPorts, serialPortSpeeds);
             comPortSettingsForm.ShowDialog();
         }
 
-        private void consoleStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void consoleStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1415ConsoleForm == null) {
                 IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort);
             }
@@ -103,7 +157,7 @@ namespace IBM1410Console
         }
 
         private void switchesStripMenuItem_Click(object sender, EventArgs e) {
-            if(IBM1410SwitchForm == null) {
+            if (IBM1410SwitchForm == null) {
                 IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);
             }
             IBM1410SwitchForm.Show();
@@ -112,6 +166,38 @@ namespace IBM1410Console
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
             Form AboutBox = new AboutBox();
             AboutBox.ShowDialog();
+        }
+
+        private void IBM1410Form_Load(object sender, EventArgs e) {
+
+            //  If we have saved settings for this window, use them.
+
+            if (Properties.Settings.Default.MainSize.Width != 0 &&
+                Properties.Settings.Default.MainSize.Height != 0) {
+                this.Size = Properties.Settings.Default.MainSize;
+                this.Location = Properties.Settings.Default.MainLoc;
+            }
+
+            this.SendToBack();
+        }
+
+        private void IBM1410Form_FormClosing(object sender, FormClosingEventArgs e) {
+
+            //  First, remember the size and location of the window...
+
+            if (this.WindowState == FormWindowState.Normal) {
+                // save location and size if the state is normal
+                Properties.Settings.Default.MainLoc = this.Location;
+                Properties.Settings.Default.MainSize = this.Size;
+            }
+            else {
+                // save the RestoreBounds if the form is minimized or maximized!
+                Properties.Settings.Default.MainLoc = this.RestoreBounds.Location;
+                Properties.Settings.Default.MainSize = this.RestoreBounds.Size;
+            }
+
+            Properties.Settings.Default.Save();
+
         }
     }
 }

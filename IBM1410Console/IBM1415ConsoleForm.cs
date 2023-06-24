@@ -31,7 +31,7 @@ namespace IBM1410Console
     public partial class IBM1415ConsoleForm : Form
     {
 
-        private enum state { ordinary, wordmark, backspace};
+        private enum state { ordinary, wordmark, backspace };
         state printerState = state.ordinary;
         bool wmInProgress = false;
 
@@ -58,12 +58,11 @@ namespace IBM1410Console
         Font consoleFont = new Font("IBM1415", 12.0f, FontStyle.Regular);  // IBM 1410 1415
         Font consoleUnderlineFont = new Font("IBM1415", 12.0f, FontStyle.Underline);  // Underline (bad parity)
 
-        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher, SerialPort serialPort)
-        {
+        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher, SerialPort serialPort) {
             InitializeComponent();
             this.CreateHandle();    // This ensures controls are created before posting data from FPGA!
 
-            if (consoleFont == null ) {
+            if (consoleFont == null) {
                 ConsoleOutput.Text = "Unable to set font.";
             }
             else {
@@ -93,8 +92,9 @@ namespace IBM1410Console
 
             Debug.WriteLine("Data received by 1415 Console Keyboard Lock: " + e.SerialByte.ToString("X2"));
 
-            if((e.SerialByte & 0x01) != 0) {
-                Action safeLockChange = delegate {
+            if ((e.SerialByte & 0x01) != 0) {
+                Action safeLockChange = delegate
+                {
                     keyboardLockLabel.ForeColor = Color.ForestGreen;
                     keyboardLockLabel.Text = "UNLOCKED";
                     ConsoleOutput.ScrollToCaret();
@@ -102,7 +102,8 @@ namespace IBM1410Console
                 ConsoleOutput.Invoke(safeLockChange);
             }
             else {
-                Action safeLockChange = delegate {
+                Action safeLockChange = delegate
+                {
                     keyboardLockLabel.ForeColor = Color.Crimson;
                     keyboardLockLabel.Text = "LOCKED";
                 };
@@ -115,7 +116,7 @@ namespace IBM1410Console
 
             const int consoleCodeByte = 0x88;
 
-            if(e.DispatchCode != consoleCodeByte) {
+            if (e.DispatchCode != consoleCodeByte) {
                 return;
             }
 
@@ -129,8 +130,8 @@ namespace IBM1410Console
                         printerState = state.wordmark;
                         // Print a naked wordmark.  Later, back up and overwrite
                         Debug.WriteLine("Printing WM character before backspace...");
-                        s = char.ToString((char) 0xFF);
-                        doAppend(s,false);
+                        s = char.ToString((char)0xFF);
+                        doAppend(s, false);
                     }
                     else if (c == BSP) {
                         printerState = state.backspace;
@@ -138,34 +139,34 @@ namespace IBM1410Console
                     else if (wmInProgress) {
                         c |= 0x80;
                         s = Char.ToString((char)c);
-                        doAppend(s,true); // This should replace the "naked" WM 
+                        doAppend(s, true); // This should replace the "naked" WM 
                         wmInProgress = false;
                     }
                     else {
-                        doAppend(s,false);
+                        doAppend(s, false);
                     }
                     break;
                 case state.wordmark:
-                    if(c == BSP) {
+                    if (c == BSP) {
                         wmInProgress = true;
                         printerState = state.ordinary;
                     }
                     else {
                         s = "<naked WM>";
-                        doAppend(s,false);
+                        doAppend(s, false);
                         s = Char.ToString((char)c);
-                        doAppend(s,false);
+                        doAppend(s, false);
                         printerState = state.ordinary;
                     }
                     break;
                 case state.backspace:
-                    if(c == UNDERSCORE) {
+                    if (c == UNDERSCORE) {
                         Debug.WriteLine("received underline character...");
                         doUnderline();
                     }
                     else {
                         s = "<overprint?>" + s;
-                        doAppend(s,false);
+                        doAppend(s, false);
                     }
                     printerState = state.ordinary;
                     break;
@@ -174,7 +175,8 @@ namespace IBM1410Console
 
         void doUnderline() {
             if (ConsoleOutput.InvokeRequired) {
-                Action safeUnderline = delegate {
+                Action safeUnderline = delegate
+                {
                     // Debug.WriteLine("Doing underline at " + (ConsoleOutput.Text.Length - 1).ToString());
                     ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length - 1;
                     ConsoleOutput.SelectionLength = 1;
@@ -196,16 +198,17 @@ namespace IBM1410Console
         }
 
 
-        void doAppend(string s, bool replace) { 
+        void doAppend(string s, bool replace) {
             if (ConsoleOutput.InvokeRequired) {
                 Debug.WriteLine("Console Output event: Delegating append of text.");
-                Action safeAppend = delegate { 
-                    if(replace) {
+                Action safeAppend = delegate
+                {
+                    if (replace) {
                         ConsoleOutput.Text = ConsoleOutput.Text.Substring(0, ConsoleOutput.Text.Length - 1);
                         ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
                     }
-                    ConsoleOutput.AppendText(s); 
-                    if(s.Contains("\r")) {
+                    ConsoleOutput.AppendText(s);
+                    if (s.Contains("\r")) {
                         ConsoleOutput.ScrollToCaret();
                     }
                 };
@@ -213,7 +216,7 @@ namespace IBM1410Console
             }
             else {
                 if (replace) {
-                    ConsoleOutput.Text = ConsoleOutput.Text.Substring(0,ConsoleOutput.Text.Length - 1);
+                    ConsoleOutput.Text = ConsoleOutput.Text.Substring(0, ConsoleOutput.Text.Length - 1);
                     ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
                 }
                 ConsoleOutput.AppendText(s);
@@ -225,7 +228,23 @@ namespace IBM1410Console
         }
 
         private void IBM1415ConsoleForm_FormClosing(object sender, FormClosingEventArgs e) {
-            if(e.CloseReason == CloseReason.UserClosing) {
+
+            //  First, remember the size and location of the window...
+
+            if (this.WindowState == FormWindowState.Normal) {
+                // save location and size if the state is normal
+                Properties.Settings.Default.ConsoleLoc = this.Location;
+                Properties.Settings.Default.ConsoleSize = this.Size;
+            }
+            else {
+                // save the RestoreBounds if the form is minimized or maximized!
+                Properties.Settings.Default.ConsoleLoc = this.RestoreBounds.Location;
+                Properties.Settings.Default.ConsoleSize = this.RestoreBounds.Size;
+            }
+
+            Properties.Settings.Default.Save();
+
+            if (e.CloseReason == CloseReason.UserClosing) {
                 e.Cancel = true;
                 Hide();
             }
@@ -283,13 +302,13 @@ namespace IBM1410Console
                 consoleControlByte[0] = consoleControlFlag | consoleControlWM;
                 controlKey = true;
             }
-            else if(e.KeyChar == (char) Keys.Back) {
+            else if (e.KeyChar == (char)Keys.Back) {
                 //  Backspace serves as the "Index" key
                 Debug.WriteLine("Index Key...");
                 consoleControlByte[0] = consoleControlFlag | consoleControlIndex;
                 controlKey = true;
             }
-            else if(e.KeyChar == 0x20) {
+            else if (e.KeyChar == 0x20) {
                 //  Space
                 Debug.WriteLine("Space Bar...");
                 consoleControlByte[0] = consoleControlFlag | consoleControlSpace;
@@ -317,7 +336,7 @@ namespace IBM1410Console
                 consoleControlByte[0] = consoleControlFlag;
                 serialPort.Write(consoleControlByte, 0, 1);
             }
-            else { 
+            else {
                 Debug.WriteLine("Console Input Sending BCD character");
                 serialPort.Write(consoleByte, 0, 1);
             }
@@ -365,6 +384,21 @@ namespace IBM1410Console
 
         private void inquiryCancelButton_Click(object sender, EventArgs e) {
             doInquiryKey(consoleInquiryCancel);
+        }
+
+        private void IBM1415ConsoleForm_Load(object sender, EventArgs e) {
+
+            //  If we have saved settings for this window, use them.
+
+            if (Properties.Settings.Default.ConsoleSize.Width != 0 &&
+                Properties.Settings.Default.ConsoleSize.Height != 0) {
+                this.Size = Properties.Settings.Default.ConsoleSize;
+                this.Location = Properties.Settings.Default.ConsoleLoc;
+            }
+
+            this.BringToFront();
+            this.Focus();
+
         }
     }
 }

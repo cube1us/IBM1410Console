@@ -41,13 +41,20 @@ namespace IBM1410Console
         SerialPort serialPort;
         SerialDataPublisher serialDataPublisher;
 
-        string[] comPorts = SerialPort.GetPortNames();
+        // string[] comPortNames = SerialPort.GetPortNames();
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
-
+        List<string> comPorts;
 
         public IBM1410Form()
         {
+            
             InitializeComponent();
+
+            Debug.WriteLine("Enumerating Serial Ports...");
+
+            //  Try and find the correct serial port (one that is USB)
+
+            comPorts = Helpers.getComPorts();
 
             serialPort = new SerialPort();
 
@@ -56,7 +63,9 @@ namespace IBM1410Console
             serialPort.BaudRate = serialPortSpeeds[4];
             serialPort.Parity = Parity.None;
             serialPort.StopBits = StopBits.One;
-            serialPort.PortName = "COM10";
+            // serialPort.PortName = "COM15";
+            serialPort.PortName = comPorts.Count > 0 ? comPorts[0] : "COM1";
+            Debug.WriteLine("Serial port is " + serialPort.PortName);
             serialPort.Handshake = Handshake.None;
 
             serialDataPublisher = new SerialDataPublisher(serialPort);
@@ -72,7 +81,6 @@ namespace IBM1410Console
         {
             ComPortSettingsForm comPortSettingsForm = new ComPortSettingsForm(serialPort, comPorts, serialPortSpeeds);
             comPortSettingsForm.ShowDialog();
-
         }
 
         private void consoleStripMenuItem_Click(object sender, EventArgs e)

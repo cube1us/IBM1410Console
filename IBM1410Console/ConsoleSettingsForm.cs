@@ -34,7 +34,7 @@ namespace IBM1410Console
         SerialPort serialPort;
         int[] serialPortSpeeds;
 
-        public ComPortSettingsForm(SerialPort serialPort, string[] comPorts, int[] serialPortSpeeds)
+        public ComPortSettingsForm(SerialPort serialPort, List<string> comPorts, int[] serialPortSpeeds)
         {
             InitializeComponent();
 
@@ -52,6 +52,7 @@ namespace IBM1410Console
                 portsComboBox.Items.Add(comPort);
             }
             portsComboBox.SelectedIndex = 0;
+            serialPort.Close();
             serialPort.PortName = (string) portsComboBox.SelectedItem;
 
             foreach (int speed in serialPortSpeeds) {
@@ -59,13 +60,16 @@ namespace IBM1410Console
             }
             speedComboBox.SelectedIndex = 4;
             serialPort.BaudRate = serialPortSpeeds[4];
+            serialPort.Open();
         }
 
         private void portsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (portsComboBox.SelectedItem != null) {
+                serialPort.Close();
                 serialPort.PortName = (string)portsComboBox.SelectedItem;
                 Debug.WriteLine("Com port set to " + serialPort.PortName);
+                serialPort.Open();
             }
         }
 
@@ -73,7 +77,7 @@ namespace IBM1410Console
         {
             if(speedComboBox.SelectedIndex >= 0) {
                 serialPort.BaudRate = serialPortSpeeds[speedComboBox.SelectedIndex];
-                Debug.WriteLine("Com port set to speed" + serialPort.BaudRate.ToString());
+                Debug.WriteLine("Com port set to speed " + serialPort.BaudRate.ToString());
             }
         }
     }

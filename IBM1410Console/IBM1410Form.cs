@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.IO;
 
 namespace IBM1410Console
 {
@@ -44,6 +45,8 @@ namespace IBM1410Console
         // string[] comPortNames = SerialPort.GetPortNames();
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
         List<string> comPorts;
+
+        static public long coreSize = 40000;
 
         public IBM1410Form() {
             string portName = null;
@@ -198,6 +201,66 @@ namespace IBM1410Console
 
             Properties.Settings.Default.Save();
 
+        }
+
+        private void LoadCoreImageToolStripMenuItem_Click(object sender, EventArgs e) {
+            char[] coreSizeChars = new char[6];
+            long fileCoreSize = 0;
+            long coresize = 0;
+
+            OpenFileDialog LoadCoreImageOpenDialog = new OpenFileDialog();
+            LoadCoreImageOpenDialog.AddExtension = true;
+            LoadCoreImageOpenDialog.DefaultExt = "cor";
+            LoadCoreImageOpenDialog.Filter = "Core Images (*.cor;*.img;*.bin)|*.cor;*.img;*.bin|All Files (*.*)|*.*";
+            LoadCoreImageOpenDialog.CheckFileExists = true;
+            LoadCoreImageOpenDialog.CheckPathExists = true;
+
+            if (LoadCoreImageOpenDialog.ShowDialog() == DialogResult.OK) {
+                Stream fileStream = File.Open(LoadCoreImageOpenDialog.FileName, FileMode.Open, FileAccess.Read);
+                BinaryReader reader = new BinaryReader(fileStream);
+
+                //  The first five characters are the core size, in decimal, ascii characters
+
+                reader.Read(coreSizeChars, 0, 5);
+                coreSizeChars[5] = '\0';
+                fileCoreSize = Int32.Parse(coreSizeChars);
+                Debug.WriteLine("File Core size: " + fileCoreSize);
+                if (fileCoreSize > Properties.Settings.Default.CoreSize) {
+                    DialogResult result = MessageBox.Show(
+                        "Core size in file of " + fileCoreSize +
+                        " is greater than selected FPGA core size of " +
+                        Properties.Settings.Default.CoreSize,
+                        "Core Size Warning",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Warning);
+
+                    if (result == DialogResult.Cancel) {
+                        reader.Close();
+                        fileStream.Close();
+                        return;
+                    }
+                }
+
+                //  The amount we will send is the smaller of the FPGA core size
+                //  and the file core size.
+
+                coreSize = fileCoreSize > Properties.Settings.Default.CoreSize ?
+                    Properties.Settings.Default.CoreSize : fileCoreSize;
+                Debug.Write("Sending Core image size of " + coreSize);
+
+                //  Read the file and send the data...
+
+                reader.Close();
+                fileStream.Close();
+            }
+
+        }
+
+        private void fPGACoreSizeToolStripMenuItem_Click(object sender, EventArgs e) {
+
+            CoreSizeSettingsForm coreSizeSettingsForm = new CoreSizeSettingsForm();
+            coreSizeSettingsForm.setCoreSize(Properties.Settings.Default.CoreSize.ToString());
+            coreSizeSettingsForm.ShowDialog();
         }
     }
 }

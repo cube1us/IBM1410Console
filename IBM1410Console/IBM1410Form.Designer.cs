@@ -30,8 +30,8 @@ namespace IBM1410Console
             menuStrip = new System.Windows.Forms.MenuStrip();
             settingsMenu = new System.Windows.Forms.ToolStripMenuItem();
             comPortsSettings = new System.Windows.Forms.ToolStripMenuItem();
+            fPGACoreSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,6 +39,7 @@ namespace IBM1410Console
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             printPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,7 +77,7 @@ namespace IBM1410Console
             // settingsMenu
             // 
             settingsMenu.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            settingsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { comPortsSettings });
+            settingsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { comPortsSettings, fPGACoreSizeToolStripMenuItem });
             settingsMenu.Name = "settingsMenu";
             settingsMenu.Size = new System.Drawing.Size(61, 20);
             settingsMenu.Text = "Settings";
@@ -84,25 +85,23 @@ namespace IBM1410Console
             // comPortsSettings
             // 
             comPortsSettings.Name = "comPortsSettings";
-            comPortsSettings.Size = new System.Drawing.Size(132, 22);
+            comPortsSettings.Size = new System.Drawing.Size(154, 22);
             comPortsSettings.Text = "COM Ports";
             comPortsSettings.Click += comPortsSettings_Click;
             // 
+            // fPGACoreSizeToolStripMenuItem
+            // 
+            fPGACoreSizeToolStripMenuItem.Name = "fPGACoreSizeToolStripMenuItem";
+            fPGACoreSizeToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            fPGACoreSizeToolStripMenuItem.Text = "FPGA Core Size";
+            fPGACoreSizeToolStripMenuItem.Click += fPGACoreSizeToolStripMenuItem_Click;
+            // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, openToolStripMenuItem, toolStripSeparator, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, toolStripSeparator, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, newToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
-            // 
-            // newToolStripMenuItem
-            // 
-            newToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("newToolStripMenuItem.Image");
-            newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
-            newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            newToolStripMenuItem.Text = "&New";
             // 
             // openToolStripMenuItem
             // 
@@ -110,13 +109,14 @@ namespace IBM1410Console
             openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O;
-            openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            openToolStripMenuItem.Text = "&Open";
+            openToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            openToolStripMenuItem.Text = "&Load Core Image";
+            openToolStripMenuItem.Click += LoadCoreImageToolStripMenuItem_Click;
             // 
             // toolStripSeparator
             // 
             toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new System.Drawing.Size(143, 6);
+            toolStripSeparator.Size = new System.Drawing.Size(204, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -124,19 +124,19 @@ namespace IBM1410Console
             saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             saveToolStripMenuItem.Text = "&Save";
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            saveAsToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             saveAsToolStripMenuItem.Text = "Save &As";
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(143, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(204, 6);
             // 
             // printToolStripMenuItem
             // 
@@ -144,7 +144,7 @@ namespace IBM1410Console
             printToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             printToolStripMenuItem.Name = "printToolStripMenuItem";
             printToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P;
-            printToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            printToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             printToolStripMenuItem.Text = "&Print";
             // 
             // printPreviewToolStripMenuItem
@@ -152,18 +152,27 @@ namespace IBM1410Console
             printPreviewToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("printPreviewToolStripMenuItem.Image");
             printPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
-            printPreviewToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            printPreviewToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             printPreviewToolStripMenuItem.Text = "Print Pre&view";
+            // 
+            // newToolStripMenuItem
+            // 
+            newToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("newToolStripMenuItem.Image");
+            newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            newToolStripMenuItem.Name = "newToolStripMenuItem";
+            newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
+            newToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            newToolStripMenuItem.Text = "&New";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(143, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size(204, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             exitToolStripMenuItem.Text = "E&xit";
             // 
             // editToolStripMenuItem
@@ -307,7 +316,7 @@ namespace IBM1410Console
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 450);
+            ClientSize = new System.Drawing.Size(800, 138);
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
             Name = "IBM1410Form";
@@ -356,6 +365,7 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consoleStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lightStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fPGACoreSizeToolStripMenuItem;
     }
 }
 

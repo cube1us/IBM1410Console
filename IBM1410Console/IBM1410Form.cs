@@ -46,7 +46,13 @@ namespace IBM1410Console
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
         List<string> comPorts;
 
-        static public long coreSize = 40000;
+        const byte loaderStreamFlag = 0x82;
+        const byte addrMark = 0x40;
+        const byte endMark = 0x70;
+        const byte data0Mark = 0x20;
+        const byte data1Mark = 0x10;
+
+        // static public long coreSize = 40000;
 
         public IBM1410Form() {
             string portName = null;
@@ -207,6 +213,8 @@ namespace IBM1410Console
             char[] coreSizeChars = new char[6];
             long fileCoreSize = 0;
             long coresize = 0;
+            int bytesPerCharacter = 0;
+            byte[] buffer = new byte[6];  //    Enough for start mark, bank and address bytes
 
             OpenFileDialog LoadCoreImageOpenDialog = new OpenFileDialog();
             LoadCoreImageOpenDialog.AddExtension = true;
@@ -223,13 +231,49 @@ namespace IBM1410Console
 
                 reader.Read(coreSizeChars, 0, 5);
                 coreSizeChars[5] = '\0';
-                fileCoreSize = Int32.Parse(coreSizeChars);
+                try {
+                    fileCoreSize = Int32.Parse(coreSizeChars);
+                }
+                catch (Exception) {
+                    MessageBox.Show("First five bytes - size - not numeric.  Load aborted",
+                        "Load Aborted");
+                    reader.Close();
+                    fileStream.Close();
+                    return;
+                }
                 Debug.WriteLine("File Core size: " + fileCoreSize);
+
+                //  See if file size matches up with size in first 5 bytes...
+                //  It should be either 2*size+5 or 4*size+5
+
+                if(fileStream.Length == fileCoreSize*2+5) {
+                    bytesPerCharacter = 2;
+                }
+                else if(fileStream.Length == fileCoreSize*4+5) {
+                    bytesPerCharacter= 4;
+                }
+                else {
+                    DialogResult result = MessageBox.Show(
+                        "Actual size of file of " + fileStream.Length +
+                        " bytes is not 2x+5 or 4x+5 of core size in header of " +
+                        fileCoreSize,
+                        "File Size Warning",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Warning);
+
+                    if (result == DialogResult.Cancel) {
+                        reader.Close();
+                        fileStream.Close();
+                        return;
+                    }
+                }
+
                 if (fileCoreSize > Properties.Settings.Default.CoreSize) {
                     DialogResult result = MessageBox.Show(
                         "Core size in file of " + fileCoreSize +
                         " is greater than selected FPGA core size of " +
-                        Properties.Settings.Default.CoreSize,
+                        Properties.Settings.Default.CoreSize +
+                        " -- Will only send " + Properties.Settings.Default.CoreSize,
                         "Core Size Warning",
                         MessageBoxButtons.OKCancel,
                         MessageBoxIcon.Warning);
@@ -244,14 +288,75 @@ namespace IBM1410Console
                 //  The amount we will send is the smaller of the FPGA core size
                 //  and the file core size.
 
-                coreSize = fileCoreSize > Properties.Settings.Default.CoreSize ?
+                coresize = fileCoreSize > Properties.Settings.Default.CoreSize ?
                     Properties.Settings.Default.CoreSize : fileCoreSize;
-                Debug.Write("Sending Core image size of " + coreSize);
+                Debug.WriteLine("Sending Core image size of " + coresize);
+
+
+                //  Send the address, which, for now, is always 0 in bank 0.
+
+                buffer[0] = loaderStreamFlag;
+                buffer[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
+                buffer[2] = addrMark | 0x00;
+                buffer[3] = addrMark | 0x00;
+                buffer[4] = addrMark | 0x00;
+                buffer[5] = addrMark | 0x00;
+                serialPort.Write(buffer, 0, 6);
 
                 //  Read the file and send the data...
 
+                for (int addr = 0; addr < coresize; addr++) {
+                    long c, t;
+
+                    try {
+                        c = bytesPerCharacter == 2 ? reader.ReadInt16() : 
+                            reader.ReadInt32();
+                    }
+                    catch(EndOfStreamException) {
+                        MessageBox.Show("Unexpected EOF on core image file.",
+                            "Unexpected EOF");
+                        break;
+                    }
+                    catch(Exception ex) {
+                        MessageBox.Show("ERROR reading core image file: " +
+                            ex.Message,"Unexpected I/O Error");
+                        break;
+                    }
+
+                    //  Exchange the top two bits to convert file format (WM C ...)
+                    //  to FPGA format (C WM ...)
+
+                    t = c;
+                    c = c & 0x3f;   
+                    if((t & 0x80) == 0x80) {
+                        c = c | 0x40;
+                    }
+                    if((t & 0x40) == 0x40) {
+                        c = c | 0x80;
+                    }
+
+                    //  Temporary debug...
+                    if (addr < 10) {
+                        Debug.WriteLine("Read in " + t.ToString("X4") +
+                            " Converted to " + c.ToString("X4"));
+                    }
+
+                    //  Data is sent HIGH four bits first, with appropriate marks.
+
+                    buffer[0] = (byte)(((c & 0xf0) >> 4) | data0Mark);
+                    buffer[1] = (byte)((c & 0x0f) | data1Mark);
+                    serialPort.Write(buffer, 0, 2);
+                }
+
+                //  Send the end of load marker.
+
+                buffer[0] = endMark;
+                serialPort.Write(buffer, 0, 1);
+
                 reader.Close();
                 fileStream.Close();
+
+                MessageBox.Show("Core File Image Load Complete", "Core Image Load Complete");
             }
 
         }

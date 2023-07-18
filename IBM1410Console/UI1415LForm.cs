@@ -308,7 +308,7 @@ namespace IBM1410Console
 
             ++lampByte;
             if(lampByte == IBM1410Lamp.lampBytes) {
-                Debug.WriteLine("UI1415LForm: Updating lamps on form...");
+                // Debug.WriteLine("UI1415LForm: Updating lamps on form...");
                 updateLampForm();
                 lampByte = 0;
             }

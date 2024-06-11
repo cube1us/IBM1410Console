@@ -121,7 +121,7 @@ namespace IBM1410Console
             }
 
             string s = Char.ToString((char)e.SerialByte);
-            Debug.WriteLine("Data received by 1415 Console Data: " + e.SerialByte.ToString("X2") + " /" + s + "/");
+            // Debug.WriteLine("Data received by 1415 Console Data: " + e.SerialByte.ToString("X2") + " /" + s + "/");
 
 
             switch (printerState) {
@@ -129,7 +129,7 @@ namespace IBM1410Console
                     if (c == WM) {
                         printerState = state.wordmark;
                         // Print a naked wordmark.  Later, back up and overwrite
-                        Debug.WriteLine("Printing WM character before backspace...");
+                        // Debug.WriteLine("Printing WM character before backspace...");
                         s = char.ToString((char)0xFF);
                         doAppend(s, false);
                     }
@@ -161,7 +161,7 @@ namespace IBM1410Console
                     break;
                 case state.backspace:
                     if (c == UNDERSCORE) {
-                        Debug.WriteLine("received underline character...");
+                        // Debug.WriteLine("received underline character...");
                         doUnderline();
                     }
                     else {
@@ -200,7 +200,7 @@ namespace IBM1410Console
 
         void doAppend(string s, bool replace) {
             if (ConsoleOutput.InvokeRequired) {
-                Debug.WriteLine("Console Output event: Delegating append of text.");
+                // Debug.WriteLine("Console Output event: Delegating append of text.");
                 Action safeAppend = delegate
                 {
                     if (replace) {
@@ -223,7 +223,7 @@ namespace IBM1410Console
                 if (s.Contains("\r")) {
                     ConsoleOutput.ScrollToCaret();
                 }
-                Debug.WriteLine("Console Output Event: Writing text directly.");
+                // Debug.WriteLine("Console Output Event: Writing text directly.");
             }
         }
 

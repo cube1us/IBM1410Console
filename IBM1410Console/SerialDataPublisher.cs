@@ -104,6 +104,9 @@ namespace IBM1410Console
 
                 if (readByte >= 0x80) {
                     lastCodeByte = readByte;
+                    if (lastCodeByte != lightCodeByte) { 
+                        Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
+                    }
                 }
                 else if(lastCodeByte == lightCodeByte ) {
                     SerialLightDataEventArgs serialLightDataEventArgs = new SerialLightDataEventArgs(lastCodeByte, readByte);

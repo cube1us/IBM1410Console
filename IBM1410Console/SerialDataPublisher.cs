@@ -25,13 +25,12 @@ using System.Diagnostics;
 namespace IBM1410Console
 {
 
-    public class SerialDataEventArgs: EventArgs
+    public class SerialDataEventArgs : EventArgs
     {
 
         public int DispatchCode { get; set; }
         public int SerialByte { get; set; }
-        public SerialDataEventArgs(int dispatchCode, int serialByte)
-        {
+        public SerialDataEventArgs(int dispatchCode, int serialByte) {
             SerialByte = serialByte;
             DispatchCode = dispatchCode;
         }
@@ -68,6 +67,19 @@ namespace IBM1410Console
     }
 
 
+    //  Tape channel data stream, used for events to both tape channels
+
+    public class TapeChannelEventArgs : EventArgs
+    {
+        public int DispatchCode { get; set; }
+        public int SerialByte { get; set; }
+        public TapeChannelEventArgs(int dispatchCode, int serialByte) {
+            SerialByte = serialByte;
+            DispatchCode = dispatchCode;
+        }
+    }
+
+
     public class SerialDataPublisher
     {
 
@@ -76,12 +88,16 @@ namespace IBM1410Console
         public event EventHandler<SerialDataEventArgs> SerialOutputEvent;
         public event EventHandler<SerialLightDataEventArgs> SerialLightOutputEvent;
         public event EventHandler<ConsoleLockDataEventArgs> ConsoleLockOutputEvent;
+        public event EventHandler<TapeChannelEventArgs> TapeChannel1OutputEvent;
+        public event EventHandler<TapeChannelEventArgs> TapeChannel2OutputEvent;
 
         //  Last received serial ID code byte
 
         private int lastCodeByte = 0x00;
         private const int lightCodeByte = 0x81;
         private const int lockCodeByte = 0x82;
+        private const int tapeChannel1CodeByte = 0x84;
+        private const int tapeChannel2CodeByte = 0x83;
 
         public SerialDataPublisher(SerialPort serialPort) {
             serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
@@ -98,23 +114,31 @@ namespace IBM1410Console
 
             Debug.WriteLine("Received " + numBytes.ToString() + " bytes from 1410.");
 
-            for(int i = 0; i < numBytes; ++i) {
+            for (int i = 0; i < numBytes; ++i) {
                 readByte = sp.ReadByte();
                 // Debug.WriteLine("Read byte " + readByte.ToString("X2"));
 
                 if (readByte >= 0x80) {
                     lastCodeByte = readByte;
-                    if (lastCodeByte != lightCodeByte) { 
+                    if (lastCodeByte != lightCodeByte) {
                         Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
                     }
                 }
-                else if(lastCodeByte == lightCodeByte ) {
+                else if (lastCodeByte == lightCodeByte) {
                     SerialLightDataEventArgs serialLightDataEventArgs = new SerialLightDataEventArgs(lastCodeByte, readByte);
                     OnRaiseSerialLightOutputEvent(serialLightDataEventArgs);
                 }
-                else if(lastCodeByte == lockCodeByte) {
+                else if (lastCodeByte == lockCodeByte) {
                     ConsoleLockDataEventArgs consoleLockDataEventArgs = new ConsoleLockDataEventArgs(lastCodeByte, readByte);
                     OnRaiseConsoleLockOutputEvent(consoleLockDataEventArgs);
+                }
+                else if (lastCodeByte == tapeChannel1CodeByte) {
+                    TapeChannelEventArgs tapeChannel1DataEventArgs = new TapeChannelEventArgs(lastCodeByte, readByte);
+                    OnRaiseTapeChannel1OutputEvent(tapeChannel1DataEventArgs);
+                }
+                else if (lastCodeByte == tapeChannel2CodeByte) {
+                    TapeChannelEventArgs tapeChannel2DataEventArgs = new TapeChannelEventArgs(lastCodeByte, readByte);
+                    OnRaiseTapeChannel2OutputEvent(tapeChannel2DataEventArgs);
                 }
                 else {
                     SerialDataEventArgs serialDataEventArgs = new SerialDataEventArgs(lastCodeByte, readByte);
@@ -132,7 +156,8 @@ namespace IBM1410Console
 
         protected void OnRaiseSerialOutputEvent(SerialDataEventArgs e) {
             EventHandler<SerialDataEventArgs> raiseEvent = SerialOutputEvent;
-            // Debug.WriteLine("Signaling event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
+            // Debug.WriteLine("Signaling event with code " + e.DispatchCode + " and character " +
+            //  e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
@@ -140,7 +165,8 @@ namespace IBM1410Console
 
         protected void OnRaiseSerialLightOutputEvent(SerialLightDataEventArgs e) {
             EventHandler<SerialLightDataEventArgs> raiseEvent = SerialLightOutputEvent;
-            // Debug.WriteLine("Signaling light event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
+            // Debug.WriteLine("Signaling light event with code " + e.DispatchCode + " and character " +
+            //  e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
@@ -148,12 +174,29 @@ namespace IBM1410Console
 
         protected void OnRaiseConsoleLockOutputEvent(ConsoleLockDataEventArgs e) {
             EventHandler<ConsoleLockDataEventArgs> raiseEvent = ConsoleLockOutputEvent;
-            Debug.WriteLine("Signaling console lock event with code " + e.DispatchCode + " and character " + e.SerialByte.ToString("X2"));
+            Debug.WriteLine("Signaling console lock event with code " + e.DispatchCode + " and character " 
+                + e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
         }
 
+        protected void OnRaiseTapeChannel1OutputEvent(TapeChannelEventArgs e) {
+            EventHandler<TapeChannelEventArgs> raiseEvent = TapeChannel1OutputEvent;
+            Debug.WriteLine("Signaling Tape Channel 1 event with code " + e.DispatchCode + " and character " + 
+                e.SerialByte.ToString("X2"));
+            if (raiseEvent != null) {
+                raiseEvent(this, e);
+            }
+        }
 
+        protected void OnRaiseTapeChannel2OutputEvent(TapeChannelEventArgs e) {
+            EventHandler<TapeChannelEventArgs> raiseEvent = TapeChannel2OutputEvent;
+            Debug.WriteLine("Signaling Tape Channel 2 event with code " + e.DispatchCode + " and character " + 
+                e.SerialByte.ToString("X2"));
+            if (raiseEvent != null) {
+                raiseEvent(this, e);
+            }
+        }
     }
 }

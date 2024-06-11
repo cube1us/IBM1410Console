@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Compile Update="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="AboutCopyrightForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ComPortSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="CoreSizeSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="IBM1410Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="IBM1410SwitchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="IBM1410TapesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="IBM1415ConsoleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI1415LForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="IBM1410Form.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="IBM1415ConsoleForm.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

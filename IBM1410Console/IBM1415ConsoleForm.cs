@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.Threading;
 
 namespace IBM1410Console
 {
@@ -54,11 +55,13 @@ namespace IBM1410Console
 
         protected byte[] consoleInputFlagByte = new byte[] { 0x81 };
         SerialPort serialPort = null;
+        SemaphoreSlim serialOutputSemaphore = null;
 
         Font consoleFont = new Font("IBM1415", 12.0f, FontStyle.Regular);  // IBM 1410 1415
         Font consoleUnderlineFont = new Font("IBM1415", 12.0f, FontStyle.Underline);  // Underline (bad parity)
 
-        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher, SerialPort serialPort) {
+        public IBM1415ConsoleForm(SerialDataPublisher serialPublisher, 
+            SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
             InitializeComponent();
             this.CreateHandle();    // This ensures controls are created before posting data from FPGA!
 
@@ -76,10 +79,11 @@ namespace IBM1410Console
             //            }
 
             this.serialPort = serialPort;
+            this.serialOutputSemaphore = serialOutputSemaphore;
 
             serialPublisher.SerialOutputEvent += new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
             serialPublisher.ConsoleLockOutputEvent += new EventHandler<ConsoleLockDataEventArgs>(consoleLockDataAvailable);
-            Debug.WriteLine("Event Handler for SerialDataPublisher Registered.");
+            Debug.WriteLine("Event Handler in Console for SerialDataPublisher Registered.");
         }
 
         void consoleLockDataAvailable(object sender, ConsoleLockDataEventArgs e) {
@@ -287,6 +291,10 @@ namespace IBM1410Console
                 return;
             }
 
+            //  Wait for access to the serial port for output...
+
+            serialOutputSemaphore.Wait();
+
             //  Send the flag byte telling 1410 we are doing console input
 
             serialPort.Write(consoleInputFlagByte, 0, consoleInputFlagByte.Length);
@@ -350,6 +358,7 @@ namespace IBM1410Console
             //    serialPort.Write(consoleControlByte, 0, 1);
             // }
 
+            serialOutputSemaphore.Release();
             e.Handled = true;
         }
 

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms.Design;
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using System.IO.Ports;
+using System.Threading;
 
 namespace IBM1410Console
 {
@@ -20,6 +22,8 @@ namespace IBM1410Console
 
         private int unit;
         private int channel;
+        private SerialPort serialPort;
+        private SemaphoreSlim serialOutputSemaphore;
 
         private String _fileName;
         private long _recordNumber;
@@ -41,21 +45,23 @@ namespace IBM1410Console
 
         //  Set up many of the fields as properties...
 
-        protected String FileName { get { return _fileName; } }
-        protected long RecordNumber { get { return _recordNumber; } }
-        protected Boolean Loaded { get { return _loaded; } }
-        protected Boolean FileProtect { get { return _fileProtect; } }
-        protected Boolean Ready { get { return _ready; } }
-        protected Boolean Selected { get { return _selected; } }
-        protected Boolean TapeIndicate { get { return _tapeIndicate; } }
-        protected Boolean HighDensity { get { return _highDensity; } }
-        protected Boolean Bot { get { return _bot; } }
+        internal String FileName { get { return _fileName; } }
+        internal long RecordNumber { get { return _recordNumber; } }
+        internal Boolean Loaded { get { return _loaded; } }
+        internal Boolean FileProtect { get { return _fileProtect; } }
+        internal Boolean Ready { get { return _ready; } }
+        internal Boolean Selected { get { return _selected; } }
+        internal Boolean TapeIndicate { get { return _tapeIndicate; } }
+        internal Boolean HighDensity { get { return _highDensity; } }
+        internal Boolean Bot { get { return _bot; } }
 
         // Constructor.  Defers most of the work to Init - which can also be invoked later
         // if a new tape is mounted.
 
-        public IBM1410TapeUnit(int channel, int unit) {
+        public IBM1410TapeUnit(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore, int channel, int unit) {
             fd = null;
+            this.serialPort = serialPort;
+            this.serialOutputSemaphore = serialOutputSemaphore;
             Init(channel,unit);
         }
 
@@ -82,7 +88,7 @@ namespace IBM1410Console
         //  Methods to respond to calls from the user interface and elsewhere
 
 
-        protected void Reset() { 
+        internal void Reset() { 
             _ready = false;
             UpdateFPGATape();
         }
@@ -90,7 +96,7 @@ namespace IBM1410Console
 
         //  Load the tape (file) (if not already loaded), and rewind.
 
-        protected Boolean LoadRewind() {
+        internal Boolean LoadRewind() {
             
             //  If the drive is currently in ready state, you can't load or rewind it.
 
@@ -164,7 +170,7 @@ namespace IBM1410Console
         }
 
         //  Unload the tape (file)
-        protected Boolean Unload() {
+        internal Boolean Unload() {
             
             //  If the drive is ready or not loaded, ignore...
 
@@ -180,7 +186,7 @@ namespace IBM1410Console
 
         //  Mount a tape (file) on the drive
 
-        protected Boolean Mount(String fileName) {
+        internal Boolean Mount(String fileName) {
 
             //  Can't mount a tape if the drive is ready or already loaded
 
@@ -197,7 +203,7 @@ namespace IBM1410Console
 
         //  Handle the Start button
 
-        protected Boolean Start() {
+        internal Boolean Start() {
 
             //  If the drive is already ready, is is not loaded, can't comply.
 
@@ -205,7 +211,7 @@ namespace IBM1410Console
                 return false;
             }
 
-            Debug.Assert(fd == null);
+            Debug.Assert(fd != null);
             _ready = true;
             UpdateFPGATape();
             return true;
@@ -213,7 +219,7 @@ namespace IBM1410Console
 
         //  Handle the Density change button
 
-        protected Boolean ChangeDensity() {
+        internal Boolean ChangeDensity() {
 
             //  Can't change density on a ready drive.
 
@@ -224,11 +230,11 @@ namespace IBM1410Console
             UpdateFPGATape();
             return true;
         }
-        
+
         //  Select a tape drive - really just used for reporting and error checking
         //  in this implementation.  The actual selection process happens bundled with
         //  the unit control, read or write instruction in the Tape Adapter Unit in the FPGA
-        protected Boolean Select(Boolean b) {
+        internal Boolean Select(Boolean b) {
             _selected = b;
             #if TAPEDEBUG
             if(fd != null && !_busy) {
@@ -241,7 +247,7 @@ namespace IBM1410Console
 
         //  Rewind to the beginning of the tape (file)
 
-        protected Boolean Rewind() {
+        internal Boolean Rewind() {
             if (!_selected || !_loaded || !_ready) {
                 Debug.WriteLine("TapeUnit Rewind unit " + channel.ToString() + unit.ToString() +
                     " not selected, loaded and ready.");
@@ -282,7 +288,7 @@ namespace IBM1410Console
 
         //  Rewind and Unload
 
-        protected Boolean RewindUnload() {
+        internal Boolean RewindUnload() {
 
             //  Do the rewind.  If it fails, reset.
 
@@ -299,7 +305,7 @@ namespace IBM1410Console
 
         //  (Erase / Skip and blank tape -- does nothing unless we someday have measured tape)
 
-        protected Boolean Skip() {
+        internal Boolean Skip() {
             #if TAPEDEBUG
                 Debug.WriteLine("TapeUnit Skip on unit " + channel.ToString() + unit.ToString());
             #endif 
@@ -314,7 +320,7 @@ namespace IBM1410Console
         //  Space forward: read until an IRG is hit.  (D Character "A", NOT in the 1410 Principles
         //  of operation?
 
-        protected int Space() {
+        internal int Space() {
 
             int rc;
 
@@ -333,7 +339,7 @@ namespace IBM1410Console
         //  Backspace.  This is a pain.  To do it, we have to take TWO steps (CHARACTERS!) back, and then
         //  one step forward to search for an IRG
 
-        protected Boolean Backspace() {
+        internal Boolean Backspace() {
 
             //  Drive must be selected, ready and loaded.
 
@@ -430,14 +436,24 @@ namespace IBM1410Console
                 //  Otherwise later, rinse, repeat until we return.
             }
         }
-        protected void ResetFile() {
 
+        
+        //  Reset file info -- after an unload or an error.
+        protected void ResetFile() {
+            if(fd != null) {
+                fd.Close();
+            }
+            fd = null;
+            _fileName = null;
+            _ready = _loaded = _fileProtect = _bot = false;
+            irgRead = writeIRG = modified = false;
+            _recordNumber = 0;
         }
 
         //  Method to write a byte.  Doesn't need to worry about load mode, word separators, 
         //  parity or anything like that.
 
-        protected Boolean Write(int c) {
+        internal Boolean Write(int c) {
 
             Debug.WriteLine("TapeUnit Write unit " + channel.ToString() + unit.ToString());
 
@@ -504,7 +520,7 @@ namespace IBM1410Console
         //  Mark the end of a record.  Called at the end of a trnsfer - sets the IRG flag
         //  for the start of the next record
 
-        void WriteIRG() {
+        internal void WriteIRG() {
             writeIRG = modified = true;
             _bot = irgRead = false;
             ++_recordNumber;
@@ -514,7 +530,7 @@ namespace IBM1410Console
         //  Write a tape mark.  Just calls write to do the dirty work.  Note that
         //  tape marks are ALWAYS even parity.
 
-        Boolean WriteTM() {
+        internal Boolean WriteTM() {
             Boolean status;
 
             #if TAPEDEBUG
@@ -541,7 +557,7 @@ namespace IBM1410Console
 
 
         //  Read a byte of a record and send it off to the FPGA
-        protected int Read() {
+        internal int Read() {
 
             int rc;
 
@@ -603,7 +619,7 @@ namespace IBM1410Console
         //  Keeps us from having to do it all more than once, though right now it is only
         //  called from one place?
 
-        protected int ReadNextChar() {
+        internal int ReadNextChar() {
 
             int c;
 
@@ -616,17 +632,17 @@ namespace IBM1410Console
             return (c);
         }
 
-         //  TODO: When a tape drive status changes in any way, we need to send a message to the
-         //  FPGA so it can update its  local status.
+        //  TODO: When a tape drive status changes in any way, we need to send a message to the
+        //  FPGA so it can update its  local status.
 
-         protected void UpdateFPGATape() {
+        internal void UpdateFPGATape() {
 
          }
 
         //  TODO:  Need to have a "busy list" of some sort that will keep a drive busy
         //  for a period of time, and process to clear the busy and update the drive status.
 
-        protected void SetBusy(long n) {
+        internal void SetBusy(long n) {
             // TODO
             _busy = true;
         }

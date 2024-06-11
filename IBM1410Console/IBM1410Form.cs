@@ -28,6 +28,8 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+
 
 namespace IBM1410Console
 {
@@ -38,9 +40,11 @@ namespace IBM1410Console
         IBM1415ConsoleForm IBM1415ConsoleForm = null;
         UI1415LForm UI1415LForm = null;
         IBM1410SwitchForm IBM1410SwitchForm = null;
+        IBM1410TapesForm IBM1410TapesForm = null;
 
         SerialPort serialPort;
         SerialDataPublisher serialDataPublisher;
+        SemaphoreSlim serialOuputSemaphore;
 
         // string[] comPortNames = SerialPort.GetPortNames();
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
@@ -98,8 +102,17 @@ namespace IBM1410Console
 
             serialDataPublisher = new SerialDataPublisher(serialPort);
 
-            IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort);
-            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);  // Need this form during setup of lamp form...
+            //  For now, we are using a simple semaphore to control access to serial output.
+            //  If writing a large amount of data, consider splitting it up and giving up
+            //  control at times!
+
+            serialOuputSemaphore = new SemaphoreSlim(1);
+
+            IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort, serialOuputSemaphore);
+
+            // Need this form during setup of lamp form...
+
+            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort,serialOuputSemaphore);  
 
             //  Warn the user if there were no suitable serial ports found...
 
@@ -114,14 +127,21 @@ namespace IBM1410Console
             //  Come up with Switches showing...
 
             if (IBM1410SwitchForm == null) {
-                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);
+                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore);
             }
             IBM1410SwitchForm.Show();
+
+            //  And the tape drive panel showing...
+
+            if (IBM1410TapesForm == null) {
+                IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore);
+            }
+            IBM1410TapesForm.Show();
 
             //  And the console typewriter...  put in front.
 
             if (IBM1415ConsoleForm == null) {
-                IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort);
+                IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort, serialOuputSemaphore);
             }
             IBM1415ConsoleForm.Show();
             IBM1415ConsoleForm.BringToFront();
@@ -149,7 +169,7 @@ namespace IBM1410Console
 
         private void consoleStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1415ConsoleForm == null) {
-                IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort);
+                IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort, serialOuputSemaphore);
             }
             IBM1415ConsoleForm.Show();
         }
@@ -167,7 +187,7 @@ namespace IBM1410Console
 
         private void switchesStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1410SwitchForm == null) {
-                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort);
+                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore);
             }
             IBM1410SwitchForm.Show();
         }

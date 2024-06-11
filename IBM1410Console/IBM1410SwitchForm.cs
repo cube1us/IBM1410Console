@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.Threading;
 
 
 namespace IBM1410Console
@@ -122,8 +123,9 @@ namespace IBM1410Console
 
 
         SerialPort serialPort = null;
+        SemaphoreSlim serialOutputSemaphore = null;
 
-        public IBM1410SwitchForm(SerialPort serialPort) {
+        public IBM1410SwitchForm(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
             InitializeComponent();
             this.CreateHandle();
 
@@ -139,6 +141,7 @@ namespace IBM1410Console
             addrTransferComboBox.SelectedIndex = 6;
             scanGateComboBox.SelectedIndex = 0;
             this.serialPort = serialPort;
+            this.serialOutputSemaphore = serialOutputSemaphore;
 
             //	Testing Data
 
@@ -229,6 +232,10 @@ namespace IBM1410Console
             byte tempByte = 0x00;
             int currentByte = 0;
 
+            //  Wait for access to the serial port for output
+
+            serialOutputSemaphore.Wait();
+
             //	First, we send the special flag byte...
 
             serialPort.Write(switchFlagByte, 0, switchFlagByte.Length);
@@ -254,6 +261,8 @@ namespace IBM1410Console
             Debug.WriteLine("/");
 
             serialPort.Write(switchBytes, 0, switchBytes.Length);
+
+            serialOutputSemaphore.Release();
         }
 
         private void modeComboBox_SelectedIndexChanged(object sender, EventArgs e) {

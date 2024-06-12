@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TAPEDEBUG
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +18,15 @@ namespace IBM1410Console
 
         public const int TAPE_IRG = 0x80;
         public const int TAPE_TM = 0x0f;
+
+        public const byte CHANNEL1FLAG = 0x84;
+        public const byte CHANNEL2FLAG = 0x83;
+
+        public const byte READYREADSTATUS = 0x01;
+        public const byte READYWRITESTATUS = 0x02;
+        public const byte LOADPOINTSTATUS = 0x04;
+        public const byte TAPEINDICATESTATUS = 0x08;
+        public const byte REWINDINGSTATUS = 0x10;
 
         public const int TAPEUNITIRG = -1;
         public const int TAPEUNITNOTREADY = -3;
@@ -51,9 +62,12 @@ namespace IBM1410Console
         internal Boolean FileProtect { get { return _fileProtect; } }
         internal Boolean Ready { get { return _ready; } }
         internal Boolean Selected { get { return _selected; } }
-        internal Boolean TapeIndicate { get { return _tapeIndicate; } }
+        internal Boolean TapeIndicate { get { return _tapeIndicate; } set { _tapeIndicate = value; } }
         internal Boolean HighDensity { get { return _highDensity; } }
         internal Boolean Bot { get { return _bot; } }
+        internal int ChannelNumber { get { return channel;  } }
+        internal int UnitNumber { get { return unit; } }
+
 
         // Constructor.  Defers most of the work to Init - which can also be invoked later
         // if a new tape is mounted.
@@ -124,7 +138,7 @@ namespace IBM1410Console
                     return (true);
                 }
                 catch(Exception e) {
-                    Debug.WriteLine("LoadRewind: Seek failed on tape unit " + channel.ToString() + 
+                    Debug.WriteLine("TapeUnit: LoadRewind: Seek failed on tape unit " + channel.ToString() + 
                        unit.ToString());
                     ResetFile();
                     _bot = _loaded = _ready = false;
@@ -151,7 +165,7 @@ namespace IBM1410Console
                     _fileProtect = true;
                 }
                 catch (Exception e2) {
-                    Debug.WriteLine("LoadRewind: new FileStream failed on tape unit " + 
+                    Debug.WriteLine("TapeUnit: LoadRewind: new FileStream failed on tape unit " + 
                         channel.ToString() + unit.ToString());
                     Debug.WriteLine(e2.ToString());
                     ResetFile();
@@ -239,7 +253,7 @@ namespace IBM1410Console
             #if TAPEDEBUG
             if(fd != null && !_busy) {
                 Debug.WriteLine("TapeUnit unit " + channel.ToString() + unit.ToString() + " selected");
-                Debug.WriteLine("TapeUInit current file offset is " + fd.Position);
+                Debug.WriteLine("TapeUnit current file offset is " + fd.Position);
             }
             #endif
             return true;
@@ -300,6 +314,7 @@ namespace IBM1410Console
 
             ResetFile();
             _tapeIndicate = false;
+            UpdateFPGATape();
             return true;
         }
 
@@ -353,7 +368,7 @@ namespace IBM1410Console
 
             #if TAPEDEBUG
                 Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
-                    " position: " + fd.Position().ToString());
+                    " position: " + fd.Position.ToString());
             #endif
 
             //  If we are already a bot, this is a NOP
@@ -428,7 +443,7 @@ namespace IBM1410Console
                     --_recordNumber;
                     #if TAPEDEBUG
                         Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
-                            " ENDED, position: " + fd.Position().ToString());
+                            " ENDED, position: " + fd.Position.ToString());
                     #endif
                     return true;
                 }
@@ -460,6 +475,8 @@ namespace IBM1410Console
             if (!_loaded || !_ready || !_selected || fd == null) {
                 Debug.WriteLine("TapeUnit write unit " + channel.ToString() + unit.ToString() +
                     " not ready, selected, loaded or fd is null");
+                Debug.WriteLine("Loaded: " + _loaded.ToString() + ", Ready: " + _ready.ToString() +
+                    ", Selected: " + _selected.ToString() + ", fd is " + (fd == null ? "null" : "not null"));
                 return false;
             }
 
@@ -548,7 +565,7 @@ namespace IBM1410Console
 
             #if TAPEDEBUG
                 Debug.WriteLine("TapeUnit WTM unit " + channel.ToString() + unit.ToString() +
-                    " Position at end: " + fd.Position().ToString());
+                    " Position at end: " + fd.Position.ToString());
             #endif
 
             SetBusy(2);
@@ -596,7 +613,7 @@ namespace IBM1410Console
             if ((tape_buffer & TAPE_IRG) != 0) {
                 #if TAPEDEBUG
                     Debug.WriteLine("TapeUnit Read " + channel.ToString() + unit.ToString() +
-                        " found IRG character at position: " + fd.Position().ToString());
+                        " found IRG character at position: " + fd.Position.ToString());
                 #endif
                 irgRead = true;
                 _bot = false;
@@ -637,7 +654,50 @@ namespace IBM1410Console
 
         internal void UpdateFPGATape() {
 
+            byte[] serialBuffer = new byte[3];
+            byte unitStatus = 0;
+            byte flagByte = 0;
+
+            if (_ready) {
+                unitStatus |= READYREADSTATUS;
+                if (!_fileProtect) {
+                    unitStatus |= READYWRITESTATUS;
+                }
+            }
+            if (_tapeIndicate) {
+                unitStatus |= TAPEINDICATESTATUS;
+            }
+            if(_busy) {
+                unitStatus |= REWINDINGSTATUS;
+            }
+            if(_bot) {
+                unitStatus |= LOADPOINTSTATUS;
+            }
+
+            flagByte = channel == 1 ? CHANNEL1FLAG : CHANNEL2FLAG;
+
+            serialBuffer[0] = flagByte;
+            serialBuffer[1] = (byte) unit;
+            serialBuffer[2] = unitStatus;
+
+            //  Wait for access to the serial port...
+
+            serialOutputSemaphore.Wait();
+            serialPort.Write(serialBuffer, 0, serialBuffer.Length);
+            serialOutputSemaphore.Release();
+
+            Debug.WriteLine("TapeUnit: Sent updated status to FPGA for unit " +
+                channel.ToString() + unit.ToString());
+
          }
+
+
+        //  Reset the Tape Indicate
+        internal void ResetTapeIndicate() {
+            _tapeIndicate = false;
+            UpdateFPGATape();
+            return;
+        }
 
         //  TODO:  Need to have a "busy list" of some sort that will keep a drive busy
         //  for a period of time, and process to clear the busy and update the drive status.
@@ -645,6 +705,10 @@ namespace IBM1410Console
         internal void SetBusy(long n) {
             // TODO
             _busy = true;
+            UpdateFPGATape();
+            _busy = false;
+            UpdateFPGATape();
+
         }
 
     }

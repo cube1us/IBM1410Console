@@ -23,7 +23,7 @@ namespace IBM1410Console
         private IBM1410TapeUnit channel2SelectedUnit = null;
 
         private IBM1410TapeUnit[,] TapeUnits = null;
-        private IBM1410TapeUnit TapeUnit = null;
+        private IBM1410TapeUnit tapeUnit = null;
 
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
@@ -76,7 +76,7 @@ namespace IBM1410Console
 
             currentChannel = 1;
             currentUnit = 0;
-            TapeUnit = TapeUnits[currentChannel,currentUnit];
+            tapeUnit = TapeUnits[currentChannel,currentUnit];
 
             unitDial.Value = currentUnit;
             unitDial.Maximum = 9;
@@ -204,6 +204,15 @@ namespace IBM1410Console
 
             Debug.WriteLine("Tape Channel 1 leaving output available routine...");
 
+            //  If the current tape unit on the GUI is the same as this one, 
+            //  Update the info displayed.
+
+            if (channel1SelectedUnit != null && tapeUnit != null &&
+                tapeUnit.ChannelNumber == channel1SelectedUnit.ChannelNumber &&
+                tapeUnit.UnitNumber == channel1SelectedUnit.UnitNumber) {
+                Display();
+            }
+
         }
 
         void tapeChannel2OutputAvailable(object sender, TapeChannelEventArgs e) {
@@ -280,7 +289,8 @@ namespace IBM1410Console
         //  Click on the unit number
         private void unitDial_ValueChanged(object sender, EventArgs e) {
             currentUnit = (int)unitDial.Value;
-            TapeUnit = TapeUnits[currentChannel,currentUnit];
+            tapeUnit = TapeUnits[currentChannel,currentUnit];
+            Display();
         }
 
 
@@ -294,14 +304,15 @@ namespace IBM1410Console
                 currentChannel = 1;
             }
             channelButton.Text = currentChannel.ToString();
-            TapeUnit = TapeUnits[currentChannel,currentUnit];
+            tapeUnit = TapeUnits[currentChannel,currentUnit];
+            Display();
         }
 
 
         //  Click on the Load/Rewind button.
         private void loadButton_Click(object sender, EventArgs e) {
-            if (TapeUnit != null) {
-                TapeUnit.LoadRewind();
+            if (tapeUnit != null) {
+                tapeUnit.LoadRewind();
                 Display();
             }
         }
@@ -309,8 +320,8 @@ namespace IBM1410Console
 
         //  Start button click
         private void startButton_Click(object sender, EventArgs e) {
-            if (TapeUnit != null) {
-                TapeUnit.Start();
+            if (tapeUnit != null) {
+                tapeUnit.Start();
                 Display();
             }
         }
@@ -318,8 +329,8 @@ namespace IBM1410Console
 
         //  Density Change
         private void densityButton_Click(object sender, EventArgs e) {
-            if (TapeUnit != null) {
-                TapeUnit.ChangeDensity();
+            if (tapeUnit != null) {
+                tapeUnit.ChangeDensity();
                 Display();
             }
         }
@@ -327,8 +338,8 @@ namespace IBM1410Console
 
         //  Unload
         private void unloadButton_Click(object sender, EventArgs e) {
-            if (TapeUnit != null) {
-                TapeUnit.Unload();
+            if (tapeUnit != null) {
+                tapeUnit.Unload();
                 Display();
             }
         }
@@ -336,8 +347,8 @@ namespace IBM1410Console
 
         //  Reset
         private void resetButton_Click(object sender, EventArgs e) {
-            if (TapeUnit != null) {
-                TapeUnit.Reset();
+            if (tapeUnit != null) {
+                tapeUnit.Reset();
                 Display();
             }
         }
@@ -346,9 +357,9 @@ namespace IBM1410Console
         //  Mount a tape (file)
 
         private void mountButton_Click(object sender, EventArgs e) { 
-            if(TapeUnit != null && openFileDialog.ShowDialog() == DialogResult.OK) {
+            if(tapeUnit != null && openFileDialog.ShowDialog() == DialogResult.OK) {
                 fileNameLabel.Text = openFileDialog.FileName;
-                TapeUnit.Mount(fileNameLabel.Text);
+                tapeUnit.Mount(fileNameLabel.Text);
                 Display();
             }
         }
@@ -356,48 +367,75 @@ namespace IBM1410Console
         //  Update the display...
 
         void Display() {
-            if (TapeUnit == null) {
+            if (tapeUnit == null) {
                 return;
             }
 
-            readyLabel.ForeColor = TapeUnit.Ready ? Color.White : Color.DarkGray;
-            selectLabel.ForeColor = TapeUnit.Selected ? Color.White : Color.DarkGray;
-            protectLabel.ForeColor = TapeUnit.FileProtect ? Color.White : Color.DarkGray;
-            tapeIndicateLabel.ForeColor = TapeUnit.TapeIndicate ? Color.White : Color.DarkGray;
-            densityLabel.ForeColor = TapeUnit.HighDensity ? Color.White : Color.DarkGray;
-            fileNameLabel.Text = TapeUnit.FileName;
-            recordNumberLabel.Text = TapeUnit.RecordNumber.ToString();
+            //  Because this method may be called from the serial data publisher thread,
+            //  the various updates need to be thread-safe.
+
+            Action safeDisplay = delegate
+            {
+
+                readyLabel.ForeColor = tapeUnit.Ready ? Color.White : Color.DarkGray;
+                selectLabel.ForeColor = tapeUnit.Selected ? Color.White : Color.DarkGray;
+                protectLabel.ForeColor = tapeUnit.FileProtect ? Color.White : Color.DarkGray;
+                tapeIndicateLabel.ForeColor = tapeUnit.TapeIndicate ? Color.White : Color.DarkGray;
+                densityLabel.ForeColor = tapeUnit.HighDensity ? Color.White : Color.DarkGray;
+                fileNameLabel.Text = tapeUnit.FileName;
+                recordNumberLabel.Text = tapeUnit.RecordNumber.ToString();
+
+            };
+
+            this.Invoke(safeDisplay);
 
             //  Enable or disable buttons appropriate to the status of the drive.
+            //  Again, these need to be thread-safe.
 
-            if (TapeUnit.Ready) {
-                mountButton.Enabled = false;
-                loadButton.Enabled = false;
-                startButton.Enabled = false;
-                unloadButton.Enabled = false;
-                resetButton.Enabled = true;
+            Action safeButtonsDisplay = null;
+
+            if (tapeUnit.Ready) {
+                safeButtonsDisplay = delegate
+                {
+                    mountButton.Enabled = false;
+                    loadButton.Enabled = false;
+                    startButton.Enabled = false;
+                    unloadButton.Enabled = false;
+                    resetButton.Enabled = true;
+                };
             }
-            else if (TapeUnit.Loaded) {
-                mountButton.Enabled = false;
-                loadButton.Enabled = false;
-                startButton.Enabled = true;
-                unloadButton.Enabled = true;
-                resetButton.Enabled = true;
+            else if (tapeUnit.Loaded) {
+                safeButtonsDisplay = delegate
+                {
+                    mountButton.Enabled = false;
+                    loadButton.Enabled = false;
+                    startButton.Enabled = true;
+                    unloadButton.Enabled = true;
+                    resetButton.Enabled = true;
+                };
             }
-            else if (TapeUnit.FileName != null && TapeUnit.FileName.Length > 0) {
-                mountButton.Enabled = true;
-                loadButton.Enabled = true;
-                startButton.Enabled = false;
-                unloadButton.Enabled = false;
-                resetButton.Enabled = true;
+            else if (tapeUnit.FileName != null && tapeUnit.FileName.Length > 0) {
+                safeButtonsDisplay = delegate
+                {
+                    mountButton.Enabled = true;
+                    loadButton.Enabled = true;
+                    startButton.Enabled = false;
+                    unloadButton.Enabled = false;
+                    resetButton.Enabled = true;
+                };
             }
             else {
-                mountButton.Enabled = true;
-                loadButton.Enabled = false;
-                startButton.Enabled = false;
-                unloadButton.Enabled = false;
-                resetButton.Enabled = true;
+                safeButtonsDisplay = delegate
+                {
+                    mountButton.Enabled = true;
+                    loadButton.Enabled = false;
+                    startButton.Enabled = false;
+                    unloadButton.Enabled = false;
+                    resetButton.Enabled = true;
+                };
             }
+
+            this.Invoke(safeButtonsDisplay);
 
         }
     }

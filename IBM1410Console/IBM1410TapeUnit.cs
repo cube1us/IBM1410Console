@@ -541,6 +541,7 @@ namespace IBM1410Console
             writeIRG = modified = true;
             _bot = irgRead = false;
             ++_recordNumber;
+            UpdateFPGATape();
         }
 
 
@@ -569,6 +570,7 @@ namespace IBM1410Console
             #endif
 
             SetBusy(2);
+            UpdateFPGATape();
             return status;
         }
 

@@ -60,6 +60,8 @@ namespace IBM1410Console
         Font consoleFont = new Font("IBM1415", 12.0f, FontStyle.Regular);  // IBM 1410 1415
         Font consoleUnderlineFont = new Font("IBM1415", 12.0f, FontStyle.Underline);  // Underline (bad parity)
 
+        String debugWindowConsoleOutput = "";
+
         public IBM1415ConsoleForm(SerialDataPublisher serialPublisher, 
             SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
             InitializeComponent();
@@ -203,6 +205,13 @@ namespace IBM1410Console
 
 
         void doAppend(string s, bool replace) {
+
+            debugWindowConsoleOutput += s;
+            if(s.Contains("\r")) {
+                Debug.WriteLine("Console output: " + debugWindowConsoleOutput);
+                debugWindowConsoleOutput = "";
+            }
+
             if (ConsoleOutput.InvokeRequired) {
                 // Debug.WriteLine("Console Output event: Delegating append of text.");
                 Action safeAppend = delegate

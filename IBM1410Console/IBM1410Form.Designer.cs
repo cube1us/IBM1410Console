@@ -56,12 +56,14 @@ namespace IBM1410Console
             lightStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             switchesStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            clearCoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -98,7 +100,7 @@ namespace IBM1410Console
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, toolStripSeparator, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, newToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, clearCoreToolStripMenuItem, toolStripSeparator, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, newToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
@@ -241,7 +243,7 @@ namespace IBM1410Console
             // 
             // windowsStripMenuItem
             // 
-            windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { consoleStripMenuItem, lightStripMenuItem, switchesStripMenuItem, optionsToolStripMenuItem });
+            windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { consoleStripMenuItem, lightStripMenuItem, switchesStripMenuItem, optionsToolStripMenuItem, tapesToolStripMenuItem });
             windowsStripMenuItem.Name = "windowsStripMenuItem";
             windowsStripMenuItem.Size = new System.Drawing.Size(68, 20);
             windowsStripMenuItem.Text = "&Windows";
@@ -251,29 +253,36 @@ namespace IBM1410Console
             // consoleStripMenuItem
             // 
             consoleStripMenuItem.Name = "consoleStripMenuItem";
-            consoleStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            consoleStripMenuItem.Size = new System.Drawing.Size(180, 22);
             consoleStripMenuItem.Text = "Console";
             consoleStripMenuItem.Click += consoleStripMenuItem_Click;
             // 
             // lightStripMenuItem
             // 
             lightStripMenuItem.Name = "lightStripMenuItem";
-            lightStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            lightStripMenuItem.Size = new System.Drawing.Size(180, 22);
             lightStripMenuItem.Text = "Console Lights";
             lightStripMenuItem.Click += lightStripMenuItem_Click;
             // 
             // switchesStripMenuItem
             // 
             switchesStripMenuItem.Name = "switchesStripMenuItem";
-            switchesStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            switchesStripMenuItem.Size = new System.Drawing.Size(180, 22);
             switchesStripMenuItem.Text = "&Switches";
             switchesStripMenuItem.Click += switchesStripMenuItem_Click;
             // 
             // optionsToolStripMenuItem
             // 
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             optionsToolStripMenuItem.Text = "&Options";
+            // 
+            // tapesToolStripMenuItem
+            // 
+            tapesToolStripMenuItem.Name = "tapesToolStripMenuItem";
+            tapesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            tapesToolStripMenuItem.Text = "Tapes";
+            tapesToolStripMenuItem.Click += tapesToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -311,6 +320,13 @@ namespace IBM1410Console
             aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             aboutToolStripMenuItem.Text = "&About...";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            // 
+            // clearCoreToolStripMenuItem
+            // 
+            clearCoreToolStripMenuItem.Name = "clearCoreToolStripMenuItem";
+            clearCoreToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            clearCoreToolStripMenuItem.Text = "Clear Core";
+            clearCoreToolStripMenuItem.Click += clearCoreToolStripMenuItem_Click;
             // 
             // IBM1410Form
             // 
@@ -366,6 +382,8 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripMenuItem consoleStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lightStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fPGACoreSizeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tapesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearCoreToolStripMenuItem;
     }
 }
 

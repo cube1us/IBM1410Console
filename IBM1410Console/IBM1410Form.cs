@@ -29,6 +29,7 @@ using System.IO.Ports;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.IO.Pipes;
 
 
 namespace IBM1410Console
@@ -112,7 +113,7 @@ namespace IBM1410Console
 
             // Need this form during setup of lamp form...
 
-            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort,serialOuputSemaphore);  
+            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore);
 
             //  Warn the user if there were no suitable serial ports found...
 
@@ -266,11 +267,11 @@ namespace IBM1410Console
                 //  See if file size matches up with size in first 5 bytes...
                 //  It should be either 2*size+5 or 4*size+5
 
-                if(fileStream.Length == fileCoreSize*2+5) {
+                if (fileStream.Length == fileCoreSize * 2 + 5) {
                     bytesPerCharacter = 2;
                 }
-                else if(fileStream.Length == fileCoreSize*4+5) {
-                    bytesPerCharacter= 4;
+                else if (fileStream.Length == fileCoreSize * 4 + 5) {
+                    bytesPerCharacter = 4;
                 }
                 else {
                     DialogResult result = MessageBox.Show(
@@ -323,23 +324,27 @@ namespace IBM1410Console
                 buffer[5] = addrMark | 0x00;
                 serialPort.Write(buffer, 0, 6);
 
+                //  Acquire access to the serial port
+
+                serialOuputSemaphore.Wait();
+
                 //  Read the file and send the data...
 
                 for (int addr = 0; addr < coresize; addr++) {
                     long c, t;
 
                     try {
-                        c = bytesPerCharacter == 2 ? reader.ReadInt16() : 
+                        c = bytesPerCharacter == 2 ? reader.ReadInt16() :
                             reader.ReadInt32();
                     }
-                    catch(EndOfStreamException) {
+                    catch (EndOfStreamException) {
                         MessageBox.Show("Unexpected EOF on core image file.",
                             "Unexpected EOF");
                         break;
                     }
-                    catch(Exception ex) {
+                    catch (Exception ex) {
                         MessageBox.Show("ERROR reading core image file: " +
-                            ex.Message,"Unexpected I/O Error");
+                            ex.Message, "Unexpected I/O Error");
                         break;
                     }
 
@@ -347,12 +352,18 @@ namespace IBM1410Console
                     //  to FPGA format (C WM ...)
 
                     t = c;
-                    c = c & 0x3f;   
-                    if((t & 0x80) == 0x80) {
+                    c = c & 0x3f;
+                    if ((t & 0x80) == 0x80) {
                         c = c | 0x40;
                     }
-                    if((t & 0x40) == 0x40) {
+                    if ((t & 0x40) == 0x40) {
                         c = c | 0x80;
+                    }
+
+                    //  Fix bad parity on zeroes (kludge)
+
+                    if (c == 0) {
+                        c = 0x80;
                     }
 
                     //  Temporary debug...
@@ -373,6 +384,10 @@ namespace IBM1410Console
                 buffer[0] = endMark;
                 serialPort.Write(buffer, 0, 1);
 
+                //  Release the kraken, I mean semaphore...
+
+                serialOuputSemaphore.Release();
+
                 reader.Close();
                 fileStream.Close();
 
@@ -387,5 +402,51 @@ namespace IBM1410Console
             coreSizeSettingsForm.setCoreSize(Properties.Settings.Default.CoreSize.ToString());
             coreSizeSettingsForm.ShowDialog();
         }
+
+        private void tapesToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (IBM1410TapesForm == null) {
+                IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore);
+            }
+            IBM1410TapesForm.Show();
+        }
+
+        private void clearCoreToolStripMenuItem_Click(object sender, EventArgs e) {
+            byte[] buffer = new byte[6];
+
+            //  Gain access to the serial port...
+
+            serialOuputSemaphore.Wait();
+
+            //  Send the flag byte fgor core load, and the start address.
+
+            buffer[0] = loaderStreamFlag;
+            buffer[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
+            buffer[2] = addrMark | 0x00;
+            buffer[3] = addrMark | 0x00;
+            buffer[4] = addrMark | 0x00;
+            buffer[5] = addrMark | 0x00;
+            serialPort.Write(buffer, 0, 6);
+
+
+            for (int addr = 0; addr < Properties.Settings.Default.CoreSize; addr++) {
+
+                //  Send a blank (0x80)
+
+                buffer[0] = (0x08 | data0Mark);
+                buffer[1] = data1Mark;
+                serialPort.Write(buffer, 0, 2);
+            }
+
+            //  Send the end of load marker.
+
+            buffer[0] = endMark;
+            serialPort.Write(buffer, 0, 1);
+
+            serialOuputSemaphore.Release();
+
+            MessageBox.Show("Core Clear Complete", "Core Clear Complete");
+        }
+
     }
 }
+

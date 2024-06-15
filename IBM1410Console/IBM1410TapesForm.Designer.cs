@@ -199,7 +199,7 @@
             mountButton.TabIndex = 15;
             mountButton.Text = "Mount";
             mountButton.UseVisualStyleBackColor = true;
-            mountButton.Click += this.mountButton_Click;
+            mountButton.Click += mountButton_Click;
             // 
             // fileNameLabel
             // 
@@ -246,6 +246,7 @@
             Controls.Add(labelRecordNumber);
             Name = "IBM1410TapesForm";
             Text = "IBM1410Tapes";
+            FormClosing += IBM1410TapesForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)unitDial).EndInit();
             ResumeLayout(false);
             PerformLayout();

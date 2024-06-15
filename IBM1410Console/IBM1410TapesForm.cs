@@ -14,7 +14,8 @@ using System.Windows.Forms;
 
 namespace IBM1410Console
 {
-    public partial class IBM1410TapesForm : Form {
+    public partial class IBM1410TapesForm : Form
+    {
 
         private int currentChannel;
         private int currentUnit;
@@ -29,12 +30,14 @@ namespace IBM1410Console
         private SemaphoreSlim serialOutputSemaphore;
         private SerialDataPublisher serialDataPublisher;
 
-        private enum ChanneReceiveState { receiveIdle, receivingOperation, receivingData };
-        ChanneReceiveState channel1ReceiveState = ChanneReceiveState.receiveIdle;
-        ChanneReceiveState channel2ReceiveState = ChanneReceiveState.receiveIdle;
+        private int[] recordSize = { 0, 0, 0 };
+
+        private enum ChannelReceiveState { receiveIdle, receivingOperation, receivingData };
+        ChannelReceiveState channel1ReceiveState = ChannelReceiveState.receiveIdle;
+        ChannelReceiveState channel2ReceiveState = ChannelReceiveState.receiveIdle;
 
         const byte READDATAFLAG = 0x40;
-        
+
         const byte CHANNEL1TOFPGAFLAG = 0x84;
         const byte CHANNEL2TOFPGAFLAG = 0x83;
 
@@ -51,13 +54,13 @@ namespace IBM1410Console
 
         //  Constructor
 
-        public IBM1410TapesForm(SerialDataPublisher serialDataPublisher, 
+        public IBM1410TapesForm(SerialDataPublisher serialDataPublisher,
             SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
 
             int c, u;
 
             this.serialPort = serialPort;
-            this.serialOutputSemaphore = serialOutputSemaphore;  
+            this.serialOutputSemaphore = serialOutputSemaphore;
             this.serialDataPublisher = serialDataPublisher;
 
             InitializeComponent();
@@ -67,22 +70,22 @@ namespace IBM1410Console
 
             TapeUnits = new IBM1410TapeUnit[3, 10];
 
-            for (c = 1; c < 2; ++c) {
+            for (c = 1; c < 3; ++c) {
                 for (u = 0; u < 10; ++u) {
-                    TapeUnits[c,u] = new IBM1410TapeUnit(serialPort, serialOutputSemaphore, c, u);
-                    TapeUnits[0, u] = null; 
+                    TapeUnits[c, u] = new IBM1410TapeUnit(serialPort, serialOutputSemaphore, c, u);
+                    TapeUnits[0, u] = null;
                 }
             }
 
             currentChannel = 1;
             currentUnit = 0;
-            tapeUnit = TapeUnits[currentChannel,currentUnit];
+            tapeUnit = TapeUnits[currentChannel, currentUnit];
 
             unitDial.Value = currentUnit;
             unitDial.Maximum = 9;
             unitDial.Minimum = 0;
 
-            loadButton.Enabled = false; 
+            loadButton.Enabled = false;
             startButton.Enabled = false;
             unloadButton.Enabled = false;
 
@@ -90,18 +93,12 @@ namespace IBM1410Console
                 new EventHandler<TapeChannelEventArgs>(tapeChannel1OutputAvailable);
 
             serialDataPublisher.TapeChannel2OutputEvent +=
-                new EventHandler<TapeChannelEventArgs>(tapeChannel1OutputAvailable);
+                new EventHandler<TapeChannelEventArgs>(tapeChannel2OutputAvailable);
 
             Debug.WriteLine("Event Handlers for SerialDataPublisher (Tapes) Registered.");
         }
 
         void tapeChannel1OutputAvailable(object sender, TapeChannelEventArgs e) {
-
-            //  TODO:  Move most of this code into another method, with channel as a parameter.
-
-            byte c = (byte) e.SerialByte;
-
-            Debug.WriteLine("Entered serial dispatch for tape channel 1, code " + e.DispatchCode.ToString());
 
             //  Is this data really for me?
 
@@ -109,117 +106,185 @@ namespace IBM1410Console
                 return;
             }
 
-            Debug.WriteLine("Channel 1 Tape input from serial port: " + c.ToString("X2"));
+            tapeSerialInputAvailable(1, (byte)e.SerialByte);
+        }
 
-            switch (channel1ReceiveState) {
+        void tapeChannel2OutputAvailable(object sender, TapeChannelEventArgs e) {
+
+            //  Is this data really for me?
+
+            if (e.DispatchCode != SerialDataPublisher.tapeChannel2FromTAUCodeByte) {
+                return;
+            }
+
+            tapeSerialInputAvailable(2, (byte)e.SerialByte);
+        }
+
+
+        //  Method to actually handle a byte of data from the USB serial port
+        //  for either channel
+
+        void tapeSerialInputAvailable(int channel, byte c) {
+
+            ChannelReceiveState channelReceiveState = channel == 1 ? channel1ReceiveState :
+                channel2ReceiveState;
+            IBM1410TapeUnit tapeUnit = channel == 1 ? channel1SelectedUnit :
+                channel2SelectedUnit;
+
+            String tapeUnitString = "";
+
+            if (tapeUnit != null) {
+                tapeUnitString = tapeUnit.ChannelNumber.ToString() + tapeUnit.UnitNumber.ToString();
+            }
+
+            // Debug.WriteLine("Entered serial dispatch for tape channel " + channel.ToString() +
+            //    " data: " + c.ToString("X2"));
+
+            switch (channelReceiveState) {
 
                 //  In the Idle state, we expect to receive a unit number
 
-                case ChanneReceiveState.receiveIdle:
-                
+                case ChannelReceiveState.receiveIdle:
+
                     // Received a unit, perhaps with an X'40' flag for reading data.
-                    
-                    if((c & 0x0f) > 10) {
-                        Debug.WriteLine("Channel 1 INVALID tape unit " + c.ToString("X2"));
+
+                    if ((c & 0x0f) > 10) {
+                        Debug.WriteLine("Tape Channel " + channel.ToString() + " INVALID tape unit " +
+                            c.ToString("X2"));
                         return;
                     }
 
                     //  Did the selected unit change?  If so, deselect the old one,
                     //  before selecting the new one.
 
-                    if(channel1SelectedUnit != null) {
-                        if(channel1SelectedUnit.UnitNumber != (c & 0x0f)) {
-                            channel1SelectedUnit.Select(false);
+                    if (tapeUnit != null) {
+                        if (tapeUnit.UnitNumber != (c & 0x0f)) {
+                            tapeUnit.Select(false);
                         }
                     }
 
-                    channel1SelectedUnit = TapeUnits[1, c & 0x0f];
-                    channel1SelectedUnit.Select(true);
-                    channel1ReceiveState = ChanneReceiveState.receivingOperation;
+                    tapeUnit = TapeUnits[channel, c & 0x0f];
+                    if (channel == 1) {
+                        channel1SelectedUnit = tapeUnit;
+                    }
+                    else {
+                        channel2SelectedUnit = tapeUnit;
+                    }
+
+                    tapeUnit.Select(true);
+
+                    //  Now that we know the unit number, we can also compose the string for
+                    //  debug messages.  Hmmm: maybe TapeUnit should just have a method for this.
+
+                    tapeUnitString = tapeUnit.ChannelNumber.ToString() + tapeUnit.UnitNumber.ToString();
+
+                    //  New state is assigned to the internal variable - and then
+                    //  copied to appropriate channel related variable later.
+
+                    channelReceiveState = ChannelReceiveState.receivingOperation;
+
                     break;
 
                 //  In the receiving Operation state, we expect to get a valid tape operation.
 
-                case ChanneReceiveState.receivingOperation:
+                case ChannelReceiveState.receivingOperation:
 
                     switch (c) {
                         case TAPEOPERREAD:
-                            ReadTapeRecord(channel1SelectedUnit);
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            ReadTapeRecord(tapeUnit);
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERWRITE:
-                            channel1ReceiveState = ChanneReceiveState.receivingData;
+                            channelReceiveState = ChannelReceiveState.receivingData;
+                            recordSize[channel] = 0;
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " begin write");
                             break;
                         case TAPEOPERBACKSPACE:
-                            channel1SelectedUnit.Backspace();
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            tapeUnit.Backspace();
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Backspace");
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERERASE:
-                            channel1SelectedUnit.Skip();
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Erase");
+                            tapeUnit.Skip();
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERWTM:
-                            channel1SelectedUnit.WriteTM();
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " WTM");
+                            tapeUnit.WriteTM();
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERUNLOAD:
-                            channel1SelectedUnit.RewindUnload();
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Rewind Unload");
+                            tapeUnit.RewindUnload();
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERREWIND:
-                            channel1SelectedUnit.Rewind();
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Rewind");
+                            tapeUnit.Rewind();
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERRESETTI:
-                            channel1SelectedUnit.ResetTapeIndicate();
-                            channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Reset T.I.");
+                            tapeUnit.ResetTapeIndicate();
+                            channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         default:
-                            Debug.WriteLine("Channel 1 INVALID tape operation " + c.ToString("X2"));
+                            Debug.WriteLine("Tape Unit " + tapeUnitString +
+                                " INVALID tape operation " + c.ToString("X2"));
+                            //  In this case do NOT update the state variable for the affected channel.
                             return;
                     }
                     break;
-                
+
                 //  State for receing data (Write to tape).  X'40' marks the end of the record
 
-                case ChanneReceiveState.receivingData:
-                    if(c == TAPEENDOFRECORD) {
-                        channel1SelectedUnit.WriteIRG();
-                        Debug.WriteLine("Channel 1 Write tape end of record." + c.ToString("X2"));
-                        channel1ReceiveState = ChanneReceiveState.receiveIdle;
+                case ChannelReceiveState.receivingData:
+                    if (c == TAPEENDOFRECORD) {
+                        tapeUnit.WriteIRG();
+                        Debug.WriteLine("Tape Write " + tapeUnitString + " end of record, size=" +
+                            recordSize[channel]);
+                        channelReceiveState = ChannelReceiveState.receiveIdle;
                     }
                     else {
-                        channel1SelectedUnit.Write(c);
-                        channel1ReceiveState = ChanneReceiveState.receivingData;
-                        Debug.WriteLine("Channel 1 write tape wrote the byte");
+                        tapeUnit.Write(c);
+                        channelReceiveState = ChannelReceiveState.receivingData;
+                        ++recordSize[channel];
+                        // Debug.WriteLine("Tape Write " + tapeUnitString + " wrote byte: " + c.ToString("X2"));
                     }
                     break;
 
                 default:
-                    channel1ReceiveState = ChanneReceiveState.receiveIdle;
-                    Debug.WriteLine("Channel 1 Tape state machine, INVALID state.");
+                    channel1ReceiveState = ChannelReceiveState.receiveIdle;
+                    Debug.WriteLine("Channel " + tapeUnit.ChannelNumber.ToString() + "" +
+                        " Tape state machine, INVALID state.");
                     break;
-
             }
 
-            Debug.WriteLine("Tape Channel 1 leaving output available routine...");
+
+            //  NOW update the state variable as appropriate.
+
+            if (channel == 1) {
+                channel1ReceiveState = channelReceiveState;
+            }
+            else {
+                channel2ReceiveState = channelReceiveState;
+            }
+
+            // Debug.WriteLine("Tape " + tapeUnitString + " leaving output available routine...");
 
             //  If the current tape unit on the GUI is the same as this one, 
             //  Update the info displayed.
 
-            if (channel1SelectedUnit != null && tapeUnit != null &&
-                tapeUnit.ChannelNumber == channel1SelectedUnit.ChannelNumber &&
-                tapeUnit.UnitNumber == channel1SelectedUnit.UnitNumber) {
+            if (tapeUnit != null &&
+                tapeUnit.ChannelNumber == currentChannel &&
+                tapeUnit.UnitNumber == currentUnit) {
                 Display();
             }
 
         }
 
-        void tapeChannel2OutputAvailable(object sender, TapeChannelEventArgs e) {
-            return;
-        }
 
-        
         //  Method to read a tape record and send it off to the FPGA.  Ideally, this thing
         //  would send it in pieces, but for now, it holds the semaphore for the entire block.
 
@@ -234,65 +299,73 @@ namespace IBM1410Console
                 0x10, 0x51, 0x52, 0x13
              };
 
+            String tapeUnitString = tapeUnit.ChannelNumber.ToString() +
+                tapeUnit.UnitNumber.ToString();
 
-            Debug.WriteLine("Begin Tape read, unit " + tapeUnit.ChannelNumber.ToString() +
-                tapeUnit.UnitNumber.ToString());
+            Debug.WriteLine("Begin Tape read, unit " + tapeUnitString);
+            recordSize[tapeUnit.ChannelNumber] = 0;
 
             //  Obtain access to the serial port for access.
 
             serialOutputSemaphore.Wait();
 
-            //  Send the channel 1 flag to the FPGA
+            //  Send the channel flag to the FPGA
 
-            bytes[0] = CHANNEL1TOFPGAFLAG;
+            bytes[0] = (tapeUnit.ChannelNumber == 1) ? CHANNEL1TOFPGAFLAG : CHANNEL2TOFPGAFLAG;
             serialPort.Write(bytes, 0, 1);
 
             //  Send the unit number + 0x40 to the FPGA to signal input data
 
-            bytes[0] = (byte)(tapeUnit.UnitNumber | READDATAFLAG);  
+            bytes[0] = (byte)(tapeUnit.UnitNumber | READDATAFLAG);
             serialPort.Write(bytes, 0, 1);
-            
+
+            /*
             for (int i = 0; i < tapeTestData.Length; i++) {
                 serialPort.Write(tapeTestData, i, 1);
             }
 
             bytes[0] = TAPEENDOFRECORD;
             serialPort.Write(bytes, 0, 1);
+            */
 
 
-                /*
-                while (true) {
-                    c = tapeUnit.Read();
-                    if (c == IBM1410TapeUnit.TAPEUNITNOTREADY || c == IBM1410TapeUnit.TAPEUNITIRG) {
-                        //  Unit went not ready, or end of record -- return IRG
-                        bytes[0] = TAPEENDOFRECORD;
-                    }
-                    else {
-                        bytes[0] = (byte)(c & 0x3f);
-                    }
-
-                    serialPort.Write(bytes, 0, 1);
-                    if (bytes[0] == TAPEENDOFRECORD) { 
-                        break;
-                    }
+            while (true) {
+                c = tapeUnit.Read();
+                if (c == IBM1410TapeUnit.TAPEUNITNOTREADY || c == IBM1410TapeUnit.TAPEUNITIRG) {
+                    //  Unit went not ready, or end of record -- return IRG
+                    bytes[0] = TAPEENDOFRECORD;
                 }
-                */
+                else {
+                    bytes[0] = (byte)(c & 0x7f);
+                    ++recordSize[tapeUnit.ChannelNumber];
+                }
+
+                // Debug.WriteLine("Read on tape unit " + tapeUnitString + " sending " + 
+                //    bytes[0].ToString("X2"));
+
+                serialPort.Write(bytes, 0, 1);
+
+                if (bytes[0] == TAPEENDOFRECORD) {
+                    break;
+                }
+            }
 
             //  Release the lock on the serial port.
 
             serialOutputSemaphore.Release();
+            tapeUnit.UpdateFPGATape();      // Update FPGA unit status, particularly BOT
+            Debug.WriteLine("Ending tape read on unit " + tapeUnitString + " record size=" +
+                recordSize[tapeUnit.ChannelNumber]);
 
-            Debug.WriteLine("Ending Channel 1 tape read");
         }
 
 
         //  Click on the unit number
         private void unitDial_ValueChanged(object sender, EventArgs e) {
             currentUnit = (int)unitDial.Value;
-            tapeUnit = TapeUnits[currentChannel,currentUnit];
+            tapeUnit = TapeUnits[currentChannel, currentUnit];
             Display();
         }
-
 
         //  Click on the channel number
 
@@ -304,7 +377,7 @@ namespace IBM1410Console
                 currentChannel = 1;
             }
             channelButton.Text = currentChannel.ToString();
-            tapeUnit = TapeUnits[currentChannel,currentUnit];
+            tapeUnit = TapeUnits[currentChannel, currentUnit];
             Display();
         }
 
@@ -312,7 +385,9 @@ namespace IBM1410Console
         //  Click on the Load/Rewind button.
         private void loadButton_Click(object sender, EventArgs e) {
             if (tapeUnit != null) {
-                tapeUnit.LoadRewind();
+                if (tapeUnit.LoadRewind()) {
+                    loadButton.Text = "Rwd";
+                }
                 Display();
             }
         }
@@ -340,6 +415,7 @@ namespace IBM1410Console
         private void unloadButton_Click(object sender, EventArgs e) {
             if (tapeUnit != null) {
                 tapeUnit.Unload();
+                loadButton.Text = "Load";
                 Display();
             }
         }
@@ -348,6 +424,7 @@ namespace IBM1410Console
         //  Reset
         private void resetButton_Click(object sender, EventArgs e) {
             if (tapeUnit != null) {
+                loadButton.Text = tapeUnit.Loaded ? "Rwd" : "Load";
                 tapeUnit.Reset();
                 Display();
             }
@@ -356,10 +433,11 @@ namespace IBM1410Console
 
         //  Mount a tape (file)
 
-        private void mountButton_Click(object sender, EventArgs e) { 
-            if(tapeUnit != null && openFileDialog.ShowDialog() == DialogResult.OK) {
+        private void mountButton_Click(object sender, EventArgs e) {
+            if (tapeUnit != null && openFileDialog.ShowDialog() == DialogResult.OK) {
                 fileNameLabel.Text = openFileDialog.FileName;
                 tapeUnit.Mount(fileNameLabel.Text);
+                loadButton.Text = "Load";
                 Display();
             }
         }
@@ -408,7 +486,7 @@ namespace IBM1410Console
                 safeButtonsDisplay = delegate
                 {
                     mountButton.Enabled = false;
-                    loadButton.Enabled = false;
+                    loadButton.Enabled = true;   // Actually it is a Load/Rewind button.  ;)
                     startButton.Enabled = true;
                     unloadButton.Enabled = true;
                     resetButton.Enabled = true;
@@ -437,6 +515,14 @@ namespace IBM1410Console
 
             this.Invoke(safeButtonsDisplay);
 
+        }
+
+        //  If the user tries to close the tapes form, just hide it.
+        private void IBM1410TapesForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                Hide();
+            }
         }
     }
 }

@@ -114,18 +114,18 @@ namespace IBM1410Console
             int numBytes = sp.BytesToRead;
             int readByte = 0;
 
-            Debug.WriteLine("Received " + numBytes.ToString() + " bytes from 1410.");
+            // Debug.WriteLine("Received " + numBytes.ToString() + " bytes from 1410.");
 
             for (int i = 0; i < numBytes; ++i) {
                 readByte = sp.ReadByte();
                 if (lastCodeByte != lightCodeByte) {
-                    Debug.WriteLine("Read byte " + readByte.ToString("X2"));
+                    // Debug.WriteLine("Read byte " + readByte.ToString("X2"));
                 }
 
                 if (readByte >= 0x80) {
                     lastCodeByte = readByte;
                     if (lastCodeByte != lightCodeByte) {
-                        Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
+                        // Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
                     }
                 }
                 else if (lastCodeByte == lightCodeByte) {
@@ -137,11 +137,11 @@ namespace IBM1410Console
                     OnRaiseConsoleLockOutputEvent(consoleLockDataEventArgs);
                 }
                 else if (lastCodeByte == tapeChannel1FromTAUCodeByte) {
-                    Debug.WriteLine("Dispatch byte to Channel 1 tape: " + readByte.ToString("X2"));
+                    // Debug.WriteLine("Dispatch byte to Channel 1 tape: " + readByte.ToString("X2"));
                     TapeChannelEventArgs tapeChannel1DataEventArgs = new TapeChannelEventArgs(lastCodeByte, readByte);
-                    Debug.WriteLine("Tape Channel 1 Event Args Created");
+                    // Debug.WriteLine("Tape Channel 1 Event Args Created");
                     OnRaiseTapeChannel1OutputEvent(tapeChannel1DataEventArgs);
-                    Debug.WriteLine("Tape Channel 1 Back from the raised event.");
+                    // Debug.WriteLine("Tape Channel 1 Back from the raised event.");
                 }
                 else if (lastCodeByte == tapeChannel2FromTAUCodeByte) {
                     TapeChannelEventArgs tapeChannel2DataEventArgs = new TapeChannelEventArgs(lastCodeByte, readByte);
@@ -193,10 +193,10 @@ namespace IBM1410Console
             Debug.WriteLine("Signaling Tape Channel 1 event with code " + e.DispatchCode + " and character " + 
                 e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
-                Debug.WriteLine("Tape Channel 1 raising event");
+                // Debug.WriteLine("Tape Channel 1 raising event");
                 raiseEvent(this, e);
             }
-            Debug.WriteLine("Tape Channel 1 Back from raised event.");
+            // Debug.WriteLine("Tape Channel 1 Back from raised event.");
         }
 
         protected void OnRaiseTapeChannel2OutputEvent(TapeChannelEventArgs e) {

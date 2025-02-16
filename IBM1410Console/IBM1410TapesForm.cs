@@ -98,6 +98,8 @@ namespace IBM1410Console
             Debug.WriteLine("Event Handlers for SerialDataPublisher (Tapes) Registered.");
         }
 
+        //  Methods that get called when serial data is available from the FPGA...
+
         void tapeChannel1OutputAvailable(object sender, TapeChannelEventArgs e) {
 
             //  Is this data really for me?
@@ -120,6 +122,14 @@ namespace IBM1410Console
             tapeSerialInputAvailable(2, (byte)e.SerialByte);
         }
 
+        //  Method to reset the tape receive state during a computer or program reset,
+        //  for example
+
+        public void tapeSerialStateReset() {
+            Debug.WriteLine("IBM1410TapesForm: tapSerialStateReset()");
+            channel1ReceiveState = ChannelReceiveState.receiveIdle;
+            channel2ReceiveState = ChannelReceiveState.receiveIdle;
+        }
 
         //  Method to actually handle a byte of data from the USB serial port
         //  for either channel
@@ -200,8 +210,8 @@ namespace IBM1410Console
                             Debug.WriteLine("Tape Unit " + tapeUnitString + " begin write");
                             break;
                         case TAPEOPERBACKSPACE:
-                            tapeUnit.Backspace();
                             Debug.WriteLine("Tape Unit " + tapeUnitString + " Backspace");
+                            tapeUnit.Backspace();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERERASE:
@@ -225,7 +235,7 @@ namespace IBM1410Console
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERRESETTI:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Reset T.I.");
+                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Reset T.I. Request from FPGA");
                             tapeUnit.ResetTapeIndicate();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
@@ -237,7 +247,7 @@ namespace IBM1410Console
                     }
                     break;
 
-                //  State for receing data (Write to tape).  X'40' marks the end of the record
+                //  State for receivng data (Write to tape).  X'00' marks the end of the record
 
                 case ChannelReceiveState.receivingData:
                     if (c == TAPEENDOFRECORD) {
@@ -353,7 +363,8 @@ namespace IBM1410Console
             //  Release the lock on the serial port.
 
             serialOutputSemaphore.Release();
-            tapeUnit.UpdateFPGATape();      // Update FPGA unit status, particularly BOT
+            // Update FPGA unit status, particularly BUT DONT!!!
+            //  tapeUnit.UpdateFPGATape("Read after Semaphore Release);  
             Debug.WriteLine("Ending tape read on unit " + tapeUnitString + " record size=" +
                 recordSize[tapeUnit.ChannelNumber]);
 

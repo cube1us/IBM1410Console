@@ -31,8 +31,7 @@ using System.Threading;
 namespace IBM1410Console
 {
 
-    public partial class IBM1410SwitchForm : Form
-    {
+    public partial class IBM1410SwitchForm : Form {
 
         public const int switchVectorBits = 280;
         public const int SLEEPTIME = 7;
@@ -124,6 +123,8 @@ namespace IBM1410Console
 
         SerialPort serialPort = null;
         SemaphoreSlim serialOutputSemaphore = null;
+        UI1415LForm lampForm = null;
+        IBM1410TapesForm tapesForm = null;
 
         public IBM1410SwitchForm(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
             InitializeComponent();
@@ -171,6 +172,14 @@ namespace IBM1410Console
             switchVector[SWITCH_ROT_UNITS_SYNC_DK1_INDEX + 10] = true;
 
             initalizing = false;
+        }
+
+        //  To avoid circular constructors, this class uses a separate method to set the
+        //  references to the tape and switch forms.
+
+        public void setForms(UI1415LForm lampForm, IBM1410TapesForm tapesForm) {
+            this.lampForm = lampForm;
+            this.tapesForm = tapesForm;
         }
 
         private void IBM1410SwitchForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -292,6 +301,7 @@ namespace IBM1410Console
         }
 
         private void computerResetButton_Click(object sender, EventArgs e) {
+            resetFormStates();  // Tell other forms about the reset
             toggleMomentarySwitch(true, SWITCH_MOM_CO_CPR_RST_INDEX);
         }
 
@@ -468,6 +478,7 @@ namespace IBM1410Console
         }
 
         private void programResetButton_Click(object sender, EventArgs e) {
+            resetFormStates();  //  Tell other forms about the reset.
             toggleMomentarySwitch(true, SWITCH_MOM_PROG_RESET_INDEX);
         }
 
@@ -564,11 +575,31 @@ namespace IBM1410Console
 
             //  If we have saved settings for this window, use them.
 
-            if(Properties.Settings.Default.SwitchesSize.Width != 0 &&
+            if (Properties.Settings.Default.SwitchesSize.Width != 0 &&
                 Properties.Settings.Default.SwitchesSize.Height != 0) {
                 this.Size = Properties.Settings.Default.SwitchesSize;
                 this.Location = Properties.Settings.Default.SwitchesLoc;
             }
         }
+
+        //  Method to reset lamps and tape on a computer or program reset
+
+        private void resetFormStates() {
+
+            if(lampForm == null || tapesForm == null) return;
+
+            Action resetLampOffset = delegate {
+                lampForm.resetLampOffset();
+            };
+
+            Action resetTapeSerialState = delegate { 
+                tapesForm.tapeSerialStateReset();
+            };
+
+            this.Invoke(resetLampOffset);
+            this.Invoke(resetTapeSerialState);            
+        }
+
+
     }
 }

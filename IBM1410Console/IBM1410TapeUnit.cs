@@ -27,6 +27,7 @@ namespace IBM1410Console
         public const byte LOADPOINTSTATUS = 0x04;
         public const byte TAPEINDICATESTATUS = 0x08;
         public const byte REWINDINGSTATUS = 0x10;
+        public const byte TAPEUNITREADYSTATUS = 0x20;
 
         public const int TAPEUNITIRG = -1;
         public const int TAPEUNITNOTREADY = -3;
@@ -45,7 +46,7 @@ namespace IBM1410Console
         private Boolean _tapeIndicate;
         private Boolean _highDensity;
         private Boolean _bot;
-        private Boolean _busy;
+        private Boolean _rewinding;
 
         private FileStream fd;
         private int tape_buffer;
@@ -96,15 +97,15 @@ namespace IBM1410Console
             _highDensity = true;
             _fileName = null;
             _recordNumber = 0;
-            UpdateFPGATape();
+            UpdateFPGATape("Init");
         }
 
         //  Methods to respond to calls from the user interface and elsewhere
 
 
         internal void Reset() { 
-            _ready = false;
-            UpdateFPGATape();
+            _ready = _tapeIndicate = false;
+            UpdateFPGATape("Reset");
         }
 
 
@@ -134,7 +135,7 @@ namespace IBM1410Console
                     irgRead = modified = false;
                     _recordNumber = 0;
                     _bot = _loaded = true;
-                    UpdateFPGATape();
+                    UpdateFPGATape("Load Rewind Seek");
                     return (true);
                 }
                 catch(Exception e) {
@@ -142,14 +143,14 @@ namespace IBM1410Console
                        unit.ToString());
                     ResetFile();
                     _bot = _loaded = _ready = false;
-                    UpdateFPGATape();
+                    UpdateFPGATape("Load Rewind Seek Error");
                     return (false);
                 }
             }
 
             if(_fileName == null || _fileName.Length == 0) {
                 _ready = false;
-                UpdateFPGATape();
+                UpdateFPGATape("Load Rewind No File");
                 return false;
             }
 
@@ -170,7 +171,7 @@ namespace IBM1410Console
                     Debug.WriteLine(e2.ToString());
                     ResetFile();
                     _loaded = _ready = _bot = false;
-                    UpdateFPGATape();
+                    UpdateFPGATape("Load Rewind Open Error");
                     return false;
                 }
             }
@@ -179,7 +180,7 @@ namespace IBM1410Console
             writeIRG = true;
             _recordNumber = 0;
             _bot = _loaded = true;
-            UpdateFPGATape();
+            UpdateFPGATape("Load Rewind Complete");
             return true;
         }
 
@@ -194,7 +195,9 @@ namespace IBM1410Console
 
             ResetFile();
             _tapeIndicate = false;
-            UpdateFPGATape();
+            _loaded = false;
+            _ready = false;
+            UpdateFPGATape("Unload");
             return true;
         }
 
@@ -211,7 +214,7 @@ namespace IBM1410Console
             Debug.Assert(fd == null);
             _fileName = fileName;
             irgRead = writeIRG = _fileProtect = _tapeIndicate = modified = _bot = false;
-            UpdateFPGATape();
+            UpdateFPGATape("Mount");
             return true;
         }
 
@@ -227,7 +230,7 @@ namespace IBM1410Console
 
             Debug.Assert(fd != null);
             _ready = true;
-            UpdateFPGATape();
+            UpdateFPGATape("Start");
             return true;
         }
 
@@ -241,7 +244,7 @@ namespace IBM1410Console
                 return false;
             }
             _highDensity = !_highDensity;
-            UpdateFPGATape();
+            UpdateFPGATape("Change Density");
             return true;
         }
 
@@ -251,7 +254,7 @@ namespace IBM1410Console
         internal Boolean Select(Boolean b) {
             _selected = b;
             #if TAPEDEBUG
-            if(fd != null && !_busy) {
+            if(fd != null && !_rewinding) {
                 Debug.WriteLine("TapeUnit unit " + channel.ToString() + unit.ToString() + " selected");
                 Debug.WriteLine("TapeUnit current file offset is " + fd.Position);
             }
@@ -288,14 +291,18 @@ namespace IBM1410Console
             catch (Exception e) {
                 Debug.WriteLine("TapeUnit Rewind failed with exception " + e.ToString());
                 ResetFile();
-                UpdateFPGATape();
+                UpdateFPGATape("Rewind Seek Error");
                 return false;
             }
 
             irgRead = modified = false;
             writeIRG = true;
-            SetBusy(5 * _recordNumber);
+            _rewinding = true;
+            // _ready = false;
+            RewindBusy(5 * _recordNumber);  // Currently hardcoded in Rewindbusy as 500ms.
             _recordNumber = 0;
+            _rewinding = false;
+            _ready = true;
             _bot = true;
             return true;
         }
@@ -308,13 +315,14 @@ namespace IBM1410Console
 
             if(!Rewind()) {
                 ResetFile();
-                UpdateFPGATape() ;
+                UpdateFPGATape("Unload Rewind Failed") ;
                 return false;
             }
 
             ResetFile();
             _tapeIndicate = false;
-            UpdateFPGATape();
+            _ready = false;
+            UpdateFPGATape("Unload");
             return true;
         }
 
@@ -322,7 +330,7 @@ namespace IBM1410Console
 
         internal Boolean Skip() {
             #if TAPEDEBUG
-                Debug.WriteLine("TapeUnit Skip on unit " + channel.ToString() + unit.ToString());
+                Debug.WriteLine("TapeUnit Erase on unit " + channel.ToString() + unit.ToString());
             #endif 
 
             if(!_selected || !_loaded || !_ready) {
@@ -347,7 +355,7 @@ namespace IBM1410Console
                 // Do nothing
             }
 
-            SetBusy(2);
+            // SetBusy(2);
             return rc;
         }
 
@@ -371,10 +379,23 @@ namespace IBM1410Console
                     " position: " + fd.Position.ToString());
             #endif
 
-            //  If we are already a bot, this is a NOP
+            //  If we are already a bot (really should not happen) just Seek to 
+            //  the beginning of the file.
 
             if(_bot) {
                 _recordNumber = 0;
+                try {
+                    fd.Seek(0, SeekOrigin.Begin);
+                }
+                catch (IOException e) {
+                    Debug.WriteLine("TapeUnit Backspace unit " +
+                        channel.ToString() + unit.ToString() + " at BOT 1 " +                         
+                        " seek failed: " + e.ToString());
+                    ResetFile();
+                    UpdateFPGATape("Backspace Seek Failed");
+                    return false;
+                }
+
                 return true;
             }
 
@@ -383,21 +404,31 @@ namespace IBM1410Console
             if (modified && writeIRG) {
                 if (!Write(0)) {
                     ResetFile();
-                    UpdateFPGATape();
+                    // UpdateFPGATape("Backspace Write IRG Failed");
                     return false;
                 }
                 modified = writeIRG = irgRead = false;
+                #if TAPEDEBUG
+                    Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
+                        " Write EOR after previous operation, at position " + fd.Position.ToString());
+                #endif
 
+                /*
                 try {
                     fd.Seek(-1, SeekOrigin.Current);
+                    #if TAPEDEBUG
+                        Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
+                            " Seek back over EOR after previous operation, at position " + fd.Position.ToString());
+                    #endif
                 }
                 catch (IOException e) {
                     Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
                         " Seek back over EOR failed: " + e.ToString());
                     ResetFile();
-                    UpdateFPGATape();
+                    UpdateFPGATape("Backspace Seek Error after Writing IRG");
                     return false;
                 }
+                */
             }
 
             //  Now, go into the two steps back, one step forward routine
@@ -410,8 +441,21 @@ namespace IBM1410Console
                     irgRead = false;
                     _bot = writeIRG = true;
                     _recordNumber = 0;
-                    Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
-                        " ended at BOT.");
+                    Debug.WriteLine("TapeUnit Backspace unit " + 
+                        channel.ToString() + unit.ToString() + " at position < 2 " + 
+                         " ended at BOT.");
+                    try {
+                        fd.Seek(0, SeekOrigin.Begin);
+                    }
+                    catch (IOException e) {
+                        Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
+                            " seek failed: " + e.ToString());
+                        ResetFile();
+                        UpdateFPGATape("Bakcspace to Load Point Seek Failed");
+                        return false;
+                    }
+
+                    UpdateFPGATape("Backspace at BOT") ;  // Tell the FPGA we are now at BOT.
                     return true;
                 }
 
@@ -419,12 +463,16 @@ namespace IBM1410Console
 
                 try {
                     fd.Seek(-2, SeekOrigin.Current);
+                    #if TAPEDEBUG
+                        Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
+                            " Back up 2 characters, at position " + fd.Position.ToString());
+                    #endif
                 }
                 catch (IOException e) {
                     Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
                         " seek failed: " + e.ToString());
                     ResetFile();
-                    UpdateFPGATape();
+                    UpdateFPGATape("Backspace Seek Error");
                     return false;
                 }
 
@@ -436,6 +484,13 @@ namespace IBM1410Console
                     return false;
                 }
 
+                #if TAPEDEBUG
+                    Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
+                    " read next character is " + tape_buffer.ToString("X2") + ", at position " + 
+                    fd.Position.ToString());
+                #endif
+
+
                 //  If we find the IRG bit on, we are done!
 
                 if ((tape_buffer & TAPE_IRG) != 0) {
@@ -443,12 +498,13 @@ namespace IBM1410Console
                     --_recordNumber;
                     #if TAPEDEBUG
                         Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
-                            " ENDED, position: " + fd.Position.ToString());
+                            " ended, position: " + fd.Position.ToString());
                     #endif
+                    UpdateFPGATape("Backspace Complete");
                     return true;
                 }
 
-                //  Otherwise later, rinse, repeat until we return.
+                //  Otherwise lather, rinse, repeat until we return.
             }
         }
 
@@ -470,7 +526,7 @@ namespace IBM1410Console
 
         internal Boolean Write(int c) {
 
-            Debug.WriteLine("TapeUnit Write unit " + channel.ToString() + unit.ToString());
+            // Debug.WriteLine("TapeUnit Write unit " + channel.ToString() + unit.ToString());
 
             if (!_loaded || !_ready || !_selected || fd == null) {
                 Debug.WriteLine("TapeUnit write unit " + channel.ToString() + unit.ToString() +
@@ -502,7 +558,7 @@ namespace IBM1410Console
                     Debug.WriteLine("TapeUnit unit " + channel.ToString() + unit.ToString() +
                         " seeking back over EOR failed: " + e.ToString());
                     ResetFile();
-                    UpdateFPGATape();
+                    UpdateFPGATape("Write Seek back over last EOR Failed");
                     return false;
                 }
 
@@ -518,6 +574,8 @@ namespace IBM1410Console
             //  Finally, we actually write out the character
 
             try {
+                // Debug.WriteLine("TapeUnit Writing to file tape unit " + channel.ToString() + unit.ToString() +
+                //    ", character " + c.ToString("X2"));
                 fd.WriteByte(Convert.ToByte(c));
             }
             catch(IOException e) {
@@ -525,10 +583,11 @@ namespace IBM1410Console
                     " Failed, I/O Error: " + e.ToString());
                 ResetFile();
                 _tapeIndicate = true;
-                UpdateFPGATape();
+                UpdateFPGATape("Write IO Error");
                 return false;
             }
 
+            // Debug.WriteLine("TapeUnit Write final position " + fd.Position.ToString());
             irgRead = writeIRG = false;
             return true;
         }
@@ -541,7 +600,7 @@ namespace IBM1410Console
             writeIRG = modified = true;
             _bot = irgRead = false;
             ++_recordNumber;
-            UpdateFPGATape();
+            // UpdateFPGATape();
         }
 
 
@@ -549,7 +608,7 @@ namespace IBM1410Console
         //  tape marks are ALWAYS even parity.
 
         internal Boolean WriteTM() {
-            Boolean status;
+            Boolean status = true;
 
             #if TAPEDEBUG
                 Debug.WriteLine("TapeUnit WTM unit " + channel.ToString() + unit.ToString());
@@ -561,7 +620,7 @@ namespace IBM1410Console
             }
             
             irgRead = modified = _bot = false;
-            status = Write(TAPE_TM);
+            // status = Write(TAPE_TM);
             writeIRG = modified = true;
 
             #if TAPEDEBUG
@@ -569,8 +628,8 @@ namespace IBM1410Console
                     " Position at end: " + fd.Position.ToString());
             #endif
 
-            SetBusy(2);
-            UpdateFPGATape();
+            // SetBusy(2);
+            // UpdateFPGATape("Write TM Complete);
             return status;
         }
 
@@ -595,6 +654,10 @@ namespace IBM1410Console
                 }
                 tape_buffer = rc;
             }
+            else {
+                Debug.WriteLine("TapeUnit unit " + channel.ToString() + unit.ToString() +
+                    " character already in buffer, position " + fd.Position.ToString());
+            }
 
             //  If we are at BOT or an IRG, strip the IRG bit from the character and 
             //  return the character.
@@ -602,10 +665,12 @@ namespace IBM1410Console
             //  A Tape Mark is only a Tape Mark as the first character.  The FPGA is also
             //  paying attention to that, be we do here as well to properly set Tape Indicate
 
-            if(_bot || irgRead) {
-                tape_buffer &= ~TAPE_IRG;
+            if (_bot || irgRead) {
+                tape_buffer &= ~TAPE_IRG;  // Strip off the IRG from pprevious read
                 if ((tape_buffer & 0x3f) == TAPE_TM) {
                     _tapeIndicate = true;
+                    Debug.WriteLine("TapeUnit unit " + channel.ToString() + unit.ToString() +
+                        " Tape Mark sensed, position " + fd.Position.ToString());
                 }
                 _bot = irgRead = false;
             }
@@ -654,14 +719,14 @@ namespace IBM1410Console
         //  TODO: When a tape drive status changes in any way, we need to send a message to the
         //  FPGA so it can update its  local status.
 
-        internal void UpdateFPGATape() {
+        internal void UpdateFPGATape(string origin) {
 
             byte[] serialBuffer = new byte[3];
             byte unitStatus = 0;
             byte flagByte = 0;
 
             if (_ready) {
-                unitStatus |= READYREADSTATUS;
+                unitStatus |= (TAPEUNITREADYSTATUS | READYREADSTATUS);
                 if (!_fileProtect) {
                     unitStatus |= READYWRITESTATUS;
                 }
@@ -669,7 +734,7 @@ namespace IBM1410Console
             if (_tapeIndicate) {
                 unitStatus |= TAPEINDICATESTATUS;
             }
-            if(_busy) {
+            if(_rewinding) {
                 unitStatus |= REWINDINGSTATUS;
             }
             if(_bot) {
@@ -689,7 +754,8 @@ namespace IBM1410Console
             serialOutputSemaphore.Release();
 
             Debug.WriteLine("TapeUnit: Sent updated status to FPGA for unit " +
-                channel.ToString() + unit.ToString());
+                channel.ToString() + unit.ToString() + 
+                ", Operation: " + origin + ", status: " + unitStatus.ToString("X2"));
 
          }
 
@@ -697,19 +763,24 @@ namespace IBM1410Console
         //  Reset the Tape Indicate
         internal void ResetTapeIndicate() {
             _tapeIndicate = false;
-            UpdateFPGATape();
+            UpdateFPGATape("Reset Tape Indicate");
             return;
         }
 
         //  TODO:  Need to have a "busy list" of some sort that will keep a drive busy
         //  for a period of time, and process to clear the busy and update the drive status.
 
-        internal void SetBusy(long n) {
+        internal void RewindBusy(long n) {
             // TODO
-            _busy = true;
-            UpdateFPGATape();
-            _busy = false;
-            UpdateFPGATape();
+
+            // _ready = false;
+            _rewinding = true;
+            UpdateFPGATape("Rewind go Busy");
+            System.Threading.Thread.Sleep(500); // Crude: sleep for 500 ms.
+            _rewinding = false;
+            _ready = true;
+            _bot = true;
+            UpdateFPGATape("Rewind end Busy");
 
         }
 

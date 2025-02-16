@@ -190,8 +190,8 @@ namespace IBM1410Console
 
         protected void OnRaiseTapeChannel1OutputEvent(TapeChannelEventArgs e) {
             EventHandler<TapeChannelEventArgs> raiseEvent = TapeChannel1OutputEvent;
-            Debug.WriteLine("Signaling Tape Channel 1 event with code " + e.DispatchCode + " and character " + 
-                e.SerialByte.ToString("X2"));
+            // Debug.WriteLine("Signaling Tape Channel 1 event with code " + e.DispatchCode + " and character " + 
+            //    e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {
                 // Debug.WriteLine("Tape Channel 1 raising event");
                 raiseEvent(this, e);

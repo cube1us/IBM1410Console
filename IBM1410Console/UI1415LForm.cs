@@ -42,6 +42,12 @@ namespace IBM1410Console
         private Color bgRed = Color.FromArgb(100, 0, 0);
 
         private int testIndex = IBM1410Lamp.lampVectorBits - 1;
+
+        private int[] lampSyncVector = { 0x3f, 0x00, 0x3f, 0x00, 0x3f };
+        private int lampSyncIndex = 0;
+        private bool outOfSync = false;
+        private enum lampSyncStates { lampSyncStart, lampSyncing, lampSyncCompleted };
+        lampSyncStates lampSyncState = lampSyncStates.lampSyncStart;
         
         public UI1415LForm(SerialDataPublisher lightOutputPublisher, IBM1410SwitchForm ibm1410SwitchForm) {
             InitializeComponent();
@@ -301,6 +307,49 @@ namespace IBM1410Console
                 return;
             }
 
+            // Debug.WriteLine("UI1415Form: Received lamp data byte: " + c.ToString("X2"));
+
+            //  waiting for sync bytes
+
+            switch(lampSyncState) {
+                case lampSyncStates.lampSyncStart:
+                    //  If data matches 1st sync byte, start the sync process
+                    if(c == lampSyncVector[0]) {
+                        // Debug.WriteLine("UI1415LForm: Starting lamp sync.");
+                        lampSyncIndex = 1;
+                        lampSyncState = lampSyncStates.lampSyncing;
+                    }
+                    return;
+                case lampSyncStates.lampSyncing:
+                    // If sync data matches, bump the sync index, and see
+                    // if we are done syncing.
+                    if(c == lampSyncVector[lampSyncIndex]) {
+                        if(++lampSyncIndex == lampSyncVector.Length) {
+                            lampSyncState = lampSyncStates.lampSyncCompleted;
+                            outOfSync = false;
+                            lampSyncIndex = 0;
+                            // Debug.WriteLine("UI1415Form: Lamp sync complete.");
+                        }
+                    }
+                    // Does not match - out of sync.  Ignore data until next sync
+                    else {
+                        lampSyncState = lampSyncStates.lampSyncStart;
+                        lampSyncIndex = 0;
+                        if(!outOfSync) {
+                            Debug.WriteLine("UI1415LForm: Out of sync. Re-syncing...");
+                            outOfSync = true;
+                        }
+                    }
+                    return;
+
+                // In this state, we are now receving lamp data: just break and fall
+                // into the remaining code, below...
+
+                case lampSyncStates.lampSyncCompleted:
+                    break;
+            }
+
+
             for (int i = 0; i < 7; ++i) {
                 newLamps[i + currentOffset] = ((c & 1) == 1 ? true : false);
                 c >>= 1;
@@ -311,7 +360,17 @@ namespace IBM1410Console
                 // Debug.WriteLine("UI1415LForm: Updating lamps on form...");
                 updateLampForm();
                 lampByte = 0;
+                lampSyncState = lampSyncStates.lampSyncStart;
+                lampSyncIndex = 0;
             }
+        }
+
+        //  Method to reset lampbyte - the offset in the lamp vector, on
+        //  computer or program reset, for example.
+
+        public void resetLampOffset() {
+            Debug.WriteLine("UI1415LForm: resetLampOffset()");
+            lampByte = 0;
         }
 
         private void updateLampForm() {

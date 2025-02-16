@@ -30,6 +30,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.IO.Pipes;
+using System.Net.Sockets;
+using System.Net;
 
 
 namespace IBM1410Console
@@ -47,6 +49,13 @@ namespace IBM1410Console
         SerialDataPublisher serialDataPublisher;
         SemaphoreSlim serialOuputSemaphore;
 
+        public struct udpStateStruct
+        {
+            public UdpClient udpClient;
+            public IPEndPoint ipEndPoint;
+        }
+        UDPDataPublisher udpDataPublisher;
+
         // string[] comPortNames = SerialPort.GetPortNames();
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
         List<string> comPorts;
@@ -58,6 +67,8 @@ namespace IBM1410Console
         const byte data1Mark = 0x10;
 
         // static public long coreSize = 40000;
+
+        IPAddress fpgaIPAddress = IPAddress.Parse("192.168.42.254");
 
         public IBM1410Form() {
             string portName = null;
@@ -74,6 +85,12 @@ namespace IBM1410Console
             serialPort.BaudRate = serialPortSpeeds[4];
             serialPort.Parity = Parity.None;
             serialPort.StopBits = StopBits.One;
+
+            udpStateStruct udpState = new udpStateStruct();
+
+            udpState.ipEndPoint = new IPEndPoint(IPAddress.Any, 1024);
+            udpState.udpClient = new UdpClient(udpState.ipEndPoint);
+            udpDataPublisher = new UDPDataPublisher(udpState,fpgaIPAddress);
 
             //  See if there is a remembered setting that is in the list.  If so, use
             //  that.  Otherwise, use the first one in the list.  If the list is emppy,
@@ -138,6 +155,15 @@ namespace IBM1410Console
                 IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore);
             }
             IBM1410TapesForm.Show();
+
+            //  We need the lamps form now, too, so it can learn about resets
+
+            UI1415LForm UI1415LForm = new UI1415LForm(serialDataPublisher, IBM1410SwitchForm);
+
+            //  Next, tell the switch form about other forms that need to know about
+            //  Computer and Program resets
+
+            IBM1410SwitchForm.setForms(UI1415LForm, IBM1410TapesForm);
 
             //  And the console typewriter...  put in front.
 
@@ -236,6 +262,7 @@ namespace IBM1410Console
             long coresize = 0;
             int bytesPerCharacter = 0;
             byte[] buffer = new byte[6];  //    Enough for start mark, bank and address bytes
+            Stream fileStream;
 
             OpenFileDialog LoadCoreImageOpenDialog = new OpenFileDialog();
             LoadCoreImageOpenDialog.AddExtension = true;
@@ -245,7 +272,13 @@ namespace IBM1410Console
             LoadCoreImageOpenDialog.CheckPathExists = true;
 
             if (LoadCoreImageOpenDialog.ShowDialog() == DialogResult.OK) {
-                Stream fileStream = File.Open(LoadCoreImageOpenDialog.FileName, FileMode.Open, FileAccess.Read);
+                try {
+                   fileStream = File.Open(LoadCoreImageOpenDialog.FileName, FileMode.Open, FileAccess.Read);
+                }
+                catch(Exception e2) {
+                    MessageBox.Show("Core Image File open failed.", "File open failed.");
+                    return;
+                }
                 BinaryReader reader = new BinaryReader(fileStream);
 
                 //  The first five characters are the core size, in decimal, ascii characters

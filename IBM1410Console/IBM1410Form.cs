@@ -54,7 +54,10 @@ namespace IBM1410Console
             public UdpClient udpClient;
             public IPEndPoint ipEndPoint;
         }
+
+        udpStateStruct udpState;
         UDPDataPublisher udpDataPublisher;
+        SemaphoreSlim udpOutputSemaphore;
 
         // string[] comPortNames = SerialPort.GetPortNames();
         int[] serialPortSpeeds = { 9600, 19200, 28800, 57600, 115200 };
@@ -69,6 +72,7 @@ namespace IBM1410Console
         // static public long coreSize = 40000;
 
         IPAddress fpgaIPAddress = IPAddress.Parse("192.168.42.254");
+        IPEndPoint fpgaEndPoint;
 
         public IBM1410Form() {
             string portName = null;
@@ -86,10 +90,10 @@ namespace IBM1410Console
             serialPort.Parity = Parity.None;
             serialPort.StopBits = StopBits.One;
 
-            udpStateStruct udpState = new udpStateStruct();
-
             udpState.ipEndPoint = new IPEndPoint(IPAddress.Any, 1024);
             udpState.udpClient = new UdpClient(udpState.ipEndPoint);
+            fpgaEndPoint = new IPEndPoint(fpgaIPAddress, 1024);
+            udpState.udpClient.Connect(fpgaEndPoint);
             udpDataPublisher = new UDPDataPublisher(udpState,fpgaIPAddress);
 
             //  See if there is a remembered setting that is in the list.  If so, use
@@ -125,12 +129,14 @@ namespace IBM1410Console
             //  control at times!
 
             serialOuputSemaphore = new SemaphoreSlim(1);
+            udpOutputSemaphore = new SemaphoreSlim(1);
 
             IBM1415ConsoleForm = new IBM1415ConsoleForm(serialDataPublisher, serialPort, serialOuputSemaphore);
 
             // Need this form during setup of lamp form...
 
-            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore);
+            IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore,
+                udpState.udpClient, udpOutputSemaphore);
 
             //  Warn the user if there were no suitable serial ports found...
 
@@ -145,7 +151,8 @@ namespace IBM1410Console
             //  Come up with Switches showing...
 
             if (IBM1410SwitchForm == null) {
-                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore);
+                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore,
+                    udpState.udpClient, udpOutputSemaphore);
             }
             IBM1410SwitchForm.Show();
 
@@ -214,7 +221,8 @@ namespace IBM1410Console
 
         private void switchesStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1410SwitchForm == null) {
-                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore);
+                IBM1410SwitchForm = new IBM1410SwitchForm(serialPort, serialOuputSemaphore,
+                    udpState.udpClient, udpOutputSemaphore);
             }
             IBM1410SwitchForm.Show();
         }
@@ -262,6 +270,8 @@ namespace IBM1410Console
             long coresize = 0;
             int bytesPerCharacter = 0;
             byte[] buffer = new byte[6];  //    Enough for start mark, bank and address bytes
+            byte[] packet = new byte[1024];
+            int packetIx = 0;
             Stream fileStream;
 
             OpenFileDialog LoadCoreImageOpenDialog = new OpenFileDialog();
@@ -346,6 +356,10 @@ namespace IBM1410Console
                     Properties.Settings.Default.CoreSize : fileCoreSize;
                 Debug.WriteLine("Sending Core image size of " + coresize);
 
+                //  Acquire access to the serial port
+
+                serialOuputSemaphore.Wait();
+                udpOutputSemaphore.Wait();
 
                 //  Send the address, which, for now, is always 0 in bank 0.
 
@@ -355,11 +369,17 @@ namespace IBM1410Console
                 buffer[3] = addrMark | 0x00;
                 buffer[4] = addrMark | 0x00;
                 buffer[5] = addrMark | 0x00;
-                serialPort.Write(buffer, 0, 6);
 
-                //  Acquire access to the serial port
+                packetIx = 0;
+                packet[0] = loaderStreamFlag;
+                packet[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
+                packet[2] = addrMark | 0x00;
+                packet[3] = addrMark | 0x00;
+                packet[4] = addrMark | 0x00;
+                packet[5] = addrMark | 0x00;
+                packetIx = 6;
 
-                serialOuputSemaphore.Wait();
+                // serialPort.Write(buffer, 0, 6);
 
                 //  Read the file and send the data...
 
@@ -400,25 +420,53 @@ namespace IBM1410Console
                     }
 
                     //  Temporary debug...
+                    /*
                     if (addr < 10) {
                         Debug.WriteLine("Read in " + t.ToString("X4") +
                             " Converted to " + c.ToString("X4"));
+                    }
+                    */
+
+                    // If packet buffer is almsot full, send it.
+                    // The -4 gives us 2 extra bytes left for the end mark
+
+                    if (packetIx > packet.Length - 4) {   
+                        udpState.udpClient.Send(packet, packetIx);
+                        // Debug.WriteLine("Sent UDP packet length " + packetIx.ToString());
+                        /*
+                        Debug.Write("/");
+                        for (int i = 0; i < packetIx; ++i) {
+                            Debug.Write(packet[i].ToString("X2") + " ");
+                        }
+                        Debug.WriteLine("/");
+                        */
+
+                        packetIx = 0;
+                        // System.Threading.Thread.Sleep(100);
                     }
 
                     //  Data is sent HIGH four bits first, with appropriate marks.
 
                     buffer[0] = (byte)(((c & 0xf0) >> 4) | data0Mark);
                     buffer[1] = (byte)((c & 0x0f) | data1Mark);
-                    serialPort.Write(buffer, 0, 2);
+                    // serialPort.Write(buffer, 0, 2);
+
+                    packet[packetIx++] = (byte)(((c & 0xf0) >> 4) | data0Mark);
+                    packet[packetIx++] = (byte)((c & 0x0f) | data1Mark);
                 }
 
                 //  Send the end of load marker.
 
                 buffer[0] = endMark;
-                serialPort.Write(buffer, 0, 1);
+                // serialPort.Write(buffer, 0, 1);
+
+                packet[packetIx++] = endMark;
+                udpState.udpClient.Send(packet, packetIx);
+                Debug.WriteLine("Sent final packet of length " + packetIx.ToString());
 
                 //  Release the kraken, I mean semaphore...
 
+                udpOutputSemaphore.Release();
                 serialOuputSemaphore.Release();
 
                 reader.Close();
@@ -449,6 +497,7 @@ namespace IBM1410Console
             //  Gain access to the serial port...
 
             serialOuputSemaphore.Wait();
+            udpOutputSemaphore.Wait();
 
             //  Send the flag byte fgor core load, and the start address.
 
@@ -458,7 +507,8 @@ namespace IBM1410Console
             buffer[3] = addrMark | 0x00;
             buffer[4] = addrMark | 0x00;
             buffer[5] = addrMark | 0x00;
-            serialPort.Write(buffer, 0, 6);
+            // serialPort.Write(buffer, 0, 6);
+            udpState.udpClient.Send(buffer, 6);
 
 
             for (int addr = 0; addr < Properties.Settings.Default.CoreSize; addr++) {
@@ -467,14 +517,17 @@ namespace IBM1410Console
 
                 buffer[0] = (0x08 | data0Mark);
                 buffer[1] = data1Mark;
-                serialPort.Write(buffer, 0, 2);
+                // serialPort.Write(buffer, 0, 2);
+                udpState.udpClient.Send(buffer, 2);
             }
 
             //  Send the end of load marker.
 
             buffer[0] = endMark;
-            serialPort.Write(buffer, 0, 1);
+            // serialPort.Write(buffer, 0, 1);
+            udpState.udpClient.Send(buffer, 1);
 
+            udpOutputSemaphore.Release();
             serialOuputSemaphore.Release();
 
             MessageBox.Show("Core Clear Complete", "Core Clear Complete");

@@ -26,6 +26,8 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.Diagnostics;
 using System.Threading;
+using System.Net.Sockets;
+using System.Net;
 
 
 namespace IBM1410Console
@@ -34,7 +36,7 @@ namespace IBM1410Console
     public partial class IBM1410SwitchForm : Form {
 
         public const int switchVectorBits = 280;
-        public const int SLEEPTIME = 7;
+        public const int SLEEPTIME = 10;
 
         public const int SWITCH_ALT_PRIORITY_PL1_INDEX = 275;   // 19.10.01.1
         public const int SWITCH_ALT_PRIORITY_PL2_INDEX = 274;   // 19.10.01.1
@@ -123,10 +125,13 @@ namespace IBM1410Console
 
         SerialPort serialPort = null;
         SemaphoreSlim serialOutputSemaphore = null;
+        UdpClient udpClient = null;
+        SemaphoreSlim udpOutputSemaphore = null;
         UI1415LForm lampForm = null;
         IBM1410TapesForm tapesForm = null;
 
-        public IBM1410SwitchForm(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
+        public IBM1410SwitchForm(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
+            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore) {
             InitializeComponent();
             this.CreateHandle();
 
@@ -143,6 +148,8 @@ namespace IBM1410Console
             scanGateComboBox.SelectedIndex = 0;
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
+            this.udpClient = udpClient;
+            this.udpOutputSemaphore = udpOutputSemaphore;
 
             //	Testing Data
 
@@ -170,7 +177,7 @@ namespace IBM1410Console
             switchVector[SWITCH_ROT_HUNDS_SYNC_DK1_INDEX + 10] = true;
             switchVector[SWITCH_ROT_TENS_SYNC_DK1_INDEX + 10] = true;
             switchVector[SWITCH_ROT_UNITS_SYNC_DK1_INDEX + 10] = true;
-
+            
             initalizing = false;
         }
 
@@ -237,17 +244,12 @@ namespace IBM1410Console
 
         private void sendSwitchVector() {
 
-            Byte[] switchBytes = new byte[switchVector.Length / 7];
+            Byte[] switchBytes = new byte[(switchVector.Length / 7)+1];   // +1 for flag byte
             byte tempByte = 0x00;
             int currentByte = 0;
 
-            //  Wait for access to the serial port for output
+            switchBytes[0] = switchFlagByte[0];
 
-            serialOutputSemaphore.Wait();
-
-            //	First, we send the special flag byte...
-
-            serialPort.Write(switchFlagByte, 0, switchFlagByte.Length);
 
             //	Next, we assemble the minions!!!
 
@@ -259,10 +261,19 @@ namespace IBM1410Console
                     tempByte = (byte)((tempByte << 1) | (switchVector[i - j] ? 1 : 0));
                 }
 
-                switchBytes[currentByte] = tempByte;
+                switchBytes[currentByte+1] = tempByte;
                 ++currentByte;
             }
 
+            /* 
+
+            //  Wait for access to the serial port for output
+
+            serialOutputSemaphore.Wait();
+
+            //	First, we send the special flag byte...  [Now put 1st in array]
+
+            //  serialPort.Write(switchFlagByte, 0, switchFlagByte.Length);
             Debug.Write("Sending switch data: /");
             for (int i = 0; i < switchBytes.Length; ++i) {
                 Debug.Write(switchBytes[i].ToString("X2") + " ");
@@ -272,6 +283,14 @@ namespace IBM1410Console
             serialPort.Write(switchBytes, 0, switchBytes.Length);
 
             serialOutputSemaphore.Release();
+
+            */
+
+            udpOutputSemaphore.Wait();
+            int sentCount = udpClient.Send(switchBytes, switchBytes.Length);
+            udpOutputSemaphore.Release();
+            // Debug.WriteLine("Sent bytes: " + sentCount.ToString());
+
         }
 
         private void modeComboBox_SelectedIndexChanged(object sender, EventArgs e) {

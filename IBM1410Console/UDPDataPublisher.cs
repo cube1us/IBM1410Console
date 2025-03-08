@@ -107,10 +107,6 @@ namespace IBM1410Console
             int numBytes = rxBytes.Length;
             int readByte = 0;
 
-            //  Start up the next receive right away...
-
-            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
-
             //  Verify it is coming from the right place.  Ignore if not.
 
             if (!IPAddress.Equals(udpState.ipEndPoint.Address, fpgaIPAddress)) {
@@ -128,13 +124,13 @@ namespace IBM1410Console
             for (int i = 0; i < numBytes; ++i) {
                 readByte = rxBytes[i];
                 if (lastCodeByte != lightCodeByte) {
-                    // Debug.WriteLine("Read byte " + readByte.ToString("X2"));
+                    Debug.WriteLine("Read byte " + readByte.ToString("X2"));
                 }
 
                 if (readByte >= 0x80) {
                     lastCodeByte = readByte;
                     if (lastCodeByte != lightCodeByte) {
-                        // Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
+                        Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
                     }
                 }
                 else if (lastCodeByte == lightCodeByte) {
@@ -172,6 +168,11 @@ namespace IBM1410Console
             // Debug.WriteLine("Data received: /" + inputData + "/");
 
             // OnRaiseUDPOutputEvent(udpDataEventArgs);
+
+            //  Start up the next receive right away...
+
+            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
+
         }
 
         protected void OnRaiseUDPOutputEvent(UDPDataEventArgs e) {

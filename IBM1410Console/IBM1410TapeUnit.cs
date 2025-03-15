@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.IO.Ports;
 using System.Threading;
+using System.Net.Sockets;
 
 namespace IBM1410Console
 {
@@ -36,6 +37,9 @@ namespace IBM1410Console
         private int channel;
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
+
+        private UdpClient udpClient = null;
+        private SemaphoreSlim udpOutputSemaphore;
 
         private String _fileName;
         private long _recordNumber;
@@ -73,10 +77,13 @@ namespace IBM1410Console
         // Constructor.  Defers most of the work to Init - which can also be invoked later
         // if a new tape is mounted.
 
-        public IBM1410TapeUnit(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore, int channel, int unit) {
+        public IBM1410TapeUnit(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
+            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore, int channel, int unit) {
             fd = null;
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
+            this.udpClient = udpClient;
+            this.udpOutputSemaphore = udpOutputSemaphore;
             Init(channel,unit);
         }
 
@@ -750,7 +757,13 @@ namespace IBM1410Console
             //  Wait for access to the serial port...
 
             serialOutputSemaphore.Wait();
+            udpOutputSemaphore.Wait();
             serialPort.Write(serialBuffer, 0, serialBuffer.Length);
+            udpClient.Send(serialBuffer,serialBuffer.Length);
+            Debug.WriteLine("Sent UDP TAU Status update packet /" +
+                serialBuffer[0].ToString("X2") + serialBuffer[1].ToString("X2") +
+                serialBuffer[2].ToString("X2") + "/");
+            udpOutputSemaphore.Release();
             serialOutputSemaphore.Release();
 
             Debug.WriteLine("TapeUnit: Sent updated status to FPGA for unit " +

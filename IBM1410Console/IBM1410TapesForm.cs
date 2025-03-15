@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Windows.Forms.VisualStyles;
 
 namespace IBM1410Console
 {
@@ -29,6 +31,9 @@ namespace IBM1410Console
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
         private SerialDataPublisher serialDataPublisher;
+
+        private UdpClient udpClient = null;
+        private SemaphoreSlim udpOutputSemaphore = null;
 
         private int[] recordSize = { 0, 0, 0 };
 
@@ -52,16 +57,24 @@ namespace IBM1410Console
 
         public const byte TAPEENDOFRECORD = 0x00;
 
+        // Sleep this amount for each tape packet sent so that we don't
+        // overrun the 1410 channel at 9us per character.
+
+        const int TAPEPACKETSLEEPTIME = 10;     
+
         //  Constructor
 
         public IBM1410TapesForm(SerialDataPublisher serialDataPublisher,
-            SerialPort serialPort, SemaphoreSlim serialOutputSemaphore) {
+            SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
+            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore) {
 
             int c, u;
 
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
             this.serialDataPublisher = serialDataPublisher;
+            this.udpClient = udpClient;
+            this.udpOutputSemaphore = udpOutputSemaphore;
 
             InitializeComponent();
             this.CreateHandle();        // Ensures controls created before we get data from FPGA
@@ -72,7 +85,8 @@ namespace IBM1410Console
 
             for (c = 1; c < 3; ++c) {
                 for (u = 0; u < 10; ++u) {
-                    TapeUnits[c, u] = new IBM1410TapeUnit(serialPort, serialOutputSemaphore, c, u);
+                    TapeUnits[c, u] = new IBM1410TapeUnit(serialPort, serialOutputSemaphore,
+                        udpClient, udpOutputSemaphore, c, u);
                     TapeUnits[0, u] = null;
                 }
             }
@@ -302,6 +316,8 @@ namespace IBM1410Console
 
             int c;
             byte[] bytes = new byte[1];
+            byte[] packet = new byte[512];
+            int packetIx = 0;
 
             byte[] tapeTestData = {
                 0x10, 0x01, 0x02, 0x43, 0x04, 0x45, 0x46, 0x07,
@@ -318,16 +334,20 @@ namespace IBM1410Console
             //  Obtain access to the serial port for access.
 
             serialOutputSemaphore.Wait();
+            udpOutputSemaphore.Wait();
+            packetIx = 0;
 
             //  Send the channel flag to the FPGA
 
             bytes[0] = (tapeUnit.ChannelNumber == 1) ? CHANNEL1TOFPGAFLAG : CHANNEL2TOFPGAFLAG;
             serialPort.Write(bytes, 0, 1);
+            packet[packetIx++] = (tapeUnit.ChannelNumber == 1) ? CHANNEL1TOFPGAFLAG : CHANNEL2TOFPGAFLAG;
 
             //  Send the unit number + 0x40 to the FPGA to signal input data
 
             bytes[0] = (byte)(tapeUnit.UnitNumber | READDATAFLAG);
             serialPort.Write(bytes, 0, 1);
+            packet[packetIx++] = (byte)(tapeUnit.UnitNumber | READDATAFLAG);
 
             /*
             for (int i = 0; i < tapeTestData.Length; i++) {
@@ -344,24 +364,67 @@ namespace IBM1410Console
                 if (c == IBM1410TapeUnit.TAPEUNITNOTREADY || c == IBM1410TapeUnit.TAPEUNITIRG) {
                     //  Unit went not ready, or end of record -- return IRG
                     bytes[0] = TAPEENDOFRECORD;
+                    packet[packetIx++] = TAPEENDOFRECORD;
                 }
                 else {
                     bytes[0] = (byte)(c & 0x7f);
+                    packet[packetIx++] = (byte)(c & 0x7f);
                     ++recordSize[tapeUnit.ChannelNumber];
                 }
 
                 // Debug.WriteLine("Read on tape unit " + tapeUnitString + " sending " + 
                 //    bytes[0].ToString("X2"));
 
-                serialPort.Write(bytes, 0, 1);
+                // serialPort.Write(bytes, 0, 1);
+
+                //  If the UDP packet is almost full, send it.
+
+                if (packetIx > packet.Length -4) {
+                    udpClient.Send(packet, packetIx);
+                    //  Sleep so that we don't overrun the IBM 1410 channel at 9us / char
+                    System.Threading.Thread.Sleep(10);  // TAPEPACKETSLEEPTIME
+                    /*
+                    Debug.WriteLine("Sent UDP Tape Read packet: ");
+                    for (int i = 0; i < packetIx; ++i) {
+                        Debug.Write(packet[i].ToString("X2") + " ");
+                        if (i % 16 == 15) {
+                            Debug.WriteLine("");
+                        }
+                    }
+
+                    Debug.WriteLine("/");
+                    */
+
+                    packetIx = 0;
+                    packet[packetIx++] = (tapeUnit.ChannelNumber == 1) ? CHANNEL1TOFPGAFLAG : CHANNEL2TOFPGAFLAG;
+                }
 
                 if (bytes[0] == TAPEENDOFRECORD) {
                     break;
                 }
             }
 
+            //  If we have data still in the UDP packet, send it.
+            if(packetIx > 0) {
+                udpClient.Send(packet, packetIx);
+            }
+
+            /*
+            Debug.WriteLine("Sent last UDP Tape Read packet: ");
+            for(int i = 0; i < packetIx; ++i) {
+                Debug.Write(packet[i].ToString("X2") + " ");
+                if (i % 16 == 15) {
+                    Debug.WriteLine("");
+                }
+            }
+
+            Debug.WriteLine("/");
+            */
+
+
             //  Release the lock on the serial port.
 
+            udpOutputSemaphore.Release();
             serialOutputSemaphore.Release();
             // Update FPGA unit status, particularly BUT DONT!!!
             //  tapeUnit.UpdateFPGATape("Read after Semaphore Release);  

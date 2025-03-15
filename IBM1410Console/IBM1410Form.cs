@@ -159,7 +159,8 @@ namespace IBM1410Console
             //  And the tape drive panel showing...
 
             if (IBM1410TapesForm == null) {
-                IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore);
+                IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore,
+                    udpState.udpClient, udpOutputSemaphore);
             }
             IBM1410TapesForm.Show();
 
@@ -486,7 +487,8 @@ namespace IBM1410Console
 
         private void tapesToolStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1410TapesForm == null) {
-                IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore);
+                IBM1410TapesForm = new IBM1410TapesForm(serialDataPublisher, serialPort, serialOuputSemaphore,
+                    udpState.udpClient, udpOutputSemaphore);
             }
             IBM1410TapesForm.Show();
         }

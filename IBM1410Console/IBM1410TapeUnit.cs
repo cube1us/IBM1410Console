@@ -494,9 +494,11 @@ namespace IBM1410Console
                 }
 
                 #if TAPEDEBUG
+                    /*
                     Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
                     " read next character is " + tape_buffer.ToString("X2") + ", at position " + 
                     fd.Position.ToString());
+                    */
                 #endif
 
 

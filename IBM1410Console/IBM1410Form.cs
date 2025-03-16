@@ -166,7 +166,7 @@ namespace IBM1410Console
 
             //  We need the lamps form now, too, so it can learn about resets
 
-            UI1415LForm UI1415LForm = new UI1415LForm(serialDataPublisher, IBM1410SwitchForm);
+            UI1415LForm UI1415LForm = new UI1415LForm(serialDataPublisher, udpDataPublisher, IBM1410SwitchForm);
 
             //  Next, tell the switch form about other forms that need to know about
             //  Computer and Program resets
@@ -214,7 +214,7 @@ namespace IBM1410Console
 
         private void lightStripMenuItem_Click(object sender, EventArgs e) {
             if (UI1415LForm == null) {
-                UI1415LForm = new UI1415LForm(serialDataPublisher, IBM1410SwitchForm);
+                UI1415LForm = new UI1415LForm(serialDataPublisher, udpDataPublisher, IBM1410SwitchForm);
             }
             UI1415LForm.Show();
 

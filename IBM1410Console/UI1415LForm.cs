@@ -30,6 +30,7 @@ namespace IBM1410Console
 
     public partial class UI1415LForm : Form
     {
+        private const int lampCodeByte = 0x81;
 
         private IBM1410Lamp[] lamps = new IBM1410Lamp[IBM1410Lamp.lampVectorBits];
         bool[] oldLamps = new bool[IBM1410Lamp.lampVectorBits];
@@ -49,13 +50,19 @@ namespace IBM1410Console
         private enum lampSyncStates { lampSyncStart, lampSyncing, lampSyncCompleted };
         lampSyncStates lampSyncState = lampSyncStates.lampSyncStart;
         
-        public UI1415LForm(SerialDataPublisher lightOutputPublisher, IBM1410SwitchForm ibm1410SwitchForm) {
+        public UI1415LForm(SerialDataPublisher lightOutputPublisher, 
+            UDPDataPublisher udpLightOutputPublisher, IBM1410SwitchForm ibm1410SwitchForm) {
             InitializeComponent();
             this.CreateHandle();    // This ensures that controls are created before receiving data from the FPGA 
             this.initLamps(ibm1410SwitchForm);
 
-            lightOutputPublisher.SerialLightOutputEvent += new EventHandler<SerialLightDataEventArgs>(lampOutputAvailable);
+            lightOutputPublisher.SerialLightOutputEvent += 
+                new EventHandler<SerialLightDataEventArgs>(lampOutputAvailable);
             Debug.WriteLine("Event Handler for SerialDataPublisher (Lamps) Registered.");
+
+            udpLightOutputPublisher.UDPLightOutputEvent +=
+                new EventHandler<UDPLightDataEventArgs>(lampUDPOutputAvailable);
+            Debug.WriteLine("Event Handler for UDPDataPublisher (Lamps) Registered.");
         }
 
         //  Initialize lamp arrays
@@ -293,25 +300,54 @@ namespace IBM1410Console
 
         }
 
-        //  This routine is invoked when we receive a byte of serial data
+        //  This routine is invoked when we receive a byte of serial data. 
+        //  This was factored out of the original method so that we could have
+        //  a similar method for UDP input without having to change much, if any
+        //  code.
 
-        void lampOutputAvailable(object sender, SerialLightDataEventArgs e ) {
+        void lampOutputAvailable(object sender, SerialLightDataEventArgs e) {
 
-            const int lampCodeByte = 0x81;
             int c = e.SerialByte;       // Contains 7 bits of lamp data
-            int currentOffset = lampByte * 7;
 
             //  Is this data really for us?
+
+            if (e.DispatchCode != lampCodeByte) {
+                return;
+            }
+
+            //  Yes: process it.
+
+            processLampByte(c);
+        }
+
+        //  This routine is invoked when we receive a byte of UDP data.
+        //  It is almost identical to the Serial one.  (I could easily combine
+        //  them by having them use the same event args,
+        //  but this arrangement allows for different debugging if needed.)
+
+        void lampUDPOutputAvailable(object sender, UDPLightDataEventArgs e) {
+
+            int c = e.UDPByte;
 
             if(e.DispatchCode != lampCodeByte) {
                 return;
             }
 
+            processLampByte(c);
+
+        }
+
+
+
+        void processLampByte(int c) {
+
+            int currentOffset = lampByte * 7;
+
             // Debug.WriteLine("UI1415Form: Received lamp data byte: " + c.ToString("X2"));
 
             //  waiting for sync bytes
 
-            switch(lampSyncState) {
+            switch (lampSyncState) {
                 case lampSyncStates.lampSyncStart:
                     //  If data matches 1st sync byte, start the sync process
                     if(c == lampSyncVector[0]) {

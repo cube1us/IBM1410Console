@@ -16,6 +16,11 @@
  *  If not, see <https://www.gnu.org/licenses/>.
 */
 
+//  There are a couple of warnings that I really don't care for, so suppress them.
+
+#pragma warning disable IDE0090
+#pragma warning disable IDE1005
+
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -470,10 +470,12 @@ namespace IBM1410Console
 
                 try {
                     fd.Seek(-2, SeekOrigin.Current);
+                    /*
                     #if TAPEDEBUG
                         Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +
                             " Back up 2 characters, at position " + fd.Position.ToString());
                     #endif
+                    */
                 }
                 catch (IOException e) {
                     Debug.WriteLine("TapeUnit Backspace unit " + channel.ToString() + unit.ToString() +

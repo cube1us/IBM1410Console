@@ -35,10 +35,12 @@ namespace IBM1410Console
     {
 
         public int DispatchCode { get; set; }
-        public int UDPByte { get; set; }
-        public UDPDataEventArgs(int dispatchCode, int udpByte) {
-            UDPByte = udpByte;
+        public int[] UDPBytes { get; set; }
+        public int UDPLen { get; set; }
+        public UDPDataEventArgs(int dispatchCode, int[] udpBytes, int udpLen) {
+            UDPBytes = udpBytes;
             DispatchCode = dispatchCode;
+            UDPLen = udpLen;
         }
 
     }
@@ -50,10 +52,12 @@ namespace IBM1410Console
     {
 
         public int DispatchCode { get; set; }
-        public int UDPByte { get; set; }
-        public UDPLightDataEventArgs(int dispatchCode, int udpByte) {
-            UDPByte = udpByte;
+        public int[] UDPBytes { get; set; }
+        public int UDPLen { get; set; }
+        public UDPLightDataEventArgs(int dispatchCode, int[] udpBytes, int uDPLen) {
+            UDPBytes = udpBytes;
             DispatchCode = dispatchCode;
+            UDPLen = uDPLen;
         }
 
     }
@@ -64,9 +68,11 @@ namespace IBM1410Console
     public class UDPTapeChannelEventArgs : EventArgs
     {
         public int DispatchCode { get; set; }
-        public int UDPByte { get; set; }
-        public UDPTapeChannelEventArgs(int dispatchCode, int udpByte) {
-            UDPByte = udpByte;
+        public int[] UDPBytes { get; set; }
+        public int UDPLen { get; set; }
+        public UDPTapeChannelEventArgs(int dispatchCode, int[] udpBytes, int udpLen) {
+            UDPBytes = udpBytes;
+            UDPLen = udpLen;
             DispatchCode = dispatchCode;
         }
     }
@@ -111,6 +117,8 @@ namespace IBM1410Console
             Byte[] rxBytes = udpState.udpClient.EndReceive(ar, ref udpState.ipEndPoint);
             int numBytes = rxBytes.Length;
             int readByte = 0;
+            int dispatchLen = 0;
+            int[] dispatchBytes = new int[2048];
 
             //  Verify it is coming from the right place.  Ignore if not.
 
@@ -119,56 +127,85 @@ namespace IBM1410Console
                 return;
             }
 
-            Debug.WriteLine("UDP Received " + rxBytes.Length.ToString() + " bytes from " +
-                "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
+            // Debug.WriteLine("UDP Received " + rxBytes.Length.ToString() + " bytes from " +
+            //    "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
 
 
 
             //  Process the data
 
-            for (int i = 0; i < numBytes; ++i) {
-                readByte = rxBytes[i];
-                if (lastCodeByte != lightCodeByte) {
-                    Debug.WriteLine("Read byte " + readByte.ToString("X2"));
+            dispatchLen = 0;
+
+            //  The following loop looks like it could go one too far, but it really doesn't.
+
+            for (int i = 0; i <= numBytes; ++i) {
+                if(i < numBytes) {
+                    readByte = rxBytes[i];
                 }
 
-                if (readByte >= 0x80) {
-                    lastCodeByte = readByte;
-                    if (lastCodeByte != lightCodeByte) {
-                        Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
+                // if (lastCodeByte != lightCodeByte && i < numBytes) {
+                //     Debug.WriteLine("Read byte " + readByte.ToString("X2"));
+                // }
+
+                if (readByte >= 0x80 || i == numBytes) {
+
+                    //  If this is not the first byte of the packet, OR, if the previous
+                    //  byte was the last byte of the packet (i == numBytes), we need to dispatch the
+                    //  data we already grabbed, then reset the dispatchLen variable.
+
+                    if(i > 0) {
+                        Debug.WriteLine("Dispatching " + dispatchLen + " bytes...");
+                        if (lastCodeByte == lightCodeByte) {
+                            UDPLightDataEventArgs udpLightDataEventArgs = 
+                                new UDPLightDataEventArgs(lastCodeByte, dispatchBytes ,dispatchLen);
+                            OnRaiseUDPLightOutputEvent(udpLightDataEventArgs);
+                            dispatchLen = 0;
+                        }
+                        /*
+                        else if (lastCodeByte == lockCodeByte) {
+                            ConsoleLockDataEventArgs consoleLockDataEventArgs = new ConsoleLockDataEventArgs(lastCodeByte, readByte);
+                            OnRaiseConsoleLockOutputEvent(consoleLockDataEventArgs);
+                        }
+                        */
+                        else if (lastCodeByte == tapeChannel1FromTAUCodeByte) {
+                            // Debug.WriteLine("Dispatch byte to Channel 1 tape: " + readByte.ToString("X2"));
+                            UDPTapeChannelEventArgs tapeChannel1DataEventArgs =
+                                new UDPTapeChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                            // Debug.WriteLine("Tape Channel 1 Event Args Created");
+                            OnRaiseUDPTapeChannel1OutputEvent(tapeChannel1DataEventArgs);
+                            // Debug.WriteLine("Tape Channel 1 Back from the raised event.");
+                            dispatchLen = 0;
+                        }
+                        else if (lastCodeByte == tapeChannel2FromTAUCodeByte) {
+                            UDPTapeChannelEventArgs tapeChannel2DataEventArgs =
+                                new UDPTapeChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                            OnRaiseUDPTapeChannel2OutputEvent(tapeChannel2DataEventArgs);
+                            dispatchLen = 0;
+                        }
+                        else {
+                            UDPDataEventArgs udpDataEventArgs = new UDPDataEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                            OnRaiseUDPOutputEvent(udpDataEventArgs);
+                            dispatchLen = 0;
+                        }
+                    }
+
+                    if (i != numBytes) {
+                        lastCodeByte = readByte;
+                        if (lastCodeByte != lightCodeByte) {
+                            Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
+                        }
                     }
                 }
-                else if (lastCodeByte == lightCodeByte) {
-                    UDPLightDataEventArgs udpLightDataEventArgs = new UDPLightDataEventArgs(lastCodeByte, readByte);
-                    OnRaiseUDPLightOutputEvent(udpLightDataEventArgs);
-                }
-                /*
-                else if (lastCodeByte == lockCodeByte) {
-                    ConsoleLockDataEventArgs consoleLockDataEventArgs = new ConsoleLockDataEventArgs(lastCodeByte, readByte);
-                    OnRaiseConsoleLockOutputEvent(consoleLockDataEventArgs);
-                }
-                */
-                else if (lastCodeByte == tapeChannel1FromTAUCodeByte) {
-                    // Debug.WriteLine("Dispatch byte to Channel 1 tape: " + readByte.ToString("X2"));
-                    UDPTapeChannelEventArgs tapeChannel1DataEventArgs = 
-                        new UDPTapeChannelEventArgs(lastCodeByte, readByte);
-                    // Debug.WriteLine("Tape Channel 1 Event Args Created");
-                    OnRaiseUDPTapeChannel1OutputEvent(tapeChannel1DataEventArgs);
-                    // Debug.WriteLine("Tape Channel 1 Back from the raised event.");
-                }
-                else if (lastCodeByte == tapeChannel2FromTAUCodeByte) {
-                    UDPTapeChannelEventArgs tapeChannel2DataEventArgs = 
-                        new UDPTapeChannelEventArgs(lastCodeByte, readByte);
-                    OnRaiseUDPTapeChannel2OutputEvent(tapeChannel2DataEventArgs);
-                }
-                else {
-                    UDPDataEventArgs udpDataEventArgs = new UDPDataEventArgs(lastCodeByte, readByte);
-                    OnRaiseUDPOutputEvent(udpDataEventArgs);
-                }
 
+                else {
+                    //  Normal byte: not code byte and previous byte was not the last byte
+                    //  Stuff it into the dispatch array.
+                    dispatchBytes[dispatchLen++] = readByte;
+                }
             }
 
             // UDPDataEventArgs udpDataEventArgs = new udpDataEventArgs(0, inputData);
+
 
             // Debug.WriteLine("Data received: /" + inputData + "/");
 
@@ -211,8 +248,8 @@ namespace IBM1410Console
 
         protected void OnRaiseUDPTapeChannel2OutputEvent(UDPTapeChannelEventArgs e) {
             EventHandler<UDPTapeChannelEventArgs> raiseEvent = UDPTapeChannel2OutputEvent;
-            Debug.WriteLine("Signaling Tape Channel 2 event with code " + e.DispatchCode + " and character " + 
-                e.UDPByte.ToString("X2"));
+            // Debug.WriteLine("Signaling Tape Channel 2 event with code " + e.DispatchCode + " and character " + 
+            //     e.UDPByte.ToString("X2"));
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }

@@ -31,6 +31,7 @@ namespace IBM1410Console
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
         private SerialDataPublisher serialDataPublisher;
+        private UDPDataPublisher udpDataPublisher;
 
         private UdpClient udpClient = null;
         private SemaphoreSlim udpOutputSemaphore = null;
@@ -65,6 +66,7 @@ namespace IBM1410Console
         //  Constructor
 
         public IBM1410TapesForm(SerialDataPublisher serialDataPublisher,
+            UDPDataPublisher udpDataPublisher,
             SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
             UdpClient udpClient, SemaphoreSlim udpOutputSemaphore) {
 
@@ -73,6 +75,7 @@ namespace IBM1410Console
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
             this.serialDataPublisher = serialDataPublisher;
+            this.udpDataPublisher = udpDataPublisher;
             this.udpClient = udpClient;
             this.udpOutputSemaphore = udpOutputSemaphore;
 
@@ -109,7 +112,13 @@ namespace IBM1410Console
             serialDataPublisher.TapeChannel2OutputEvent +=
                 new EventHandler<TapeChannelEventArgs>(tapeChannel2OutputAvailable);
 
-            Debug.WriteLine("Event Handlers for SerialDataPublisher (Tapes) Registered.");
+            udpDataPublisher.UDPTapeChannel1OutputEvent +=
+                new EventHandler<UDPTapeChannelEventArgs>(tapeChannel1UDPOutputAvailable);
+
+            udpDataPublisher.UDPTapeChannel1OutputEvent +=
+                new EventHandler<UDPTapeChannelEventArgs>(tapeChannel2UDPOutputAvailable);
+
+            Debug.WriteLine("Event Handlers for Serial and UDP Data Publishers (Tapes) Registered.");
         }
 
         //  Methods that get called when serial data is available from the FPGA...
@@ -135,6 +144,35 @@ namespace IBM1410Console
 
             tapeSerialInputAvailable(2, (byte)e.SerialByte);
         }
+
+        //  Methods that get called when Ethernet UDP data is available from the FPGA...
+
+        void tapeChannel1UDPOutputAvailable(object sender, UDPTapeChannelEventArgs e) {
+
+            if(e.DispatchCode != UDPDataPublisher.tapeChannel1FromTAUCodeByte) {
+                return;
+            }
+
+            // tapeSerialInputAvailable(1, (byte)e.UDPByte);
+
+            for(int i = 0; i < e.UDPLen; ++i) {
+                tapeSerialInputAvailable(1, (byte) e.UDPBytes[i]);
+            }
+        }
+
+        void tapeChannel2UDPOutputAvailable(object sender, UDPTapeChannelEventArgs e) {
+
+            if (e.DispatchCode != UDPDataPublisher.tapeChannel2FromTAUCodeByte) {
+                return;
+            }
+
+            // tapeSerialInputAvailable(2, (byte)e.UDPByte);
+
+            for (int i = 0; i < e.UDPLen; ++i) {
+                tapeSerialInputAvailable(2, (byte)e.UDPBytes[i]);
+            }
+        }
+
 
         //  Method to reset the tape receive state during a computer or program reset,
         //  for example
@@ -271,7 +309,7 @@ namespace IBM1410Console
                         channelReceiveState = ChannelReceiveState.receiveIdle;
                     }
                     else {
-                        tapeUnit.Write(c);
+                        tapeUnit.Write(c, false);
                         channelReceiveState = ChannelReceiveState.receivingData;
                         ++recordSize[channel];
                         // Debug.WriteLine("Tape Write " + tapeUnitString + " wrote byte: " + c.ToString("X2"));

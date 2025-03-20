@@ -327,13 +327,14 @@ namespace IBM1410Console
 
         void lampUDPOutputAvailable(object sender, UDPLightDataEventArgs e) {
 
-            int c = e.UDPByte;
-
             if(e.DispatchCode != lampCodeByte) {
                 return;
             }
 
-            processLampByte(c);
+            // processLampByte(c);
+            for(int i = 0; i < e.UDPLen; ++i) {
+                processLampByte(e.UDPBytes[i]);
+            }
 
         }
 

@@ -33,6 +33,8 @@ namespace IBM1410Console
         public const int TAPEUNITIRG = -1;
         public const int TAPEUNITNOTREADY = -3;
 
+        public const bool TAPEFORCEIRG = true;
+
         private int unit;
         private int channel;
         private SerialPort serialPort;
@@ -130,7 +132,7 @@ namespace IBM1410Console
 
             if(modified && writeIRG) {
                 Debug.Assert(fd != null);
-                Write(0);
+                Write(0, TAPEFORCEIRG);
                 modified = false;
             }
 
@@ -198,6 +200,15 @@ namespace IBM1410Console
 
             if(_ready || !_loaded) {
                 return false;
+            }
+
+            //  If the tape was written to, and the file properly
+
+            if(modified && writeIRG) {
+                if(!Write(0, TAPEFORCEIRG)) {
+                    return false;
+                }
+                writeIRG = modified = false;
             }
 
             ResetFile();
@@ -286,7 +297,7 @@ namespace IBM1410Console
             //  tape mark, I suppose)
 
             if (modified && writeIRG) {
-                if (!Write(0)) {
+                if (!Write(0, TAPEFORCEIRG)) {
                     return false;
                 }
                 writeIRG = modified = false;
@@ -409,7 +420,7 @@ namespace IBM1410Console
             //  If we just ended a record, write out its IRG, then back up before it...
 
             if (modified && writeIRG) {
-                if (!Write(0)) {
+                if (!Write(0, !TAPEFORCEIRG)) {
                     ResetFile();
                     // UpdateFPGATape("Backspace Write IRG Failed");
                     return false;
@@ -535,11 +546,11 @@ namespace IBM1410Console
         //  Method to write a byte.  Doesn't need to worry about load mode, word separators, 
         //  parity or anything like that.
 
-        internal Boolean Write(int c) {
+        internal Boolean Write(int c, bool forceWrite) {
 
             // Debug.WriteLine("TapeUnit Write unit " + channel.ToString() + unit.ToString());
 
-            if (!_loaded || !_ready || !_selected || fd == null) {
+            if ((!forceWrite && (!_loaded || !_ready || !_selected)) || fd == null) {
                 Debug.WriteLine("TapeUnit write unit " + channel.ToString() + unit.ToString() +
                     " not ready, selected, loaded or fd is null");
                 Debug.WriteLine("Loaded: " + _loaded.ToString() + ", Ready: " + _ready.ToString() +
@@ -626,7 +637,7 @@ namespace IBM1410Console
             #endif
 
             ++_recordNumber;
-            if(!Write(TAPE_TM | TAPE_IRG)) {
+            if(!Write(TAPE_TM | TAPE_IRG, !TAPEFORCEIRG)) {
                 return(false);
             }
             

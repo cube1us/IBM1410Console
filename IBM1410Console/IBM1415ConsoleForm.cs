@@ -208,7 +208,7 @@ namespace IBM1410Console
 
             debugWindowConsoleOutput += s;
             if(s.Contains("\r")) {
-                Debug.WriteLine("Console output: " + debugWindowConsoleOutput);
+                Debug.Write("Console output: " + debugWindowConsoleOutput);
                 debugWindowConsoleOutput = "";
             }
 

@@ -109,7 +109,7 @@ namespace IBM1410Console
             //  Start up the recieve - this is just the FIRST receive.
             udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
 
-            Debug.WriteLine("UDP BeginREceive called.");
+            Debug.WriteLine("UDP BeginReceive called.");
         }
 
         private void UDPDataReceivedHandler(IAsyncResult ar) { 
@@ -147,6 +147,8 @@ namespace IBM1410Console
                 //     Debug.WriteLine("Read byte " + readByte.ToString("X2"));
                 // }
 
+                // Debug.WriteLine("Read byte " + readByte.ToString("X2"));
+
                 if (readByte >= 0x80 || i == numBytes) {
 
                     //  If this is not the first byte of the packet, OR, if the previous
@@ -154,7 +156,7 @@ namespace IBM1410Console
                     //  data we already grabbed, then reset the dispatchLen variable.
 
                     if(i > 0) {
-                        Debug.WriteLine("Dispatching " + dispatchLen + " bytes...");
+                        // Debug.WriteLine("Dispatching " + dispatchLen + " bytes...");
                         if (lastCodeByte == lightCodeByte) {
                             UDPLightDataEventArgs udpLightDataEventArgs = 
                                 new UDPLightDataEventArgs(lastCodeByte, dispatchBytes ,dispatchLen);
@@ -190,10 +192,10 @@ namespace IBM1410Console
                     }
 
                     if (i != numBytes) {
-                        lastCodeByte = readByte;
-                        if (lastCodeByte != lightCodeByte) {
+                        if (lastCodeByte != readByte) {
                             Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
                         }
+                        lastCodeByte = readByte;
                     }
                 }
 

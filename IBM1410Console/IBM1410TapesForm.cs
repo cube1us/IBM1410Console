@@ -115,7 +115,7 @@ namespace IBM1410Console
             udpDataPublisher.UDPTapeChannel1OutputEvent +=
                 new EventHandler<UDPTapeChannelEventArgs>(tapeChannel1UDPOutputAvailable);
 
-            udpDataPublisher.UDPTapeChannel1OutputEvent +=
+            udpDataPublisher.UDPTapeChannel2OutputEvent +=
                 new EventHandler<UDPTapeChannelEventArgs>(tapeChannel2UDPOutputAvailable);
 
             Debug.WriteLine("Event Handlers for Serial and UDP Data Publishers (Tapes) Registered.");
@@ -171,6 +171,8 @@ namespace IBM1410Console
             for (int i = 0; i < e.UDPLen; ++i) {
                 tapeSerialInputAvailable(2, (byte)e.UDPBytes[i]);
             }
+
+            // Debug.WriteLine("Dispatching bytes to TAU Channel 2");
         }
 
 
@@ -259,40 +261,40 @@ namespace IBM1410Console
                         case TAPEOPERWRITE:
                             channelReceiveState = ChannelReceiveState.receivingData;
                             recordSize[channel] = 0;
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " begin write");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " begin write");
                             break;
                         case TAPEOPERBACKSPACE:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Backspace");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " Backspace");
                             tapeUnit.Backspace();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERERASE:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Erase");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " Erase");
                             tapeUnit.Skip();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERWTM:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " WTM");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " WTM");
                             tapeUnit.WriteTM();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERUNLOAD:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Rewind Unload");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " Rewind Unload");
                             tapeUnit.RewindUnload();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERREWIND:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Rewind");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " Rewind");
                             tapeUnit.Rewind();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         case TAPEOPERRESETTI:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString + " Reset T.I. Request from FPGA");
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString + " Reset T.I. Request from FPGA");
                             tapeUnit.ResetTapeIndicate();
                             channelReceiveState = ChannelReceiveState.receiveIdle;
                             break;
                         default:
-                            Debug.WriteLine("Tape Unit " + tapeUnitString +
+                            Debug.WriteLine("*** Tape Unit " + tapeUnitString +
                                 " INVALID tape operation " + c.ToString("X2"));
                             //  In this case do NOT update the state variable for the affected channel.
                             return;
@@ -366,7 +368,7 @@ namespace IBM1410Console
             String tapeUnitString = tapeUnit.ChannelNumber.ToString() +
                 tapeUnit.UnitNumber.ToString();
 
-            Debug.WriteLine("Begin Tape read, unit " + tapeUnitString);
+            Debug.WriteLine("*** Begin Tape read, unit " + tapeUnitString);
             recordSize[tapeUnit.ChannelNumber] = 0;
 
             //  Obtain access to the serial port for access.
@@ -378,13 +380,13 @@ namespace IBM1410Console
             //  Send the channel flag to the FPGA
 
             bytes[0] = (tapeUnit.ChannelNumber == 1) ? CHANNEL1TOFPGAFLAG : CHANNEL2TOFPGAFLAG;
-            serialPort.Write(bytes, 0, 1);
+            // serialPort.Write(bytes, 0, 1);
             packet[packetIx++] = (tapeUnit.ChannelNumber == 1) ? CHANNEL1TOFPGAFLAG : CHANNEL2TOFPGAFLAG;
 
             //  Send the unit number + 0x40 to the FPGA to signal input data
 
             bytes[0] = (byte)(tapeUnit.UnitNumber | READDATAFLAG);
-            serialPort.Write(bytes, 0, 1);
+            // serialPort.Write(bytes, 0, 1);
             packet[packetIx++] = (byte)(tapeUnit.UnitNumber | READDATAFLAG);
 
             /*

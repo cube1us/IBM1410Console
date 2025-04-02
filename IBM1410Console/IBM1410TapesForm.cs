@@ -212,9 +212,10 @@ namespace IBM1410Console
 
                     // Received a unit, perhaps with an X'40' flag for reading data.
 
-                    if ((c & 0x0f) > 10) {
+                    if ((c & 0x0f) > 9) {
                         Debug.WriteLine("Tape Channel " + channel.ToString() + " INVALID tape unit " +
                             c.ToString("X2"));
+                        //  TODO:  Show a dialog box here as tape is out of sync.
                         return;
                     }
 
@@ -319,7 +320,7 @@ namespace IBM1410Console
                     break;
 
                 default:
-                    channel1ReceiveState = ChannelReceiveState.receiveIdle;
+                    channelReceiveState = ChannelReceiveState.receiveIdle;
                     Debug.WriteLine("Channel " + tapeUnit.ChannelNumber.ToString() + "" +
                         " Tape state machine, INVALID state.");
                     break;

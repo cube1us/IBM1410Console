@@ -15,6 +15,21 @@ using System.Net.Sockets;
 using System.Windows.Forms.VisualStyles;
 
 namespace IBM1410Console
+
+    /*
+     * Tape drive FPGA <-> PC Support Program protocols:
+     * 
+     * For PC => FPGA:
+     *    Channel Character [CR]:  0x84 (Channel 1), 0x83 (Channel 2)
+     *    Status from PC to FPGA:    [CR] [Unit] [Status Byte]
+     *    Read data from PC to FPGA: [CR] [Unit | 0x40] [Read data bytes] [TAPEENDOFRECORD == 0x00]
+     * 
+     * For FPGA => PC
+     *    Channel Character [CW]:  0x85 (Channel 1), 0x84 (Channel 2)
+     *    Unit Control Operartion:    [CW] [Unit] [Operation Byte]  (Tape Write is operation byte of 0x02)
+     *    Tape Write from FPGA to PC: [CW] [Unit] [Write data bytes] [TAPEENDOFRECORD = 0x00]
+     * 
+     */
 {
     public partial class IBM1410TapesForm : Form
     {

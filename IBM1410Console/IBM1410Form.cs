@@ -44,6 +44,7 @@ namespace IBM1410Console
         UI1415LForm UI1415LForm = null;
         IBM1410SwitchForm IBM1410SwitchForm = null;
         IBM1410TapesForm IBM1410TapesForm = null;
+        IBM1402Form IBM1402Form = null;
 
         SerialPort serialPort;
         SerialDataPublisher serialDataPublisher;

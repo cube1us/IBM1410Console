@@ -43,13 +43,13 @@
             labelTransport = new System.Windows.Forms.Label();
             labelReaderStop = new System.Windows.Forms.Label();
             loadButton = new System.Windows.Forms.Button();
-            hoppersButton = new System.Windows.Forms.Button();
-            punch0PocketCountLabel = new System.Windows.Forms.Label();
-            punch4PocketCountLabel = new System.Windows.Forms.Label();
-            pocket82CountLabel = new System.Windows.Forms.Label();
-            reader1PocketLabel = new System.Windows.Forms.Label();
-            reader0PocketCountLabel = new System.Windows.Forms.Label();
             readerOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            punch0StackerButton = new System.Windows.Forms.Button();
+            punch4StackerButton = new System.Windows.Forms.Button();
+            middleStackerButton = new System.Windows.Forms.Button();
+            reader1StackerButton = new System.Windows.Forms.Button();
+            reader0StackerButton = new System.Windows.Forms.Button();
+            testButton = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // punchStartButton
@@ -261,87 +261,88 @@
             loadButton.UseVisualStyleBackColor = false;
             loadButton.Click += loadButton_Click;
             // 
-            // hoppersButton
-            // 
-            hoppersButton.BackColor = System.Drawing.SystemColors.ControlLight;
-            hoppersButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-            hoppersButton.Location = new System.Drawing.Point(355, 108);
-            hoppersButton.Name = "hoppersButton";
-            hoppersButton.Size = new System.Drawing.Size(112, 43);
-            hoppersButton.TabIndex = 62;
-            hoppersButton.Text = "Hoppers...";
-            hoppersButton.UseVisualStyleBackColor = false;
-            // 
-            // punch0PocketCountLabel
-            // 
-            punch0PocketCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            punch0PocketCountLabel.ForeColor = System.Drawing.Color.DimGray;
-            punch0PocketCountLabel.Location = new System.Drawing.Point(12, 163);
-            punch0PocketCountLabel.Name = "punch0PocketCountLabel";
-            punch0PocketCountLabel.Size = new System.Drawing.Size(94, 37);
-            punch0PocketCountLabel.TabIndex = 63;
-            punch0PocketCountLabel.Text = "0: #####";
-            punch0PocketCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // punch4PocketCountLabel
-            // 
-            punch4PocketCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            punch4PocketCountLabel.ForeColor = System.Drawing.Color.DimGray;
-            punch4PocketCountLabel.Location = new System.Drawing.Point(201, 163);
-            punch4PocketCountLabel.Name = "punch4PocketCountLabel";
-            punch4PocketCountLabel.Size = new System.Drawing.Size(94, 37);
-            punch4PocketCountLabel.TabIndex = 64;
-            punch4PocketCountLabel.Text = "4: #####";
-            punch4PocketCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // pocket82CountLabel
-            // 
-            pocket82CountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            pocket82CountLabel.ForeColor = System.Drawing.Color.DimGray;
-            pocket82CountLabel.Location = new System.Drawing.Point(390, 163);
-            pocket82CountLabel.Name = "pocket82CountLabel";
-            pocket82CountLabel.Size = new System.Drawing.Size(94, 37);
-            pocket82CountLabel.TabIndex = 65;
-            pocket82CountLabel.Text = "8/2: #####";
-            pocket82CountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // reader1PocketLabel
-            // 
-            reader1PocketLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            reader1PocketLabel.ForeColor = System.Drawing.Color.DimGray;
-            reader1PocketLabel.Location = new System.Drawing.Point(579, 163);
-            reader1PocketLabel.Name = "reader1PocketLabel";
-            reader1PocketLabel.Size = new System.Drawing.Size(94, 37);
-            reader1PocketLabel.TabIndex = 66;
-            reader1PocketLabel.Text = "1: #####";
-            reader1PocketLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // reader0PocketCountLabel
-            // 
-            reader0PocketCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            reader0PocketCountLabel.ForeColor = System.Drawing.Color.DimGray;
-            reader0PocketCountLabel.Location = new System.Drawing.Point(768, 163);
-            reader0PocketCountLabel.Name = "reader0PocketCountLabel";
-            reader0PocketCountLabel.Size = new System.Drawing.Size(94, 37);
-            reader0PocketCountLabel.TabIndex = 67;
-            reader0PocketCountLabel.Text = "0: #####";
-            reader0PocketCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // readerOpenFileDialog
             // 
             readerOpenFileDialog.FileName = "readerFile";
+            // 
+            // punch0StackerButton
+            // 
+            punch0StackerButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            punch0StackerButton.Location = new System.Drawing.Point(12, 183);
+            punch0StackerButton.Name = "punch0StackerButton";
+            punch0StackerButton.Size = new System.Drawing.Size(106, 37);
+            punch0StackerButton.TabIndex = 68;
+            punch0StackerButton.Text = "0: ######";
+            punch0StackerButton.UseVisualStyleBackColor = false;
+            punch0StackerButton.Click += punch0StackerButton_Click;
+            // 
+            // punch4StackerButton
+            // 
+            punch4StackerButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            punch4StackerButton.Location = new System.Drawing.Point(198, 183);
+            punch4StackerButton.Name = "punch4StackerButton";
+            punch4StackerButton.Size = new System.Drawing.Size(106, 37);
+            punch4StackerButton.TabIndex = 69;
+            punch4StackerButton.Text = "4: ######";
+            punch4StackerButton.UseVisualStyleBackColor = false;
+            punch4StackerButton.Click += punch4StackerButton_Click;
+            // 
+            // middleStackerButton
+            // 
+            middleStackerButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            middleStackerButton.Location = new System.Drawing.Point(384, 183);
+            middleStackerButton.Name = "middleStackerButton";
+            middleStackerButton.Size = new System.Drawing.Size(106, 37);
+            middleStackerButton.TabIndex = 70;
+            middleStackerButton.Text = "8/2: ######";
+            middleStackerButton.UseVisualStyleBackColor = false;
+            middleStackerButton.Click += middleStackerButton_Click;
+            // 
+            // reader1StackerButton
+            // 
+            reader1StackerButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            reader1StackerButton.Location = new System.Drawing.Point(570, 183);
+            reader1StackerButton.Name = "reader1StackerButton";
+            reader1StackerButton.Size = new System.Drawing.Size(106, 37);
+            reader1StackerButton.TabIndex = 71;
+            reader1StackerButton.Text = "1: ######";
+            reader1StackerButton.UseVisualStyleBackColor = false;
+            reader1StackerButton.Click += reader1StackerButton_Click;
+            // 
+            // reader0StackerButton
+            // 
+            reader0StackerButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            reader0StackerButton.Location = new System.Drawing.Point(756, 183);
+            reader0StackerButton.Name = "reader0StackerButton";
+            reader0StackerButton.Size = new System.Drawing.Size(106, 37);
+            reader0StackerButton.TabIndex = 72;
+            reader0StackerButton.Text = "0: ######";
+            reader0StackerButton.UseVisualStyleBackColor = false;
+            reader0StackerButton.Click += reader0StackerButton_Click;
+            // 
+            // testButton
+            // 
+            testButton.BackColor = System.Drawing.SystemColors.ControlLight;
+            testButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            testButton.Location = new System.Drawing.Point(12, 108);
+            testButton.Name = "testButton";
+            testButton.Size = new System.Drawing.Size(82, 43);
+            testButton.TabIndex = 73;
+            testButton.Text = "Test Stacker";
+            testButton.UseVisualStyleBackColor = false;
+            testButton.Click += testButton_Click;
             // 
             // IBM1402Form
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(876, 217);
-            Controls.Add(reader0PocketCountLabel);
-            Controls.Add(reader1PocketLabel);
-            Controls.Add(pocket82CountLabel);
-            Controls.Add(punch4PocketCountLabel);
-            Controls.Add(punch0PocketCountLabel);
-            Controls.Add(hoppersButton);
+            ClientSize = new System.Drawing.Size(876, 232);
+            Controls.Add(testButton);
+            Controls.Add(reader0StackerButton);
+            Controls.Add(reader1StackerButton);
+            Controls.Add(middleStackerButton);
+            Controls.Add(punch4StackerButton);
+            Controls.Add(punch0StackerButton);
             Controls.Add(loadButton);
             Controls.Add(labelReaderStop);
             Controls.Add(labelTransport);
@@ -385,12 +386,12 @@
         private System.Windows.Forms.Label labelTransport;
         private System.Windows.Forms.Label labelReaderStop;
         private System.Windows.Forms.Button loadButton;
-        private System.Windows.Forms.Button hoppersButton;
-        private System.Windows.Forms.Label punch0PocketCountLabel;
-        private System.Windows.Forms.Label punch4PocketCountLabel;
-        private System.Windows.Forms.Label pocket82CountLabel;
-        private System.Windows.Forms.Label reader1PocketLabel;
-        private System.Windows.Forms.Label reader0PocketCountLabel;
         private System.Windows.Forms.OpenFileDialog readerOpenFileDialog;
+        private System.Windows.Forms.Button punch0StackerButton;
+        private System.Windows.Forms.Button punch4StackerButton;
+        private System.Windows.Forms.Button middleStackerButton;
+        private System.Windows.Forms.Button reader1StackerButton;
+        private System.Windows.Forms.Button reader0StackerButton;
+        private System.Windows.Forms.Button testButton;
     }
 }

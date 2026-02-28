@@ -101,9 +101,9 @@ namespace IBM1410Console
         public event EventHandler<UDPLightDataEventArgs> UDPLightOutputEvent;
         public event EventHandler<UDPTapeChannelEventArgs> UDPTapeChannel1OutputEvent;
         public event EventHandler<UDPTapeChannelEventArgs> UDPTapeChannel2OutputEvent;
-        public event EventHandler<UDPUnitRecordChannelEventArgs> UDPReaderChannel1OutputEvent;
-        public event EventHandler<UDPUnitRecordChannelEventArgs> UDPPunchChannel1OutputEvent;
-        public event EventHandler<UDPUnitRecordChannelEventArgs> UDPPrinterChannel1OutputEvent;
+        public event EventHandler<UDPUnitRecordChannelEventArgs> UDPUnitChannel1OutputEvent;
+        // public event EventHandler<UDPUnitRecordChannelEventArgs> UDPPunchChannel1OutputEvent;
+        // public event EventHandler<UDPUnitRecordChannelEventArgs> UDPPrinterChannel1OutputEvent;
 
 
         //  Last received UDP ID code byte coming FROM the FPGA
@@ -122,8 +122,8 @@ namespace IBM1410Console
         private int lastUnitRecordDevice = 0x00;
         private int lastUnitRecordOperation = 0x00;
         private int readerChannel1Device = 0x01;
-        private int punchChannel1Device = 0x02;
-        private int printerChannel1Device = 0x03;
+        private int punchChannel1Device = 0x04;
+        private int printerChannel1Device = 0x02;
 
         private const int lightCodeByte = 0x81;
         private const int lockCodeByte = 0x82;   // Currently handled by UART Serial
@@ -170,8 +170,6 @@ namespace IBM1410Console
             // Debug.WriteLine("UDP Received " + rxBytes.Length.ToString() + " bytes from " +
             //    "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
 
-
-
             //  Process the data
 
             dispatchLen = 0;
@@ -212,48 +210,41 @@ namespace IBM1410Console
                         else if (lastCodeByte == deviceFrom1414CodeByte) {
                             Debug.WriteLine("Dispatching " + dispatchLen + " bytes for unit record");
 
-                            //  At this point we *must* have received at least one byte, so the device should not be 00
-                            //  Have we received the device number yet?  If not, then just ignore
-
                             if (lastUnitRecordDevice == 0x00) {
-                                Debug.WriteLine("UDPDataPublisher: No unit record device found as expected.");
-                                MessageBox.Show("UDPDataPublisher: No unit record device found as expected.");
+                                Debug.WriteLine("UDPDataPublisher: No unit record device available yet - no Dispatch.");
                             }
                             else if (lastUnitRecordOperation == 0x00 || dispatchLen == 0) {
                                 Debug.WriteLine("UDPDataPublisher: No unit record operation available yet - no Dispatch");
                             }
                             //  For a card reader, nothing follows the operation
                             else if (lastUnitRecordDevice == readerChannel1Device) {
-                                if(dispatchLen != 1) {
-                                    Debug.WriteLine("UDPDataPublisher: Reader Channel 1 Dispatch Length not 1 " + 
+                                if (dispatchLen != 1) {
+                                    Debug.WriteLine("UDPDataPublisher: Reader Channel 1 Dispatch Length not 1 " +
                                         dispatchLen.ToString());
                                     MessageBox.Show("UDPDataPublisher: Reader Channel 1 Dispatch Length not 1 " +
                                         dispatchLen.ToString());
                                 }
-                                Debug.WriteLine("Dispatching Reader Channel 1 operation of " + 
+                                Debug.WriteLine("Dispatching Reader Channel 1 operation of " +
                                     dispatchBytes[0].ToString("X2"));
-                                UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs = 
+                                UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
                                     new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                                OnRaiseUDPReaderChannel1OutputEvent(unitRecordChannelEventArgs);
+                                OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
                                 //  And then reset...
                                 lastUnitRecordDevice = 0x00;
                                 lastUnitRecordOperation = 0x00;
                             }
-                            else {
-                                //  For a unit record output device, we are receiving data until we get a 0 byte.
-                                //  TODO
-
-                                // UnitRecordChannelEventArgs unitRecordChannelEventArgs = new UnitRecordChannelEventArgs(lastCodeByte, readByte);
-
-                                //  Decide which device we are going to dispatch to...
-
-                                //  If this is a 0 byte, it is the end of the data, so reset our state information.
-
+                            else if (lastUnitRecordDevice == punchChannel1Device) {
+                                UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
+                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                                Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 punch.");
+                                OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
+                                //  If this byte is 0, then reset.
                                 if (readByte == 0x00) {
                                     lastUnitRecordDevice = 0x00;
                                     lastUnitRecordOperation = 0x00;
                                 }
                             }
+
                         }
 
                         else if (lastCodeByte == tapeChannel1FromTAUCodeByte) {
@@ -300,6 +291,7 @@ namespace IBM1410Console
                             lastUnitRecordDevice = readByte;
                         }
                         else if (lastUnitRecordDevice != 0 && lastUnitRecordOperation == 0) {
+                            // We DO include the operation code in the dispatch vector for unit record devices.
                             lastUnitRecordOperation = readByte;
                             dispatchBytes[dispatchLen++] = readByte;
                         }
@@ -368,8 +360,8 @@ namespace IBM1410Console
             }
         }
 
-        protected void OnRaiseUDPReaderChannel1OutputEvent(UDPUnitRecordChannelEventArgs e) {
-            EventHandler<UDPUnitRecordChannelEventArgs> raiseEvent = UDPReaderChannel1OutputEvent;
+        protected void OnRaiseUDPUnitChannel1OutputEvent(UDPUnitRecordChannelEventArgs e) {
+            EventHandler<UDPUnitRecordChannelEventArgs> raiseEvent = UDPUnitChannel1OutputEvent;
             // Debug.WriteLine("Signaling Reader Channel 1 event with code " + e.DispatchCode + " and character " + 
             //     e.UDPByte.ToString("X2"));
             if (raiseEvent != null) {

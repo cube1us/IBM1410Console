@@ -33,6 +33,7 @@ namespace IBM1410Console
             fPGACoreSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            clearCoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,7 +64,7 @@ namespace IBM1410Console
             searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            clearCoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            cardReaderPunchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -114,6 +115,13 @@ namespace IBM1410Console
             openToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             openToolStripMenuItem.Text = "&Load Core Image";
             openToolStripMenuItem.Click += LoadCoreImageToolStripMenuItem_Click;
+            // 
+            // clearCoreToolStripMenuItem
+            // 
+            clearCoreToolStripMenuItem.Name = "clearCoreToolStripMenuItem";
+            clearCoreToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            clearCoreToolStripMenuItem.Text = "Clear Core";
+            clearCoreToolStripMenuItem.Click += clearCoreToolStripMenuItem_Click;
             // 
             // toolStripSeparator
             // 
@@ -243,12 +251,11 @@ namespace IBM1410Console
             // 
             // windowsStripMenuItem
             // 
-            windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { consoleStripMenuItem, lightStripMenuItem, switchesStripMenuItem, optionsToolStripMenuItem, tapesToolStripMenuItem });
+            windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { consoleStripMenuItem, lightStripMenuItem, switchesStripMenuItem, optionsToolStripMenuItem, tapesToolStripMenuItem, cardReaderPunchToolStripMenuItem });
             windowsStripMenuItem.Name = "windowsStripMenuItem";
             windowsStripMenuItem.Size = new System.Drawing.Size(68, 20);
             windowsStripMenuItem.Text = "&Windows";
             windowsStripMenuItem.ToolTipText = "Opens 1410 Windows";
-            windowsStripMenuItem.Click += windowsStripMenuItem_Click;
             // 
             // consoleStripMenuItem
             // 
@@ -321,12 +328,12 @@ namespace IBM1410Console
             aboutToolStripMenuItem.Text = "&About...";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
-            // clearCoreToolStripMenuItem
+            // cardReaderPunchToolStripMenuItem
             // 
-            clearCoreToolStripMenuItem.Name = "clearCoreToolStripMenuItem";
-            clearCoreToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            clearCoreToolStripMenuItem.Text = "Clear Core";
-            clearCoreToolStripMenuItem.Click += clearCoreToolStripMenuItem_Click;
+            cardReaderPunchToolStripMenuItem.Name = "cardReaderPunchToolStripMenuItem";
+            cardReaderPunchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            cardReaderPunchToolStripMenuItem.Text = "Card Reader/Punch";
+            cardReaderPunchToolStripMenuItem.Click += cardReaderPunchToolStripMenuItem_Click;
             // 
             // IBM1410Form
             // 
@@ -384,6 +391,7 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripMenuItem fPGACoreSizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tapesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearCoreToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cardReaderPunchToolStripMenuItem;
     }
 }
 

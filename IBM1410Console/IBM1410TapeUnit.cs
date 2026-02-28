@@ -771,9 +771,15 @@ namespace IBM1410Console
 
             //  Wait for access to the serial port...
 
-            serialOutputSemaphore.Wait();
             udpOutputSemaphore.Wait();
-            serialPort.Write(serialBuffer, 0, serialBuffer.Length);
+            try {
+                serialOutputSemaphore.Wait();
+                serialPort.Write(serialBuffer, 0, serialBuffer.Length);
+            }
+            catch (Exception e) {
+                ;
+            }
+
             udpClient.Send(serialBuffer,serialBuffer.Length);
             Debug.WriteLine("   Sent UDP TAU Status update packet /" +
                 serialBuffer[0].ToString("X2") + serialBuffer[1].ToString("X2") +

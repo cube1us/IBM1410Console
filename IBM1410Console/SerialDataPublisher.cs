@@ -100,9 +100,9 @@ namespace IBM1410Console
         public event EventHandler<ConsoleLockDataEventArgs> ConsoleLockOutputEvent;
         public event EventHandler<TapeChannelEventArgs> TapeChannel1OutputEvent;
         public event EventHandler<TapeChannelEventArgs> TapeChannel2OutputEvent;
-        public event EventHandler<UnitRecordChannelEventArgs> ReaderChannel1OutputEvent;
-        public event EventHandler<UnitRecordChannelEventArgs> PunchChannel1OutputEvent;
-        public event EventHandler<UnitRecordChannelEventArgs> PrinterChannel1OutputEvent;
+        public event EventHandler<UnitRecordChannelEventArgs> UnitChannel1OutputEvent;
+        // public event EventHandler<UnitRecordChannelEventArgs> PunchChannel1OutputEvent;
+        // public event EventHandler<UnitRecordChannelEventArgs> PrinterChannel1OutputEvent;
 
 
         //  Last received serial ID code byte
@@ -138,8 +138,13 @@ namespace IBM1410Console
         public SerialDataPublisher(SerialPort serialPort) {
             serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
             // TODO:  This open can fail if specified serial port not found.
-            serialPort.Open();
-            Debug.WriteLine("Received Data Handler subscribed");
+            try {
+                serialPort.Open();
+                Debug.WriteLine("Received Data Handler subscribed");
+            }
+            catch(Exception e) {
+
+            }
         }
 
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e) {
@@ -178,38 +183,45 @@ namespace IBM1410Console
                     //  also includes the channel number in it.) 
                     //  If we have that, but not the operation, then this must be the operation.
                     //  Otherwise we know both, and this must be data (i.e. for punch, printer, paper tape or telegraph)
-                    
-                    if(lastUnitRecordDevice == 0x00) {
+
+                    if (lastUnitRecordDevice == 0x00) {
                         lastUnitRecordDevice = readByte;
-                        Debug.WriteLine("Now receiving data for unit record device " + readByte.ToString("X2"));
+                        //  Note: We do NOT dispatch the unit record device code, we just remember it.
+                        Debug.WriteLine("Receiving request for unit record device " + readByte.ToString("X2"));
                     }
-                    else if(lastUnitRecordOperation == 0x00) {
+                    else if (lastUnitRecordOperation == 0x00) {
                         lastUnitRecordOperation = readByte;
+                        Debug.WriteLine("Received request for operation " + readByte.ToString("X2") + " for unit record device " + lastUnitRecordDevice.ToString("X2"));
+
+                        //  We DO Dispatch the unit record operation code, however.
+                        UnitRecordChannelEventArgs unitRecordChannelEventArgs = new UnitRecordChannelEventArgs(lastCodeByte, readByte);
+                        OnRaiseUnitChannel1OutputEvent(unitRecordChannelEventArgs);
 
                         //  If we are receiving data from the FPGA for the reader, then this is the end of the message
+
                         if (lastUnitRecordDevice == readerChannel1Device) {
-                            Debug.WriteLine("Dispatching Reader Channel 1 operation of " + readByte.ToString("X2"));
-                            UnitRecordChannelEventArgs unitRecordChannelEventArgs = new UnitRecordChannelEventArgs(lastCodeByte, readByte);
-                            OnRaiseReaderChannel1OutputEvent(unitRecordChannelEventArgs);
-                            //  And then reset...
+                            Debug.WriteLine("Dispatced Reader Channel 1 operation of " + readByte.ToString("X2"));
                             lastUnitRecordDevice = 0x00;
                             lastUnitRecordOperation = 0x00;
                         }
                     }
-                    else {
-                        //  For an output device, we are receiving data until we get a 0 byte.
-                        //  TODO
-
+                    else if (lastUnitRecordDevice == punchChannel1Device) {
+                        Debug.WriteLine("Dispatching data byte to Channel 1 punch: " + readByte.ToString("X2"));
+                        
                         UnitRecordChannelEventArgs unitRecordChannelEventArgs = new UnitRecordChannelEventArgs(lastCodeByte, readByte);
-
-                        //  Decide which device we are going to dispatch to...
-
-                        //  If this is a 0 byte, it is the end of the data, so reset our state information.
+                        OnRaiseUnitChannel1OutputEvent(unitRecordChannelEventArgs);
+                        
+                        //  If this byte is 0, then reset (the FPGA should never send an actual 0 ** DATA ** byte to the punch 
+                        //  (It would be 0x40 for a blank)
 
                         if (readByte == 0x00) {
                             lastUnitRecordDevice = 0x00;
                             lastUnitRecordOperation = 0x00;
-                        }                        
+                        }
+                    }
+
+                    else {
+                        // Just ignore any other unit record device for now.
                     }
                 }
                 else if (lastCodeByte == tapeChannel1FromTAUCodeByte) {
@@ -284,8 +296,8 @@ namespace IBM1410Console
             }
         }
 
-        protected void OnRaiseReaderChannel1OutputEvent(UnitRecordChannelEventArgs e) {
-            EventHandler<UnitRecordChannelEventArgs> raiseEvent = ReaderChannel1OutputEvent;
+        protected void OnRaiseUnitChannel1OutputEvent(UnitRecordChannelEventArgs e) {
+            EventHandler<UnitRecordChannelEventArgs> raiseEvent = UnitChannel1OutputEvent;
             Debug.WriteLine("Signaling Unit Record event with code " + e.DispatchCode + " and character " +
                 e.SerialByte.ToString("X2"));
             if (raiseEvent != null) {

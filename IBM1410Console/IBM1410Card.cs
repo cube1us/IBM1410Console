@@ -25,18 +25,21 @@ using System.Windows.Forms;
 namespace IBM1410Console
 {
     //  This class implements a card image
-    internal class IBM1410Card
+    public  class IBM1410Card
+
     {
-        private IBM1402Stacker Stacker;
+        private IBM1402Stacker stacker;
         public byte[] image;
+        public int currentByte;
         public Boolean wrongLengthRecord;
         public Boolean dataCheck;
         public Boolean lastCard;
 
         //  Constructor
         public IBM1410Card() {
-            Stacker = null;
+            stacker = null;
             image = new byte[80];
+            currentByte = 0;
             wrongLengthRecord = false;
             dataCheck = false;
             lastCard = false;
@@ -55,17 +58,29 @@ namespace IBM1410Console
         public void setLastCard(Boolean b) { lastCard = b; }
 
         //  Method to select a particular stacker for a card
-        public void SelectStaker(IBM1402Stacker stacker) {
-            Stacker = stacker;
+        public void selectStacker(IBM1402Stacker stacker) {
+            this.stacker = stacker;
+        }
+
+        //  Method to add a byte to the card image
+
+        public Boolean addByte(byte c) {
+            if (currentByte < image.Length) {
+                image[currentByte++] = c;
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         
         //  Method to stack a card in a stacker
 
         public bool Stack() {
-            if (Stacker == null) {
+            if (stacker == null) {
                 return false;
             }
-            return (Stacker.Stack(this));
+            return (stacker.Stack(this));
         }
 
 
@@ -74,24 +89,33 @@ namespace IBM1410Console
     //  This class implements a stacker slot on a 1402 Card/Read Punch
     //  TODO:  Provide a method to write the contents of a stacker to a file.
 
-    internal class IBM1402Stacker {
+    public class IBM1402Stacker {
 
         private int count;
         private const int MAXCOUNT = 10000;
+        private string stackerName;
+        private string stackerShortName;
+        private System.Windows.Forms.Button button;
+
         // private String fileName;
         // private FileStream fd;
         private List<string> cardList;
         public int getCount() {  return count; }
+        public List<string> getCardList() { return cardList; }
+        public string getStackerName() { return stackerName; }
 
         // public String GetFileName() { return fileName; }
 
 
         //  Constructor
-        public IBM1402Stacker() {
+        public IBM1402Stacker(string stackerName, string stackerShortName, System.Windows.Forms.Button button) {
             count = 0;
             // fd = null;
             // fileName = null;
             cardList = new List<string>();
+            this.stackerName = stackerName;
+            this.stackerShortName = stackerShortName;
+            this.button = button;
         }
 
         /*
@@ -139,6 +163,7 @@ namespace IBM1410Console
         public void reset() { 
             count = 0; 
             cardList.Clear();
+            button.Text = stackerShortName + ": #####";
         }
 
         //  Method to check if a stacker is full
@@ -166,7 +191,8 @@ namespace IBM1410Console
 
             //  Add the card image to the card list.
 
-            cardList.Add(System.Text.Encoding.ASCII.GetString(card.image,0, i-1));
+            cardList.Add(System.Text.Encoding.ASCII.GetString(card.image,0,i) + "\n");
+            button.Text = stackerShortName + ": " + count.ToString("D5");
             return true;
 
             /*

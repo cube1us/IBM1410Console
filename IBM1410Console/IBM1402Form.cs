@@ -27,6 +27,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -35,7 +36,8 @@ using System.Xml;
 
 namespace IBM1410Console
 {
-    public partial class IBM1402Form : Form {
+    public partial class IBM1402Form : Form
+    {
 
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
@@ -57,7 +59,7 @@ namespace IBM1410Console
 
         private int currentUnitRecordDevice = 0;
         private int currentReaderOperation = 0;
-        private bool currentReaderSkippingBytes = false;
+        private int currentPunchOperation = 0;
 
         private IBM1402Stacker readerStacker0;
         private IBM1402Stacker readerStacker1;
@@ -72,7 +74,7 @@ namespace IBM1410Console
         public const int readerIsWLR = 0x08;        // Card image is more than 80 characters
         public const int readerIsLastCard = 0x10;   // EOF Button is pressed, active and last card in station
         public const int readerStackerFull = 0x20;  // Stacker is full
-        
+
         public const byte UNITRECORDFLAG = 0x85;
         public const byte READERCH1FLAG = 0x01;
         public const byte PUNCHCH1FLAG = 0x04;
@@ -86,7 +88,11 @@ namespace IBM1410Console
         public const byte STACKER1 = 0x1;
         public const byte STACKER2 = 0x2;
 
+        public const byte PUNCHOPERATION = 0x40;
+
         private byte readerStatus = 0;               // Not ready by default.
+
+        IBM1410Card punchedCard = null;
 
         public IBM1402Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
@@ -99,17 +105,17 @@ namespace IBM1410Console
             this.udpClient = udpClient;
             this.udpOutputSemaphore = udpOutputSemaphore;
 
+            InitializeComponent();  // Create the buttons before we create the stackers.
+            this.CreateHandle();    // Ensures controls are created before we get FPGA data
+
             //  Create the various stackers.
 
-            readerStacker0 = new IBM1402Stacker();
-            readerStacker1 = new IBM1402Stacker();
-            readerStacker2 = new IBM1402Stacker();
-            punchStacker0 = new IBM1402Stacker();
-            punchStacker4 = new IBM1402Stacker();
+            readerStacker0 = new IBM1402Stacker("Reader Stacker 0", "0", reader0StackerButton);
+            readerStacker1 = new IBM1402Stacker("Reader Stacker 1", "1", reader1StackerButton);
+            readerStacker2 = new IBM1402Stacker("Reader Stacker 2 / Punch Stacker 8", "2/8", middleStackerButton);
+            punchStacker0 = new IBM1402Stacker("Punch Stacker 0", "0", punch0StackerButton);
+            punchStacker4 = new IBM1402Stacker("Punch Stacker 4", "4", punch4StackerButton);
             punchStacker8 = readerStacker2;
-
-            InitializeComponent();
-            this.CreateHandle();    // Ensures controls are created before we get FPGA data
 
             readerStartButton.Enabled = false;
             readerStopButton.Enabled = false;
@@ -118,24 +124,26 @@ namespace IBM1410Console
             readerReady = readerLastCard = false;
             readerFileStream = null;
 
-            serialDataPublisher.ReaderChannel1OutputEvent +=
-                new EventHandler<UnitRecordChannelEventArgs>(readerChannel1OperationAvailable);
+            serialDataPublisher.UnitChannel1OutputEvent +=
+                new EventHandler<UnitRecordChannelEventArgs>(unitChannel1OperationAvailable);
 
-            udpDataPublisher.UDPReaderChannel1OutputEvent +=
-                new EventHandler<UDPUnitRecordChannelEventArgs>(readerChannel1UDPOperationAvailable);
+            udpDataPublisher.UDPUnitChannel1OutputEvent +=
+                new EventHandler<UDPUnitRecordChannelEventArgs>(unitChannel1UDPOperationAvailable);
         }
 
-        void readerChannel1OperationAvailable(object sender, UnitRecordChannelEventArgs e) {
+        //  Right now, the unit record devices are just UDP, so ignore serial requests
+        void unitChannel1OperationAvailable(object sender, UnitRecordChannelEventArgs e) {
             //  Right now, just using UDP, so ignore serial port requests.
         }
 
-        void readerChannel1UDPOperationAvailable(object sender, UDPUnitRecordChannelEventArgs e) {
-            
-            //  The CPU has asked the 1414 to have the reader to do something...
+        void unitChannel1UDPOperationAvailable(object sender, UDPUnitRecordChannelEventArgs e) {
+
+            //  The CPU has asked the 1414 to have a unit record device do something...
+            //  It might or might NOT be the reader...
 
             //  If this really isn't for us, ignore it.
 
-            if(e.DispatchCode != UNITRECORDFLAG) {
+            if (e.DispatchCode != UNITRECORDFLAG) {
                 return;
             }
 
@@ -148,17 +156,16 @@ namespace IBM1410Console
                     currentUnitRecordDevice = e.UDPBytes[i];
                     currentReaderOperation = 0;
                 }
-                else if (currentUnitRecordDevice != READERCH1FLAG) {
-                    //  This unit record request isn't for the reader, so ignore it,
-                    //  until we see a terminating 0x00
-                    if (e.UDPBytes[i] == 0) {
-                        currentUnitRecordDevice = 0;
-                    }
-                }
-                else {
-                    //  The current unit record device is the reader, so
-                    //  process it.
+                else if (currentUnitRecordDevice == READERCH1FLAG) {
+                    //  The current unit record device is the reader, so process it.
                     readerMessageInputAvailable((byte)e.UDPBytes[i]);
+                }
+                else if (currentUnitRecordDevice == PUNCHCH1FLAG) {
+                    punchMessageInputAvailable((byte)e.UDPBytes[i]);
+                }
+                else if (e.UDPBytes[i] == 0) {
+                    //  For any other device (e.g., printer, for now, just swallow up data until we see a 0x00
+                    currentUnitRecordDevice = 0;
                 }
             }
         }
@@ -167,32 +174,70 @@ namespace IBM1410Console
 
         void readerMessageInputAvailable(byte c) {
 
-            //  0 Terminates the reader request.
+            //  0 Terminates the reader request when receiving data, though this should
+            //  never actually occur, for a reader...
 
             if (c == 0) {
                 currentReaderOperation = 0;
                 currentUnitRecordDevice = 0;
-                currentReaderSkippingBytes = false;
                 return;
             }
 
             //  The first byte should be an operation code.  And for the reader,
-            //  That is ALL we expect
+            //  That is ALL we expect - we do not expect a trailing 00.
 
-            if(currentReaderOperation == 0) {
-                if((c & READERFEEDOPERATION) != READERFEEDOPERATION) {
-                    currentReaderOperation = READERFEEDOPERATION;
+            if (currentReaderOperation == 0) {
+                if ((c & READERFEEDOPERATION) == READERFEEDOPERATION) {
+                    currentReaderOperation = c;
                     doSelectStackerFeed();
+                }
+                else {
+                    Debug.WriteLine("IBM1402Form.readerMessageInputAvailable: Invalid reader operation code: " + c.ToString("X2"));
+                    MessageBox.Show("IBM1402Form.readerMessageInputAvailable: Invalid reader operation code: " + c.ToString("X2"));
+                }
+                currentReaderOperation = 0;
+                currentUnitRecordDevice = 0;
+            }
+        }
+
+        void punchMessageInputAvailable(byte c) {
+
+            if(c == 0) {
+
+                //  A 0 byte terminates the card image.
+
+                IBM1402Stacker stacker = null;
+                switch (currentPunchOperation) {
+                    case 0x40: stacker = punchStacker0; break;
+                    case 0x44: stacker = punchStacker4; break;
+                    case 0x48: stacker = punchStacker8; break;
+                    default: stacker = null; break;
+                }
+                if (stacker == null) {
+                    Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Unexpected punch operation received from FPGA: " + currentPunchOperation.ToString("X2"));
+                    MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Unexpected punch operation received from FPGA: " + currentPunchOperation.ToString("X2"));
+                }
+                else {
+                    stacker.Stack(punchedCard);
+                }
+                punchedCard = null; 
+            }
+
+            if (currentPunchOperation == 0) {
+                if ((c & PUNCHOPERATION) == PUNCHOPERATION) {
+                    currentPunchOperation = c;
+                    punchedCard = new IBM1410Card();
+                }
+                else {
+                    Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Invalid punch operation code: " + c.ToString("X2"));
+                    MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Invalid punch operation code: " + c.ToString("X2"));
                 }
             }
 
             else {
-                if(!currentReaderSkippingBytes) {
-                    Debug.WriteLine("IBM1402Form:readerMessageInputAvailable: " +
-                        "Expected a 0 byte after the operation/stacker byte");
-                    MessageBox.Show("IBM1402Form:readerMessageInputAvailable: " +
-                        "Expected a 0 byte after the operation/stacker byte");
-                    currentReaderSkippingBytes = true;
+                if(punchedCard.addByte(c) == false) {
+                    Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
+                    MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                 }
             }
         }
@@ -201,10 +246,11 @@ namespace IBM1410Console
 
         private void doSelectStackerFeed() {
 
+            IBM1402Stacker stacker = null;
 
             //  If the reader is currently busy or not ready, report that.
 
-            if(readerBusy || !readerReady) {
+            if (readerBusy || !readerReady) {
                 sendReaderStatus();
                 return;
             }
@@ -212,7 +258,19 @@ namespace IBM1410Console
             //  If there is a card at the read station, stack it.
 
             if (readStation != null) {
-                //  Stack it
+                switch (currentReaderOperation) {
+                    case 0x10: stacker = readerStacker0; break;
+                    case 0x11: stacker = readerStacker1; break;
+                    case 0x12: stacker = readerStacker2; break;
+                    default: stacker = null; break;
+                }
+                if (stacker == null) {
+                    Debug.WriteLine("IBM1402Form.doSelectStackerFeed: Unexpected reader operation received from FPGA: " + currentReaderOperation.ToString("X2"));
+                    MessageBox.Show("IBM1402Form.doSelectStackerFeed: Unexpected reader operation received from FPGA: " + currentReaderOperation.ToString("X2"));
+                }
+                else {
+                    stacker.Stack(readStation);
+                }
                 readStation = null;
             }
 
@@ -256,10 +314,6 @@ namespace IBM1410Console
             readerStartButton.Enabled = !readerReady;
             readerStopButton.Enabled = readerReady;
 
-            //  Send the reader status to the FPGA (1414)
-
-            sendReaderStatus();
-
             //  If there is data at the read station, send that off to the 1414 (FPGA)
 
             if (readStation != null) {
@@ -269,7 +323,12 @@ namespace IBM1410Console
 
                 if (readStation.lastCard) {
                     readerEOF = false;
+                    readerLastCard = false;
                 }
+            }
+            else {
+                //  Send the reader status to the FPGA (1414) if we didn't just send it.
+                sendReaderStatus();
             }
         }
 
@@ -280,19 +339,19 @@ namespace IBM1410Console
             byte[] statusBuffer = new byte[4];
 
             readerStatus = 0;
-            if(readerReady) {
+            if (readerReady) {
                 readerStatus |= readerIsReady;
             }
-            if(readerBusy) {
+            if (readerBusy) {
                 readerStatus |= readerIsBusy;
             }
-            if(readerDataCheck) {
+            if (readerDataCheck) {
                 readerStatus |= readerIsDataCheck;
             }
-            if(readerLastCard) {
+            if (readerLastCard) {
                 readerStatus |= readerIsLastCard;
             }
-            if(readerWLR) {
+            if (readerWLR) {
                 readerStatus |= readerIsWLR;
             }
 
@@ -305,7 +364,7 @@ namespace IBM1410Console
             statusBuffer[1] = READERCH1FLAG;
             statusBuffer[2] = STATUSUPDATEOPERATION;
             statusBuffer[3] = readerStatus;
-            udpClient.Send(statusBuffer,statusBuffer.Length);
+            udpClient.Send(statusBuffer, statusBuffer.Length);
             udpOutputSemaphore.Release();
         }
 
@@ -397,12 +456,12 @@ namespace IBM1410Console
 
             //  If there is data at the read station, send that off to the FPGA
 
-            if(readStation != null) {
+            if (readStation != null) {
                 sendReadStation();
 
                 //  If we just sent the last card, reset the EOF status
 
-                if(readStation.lastCard) {
+                if (readStation.lastCard) {
                     readerEOF = false;
                 }
             }
@@ -427,7 +486,7 @@ namespace IBM1410Console
         private void readerEOFButton_Click(object sender, EventArgs e) {
             readerEOF = true;
         }
-        
+
         //  Method to feed a card on the IBM 1402 reader.
 
         private IBM1410Card FeedCard() {
@@ -436,7 +495,7 @@ namespace IBM1410Console
             int i;
             int c = 0;
 
-            if(readerFileStream == null || card == null ) {
+            if (readerFileStream == null || card == null) {
                 readerReady = false;
                 return (null);
             }
@@ -500,7 +559,9 @@ namespace IBM1410Console
             //  Convert the data from ASCII to BCD, filling in the message along the way.
             //  If invalid data is found, set that status too...
 
-            for(i=0; i < card.Length; ++i) {
+            readStation.setDataCheck(false);
+
+            for (i = 0; i < card.Length; ++i) {
                 if ((message[n++] = IBM1410BCD.ASCIItoBCD((char)card[i])) == 0xff) {
                     readStation.setDataCheck(true);
                 }
@@ -509,9 +570,11 @@ namespace IBM1410Console
             message[n++] = 0;  //  Trailing 0 on the card image in the message by convention.
 
             //  Update the reader status first.  That will either set or clear the WLR and data check in the FPGA
+            //  It also updates the last card status in the 1414.
 
             readerWLR = readStation.getWrongLengthRecord();
             readerDataCheck = readStation.getDataCheck();
+            readerLastCard = readStation.getLastCard();
 
             sendReaderStatus();
 
@@ -523,6 +586,45 @@ namespace IBM1410Console
 
             //  Consider setting readStation to null here...
 
+        }
+
+        //  Handler methods for all of the stacker buttons - opens a dialog
+
+        private void punch0StackerButton_Click(object sender, EventArgs e) {
+            IBM1402StackerForm form = new IBM1402StackerForm(punchStacker0);
+            form.ShowDialog();
+            form = null;
+        }
+
+        private void punch4StackerButton_Click(object sender, EventArgs e) {
+            IBM1402StackerForm form = new IBM1402StackerForm(punchStacker4);
+            form.ShowDialog();
+            form = null;
+        }
+
+        private void middleStackerButton_Click(object sender, EventArgs e) {
+            IBM1402StackerForm form = new IBM1402StackerForm(readerStacker2);
+            form.ShowDialog();
+            form = null;
+        }
+
+        private void reader1StackerButton_Click(object sender, EventArgs e) {
+            IBM1402StackerForm form = new IBM1402StackerForm(readerStacker1);
+            form.ShowDialog();
+            form = null;
+        }
+
+        private void reader0StackerButton_Click(object sender, EventArgs e) {
+            IBM1402StackerForm form = new IBM1402StackerForm(readerStacker0);
+            form.ShowDialog();
+            form = null;
+        }
+
+        private void testButton_Click(object sender, EventArgs e) {
+            IBM1410Card card = new IBM1410Card();
+            card.image = Encoding.ASCII.GetBytes("Test Card Image ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 @#$%+-()*");
+            card.selectStacker(readerStacker2);
+            card.Stack();
         }
     }
 }

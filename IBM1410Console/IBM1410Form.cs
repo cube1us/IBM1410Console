@@ -95,7 +95,7 @@ namespace IBM1410Console
             udpState.udpClient = new UdpClient(udpState.ipEndPoint);
             fpgaEndPoint = new IPEndPoint(fpgaIPAddress, 1024);
             udpState.udpClient.Connect(fpgaEndPoint);
-            udpDataPublisher = new UDPDataPublisher(udpState,fpgaIPAddress);
+            udpDataPublisher = new UDPDataPublisher(udpState, fpgaIPAddress);
 
             //  See if there is a remembered setting that is in the list.  If so, use
             //  that.  Otherwise, use the first one in the list.  If the list is emppy,
@@ -211,9 +211,6 @@ namespace IBM1410Console
             IBM1415ConsoleForm.Show();
         }
 
-        private void windowsStripMenuItem_Click(object sender, EventArgs e) {
-        }
-
         private void lightStripMenuItem_Click(object sender, EventArgs e) {
             if (UI1415LForm == null) {
                 UI1415LForm = new UI1415LForm(serialDataPublisher, udpDataPublisher, IBM1410SwitchForm);
@@ -229,6 +226,15 @@ namespace IBM1410Console
             }
             IBM1410SwitchForm.Show();
         }
+
+        private void cardReaderPunchToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (IBM1402Form == null) {
+                IBM1402Form = new IBM1402Form(serialDataPublisher, udpDataPublisher,
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+            }
+            IBM1402Form.Show();
+        }
+
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
             Form AboutBox = new AboutBox();
@@ -286,9 +292,9 @@ namespace IBM1410Console
 
             if (LoadCoreImageOpenDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                   fileStream = File.Open(LoadCoreImageOpenDialog.FileName, FileMode.Open, FileAccess.Read);
+                    fileStream = File.Open(LoadCoreImageOpenDialog.FileName, FileMode.Open, FileAccess.Read);
                 }
-                catch(Exception e2) {
+                catch (Exception e2) {
                     MessageBox.Show("Core Image File open failed.", "File open failed.");
                     return;
                 }
@@ -433,7 +439,7 @@ namespace IBM1410Console
                     // If packet buffer is almsot full, send it.
                     // The -4 gives us 2 extra bytes left for the end mark
 
-                    if (packetIx > packet.Length - 4) {   
+                    if (packetIx > packet.Length - 4) {
                         udpState.udpClient.Send(packet, packetIx);
                         // Debug.WriteLine("Sent UDP packet length " + packetIx.ToString());
                         /*

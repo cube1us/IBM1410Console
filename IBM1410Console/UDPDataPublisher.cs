@@ -245,6 +245,17 @@ namespace IBM1410Console
                                 }
                             }
 
+                            else if (lastUnitRecordDevice == printerChannel1Device) {
+                                UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
+                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                                Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 printer.");
+                                OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
+                                //  If this byte is 0, then reset.
+                                if (readByte == 0x00) {
+                                    lastUnitRecordDevice = 0x00;
+                                    lastUnitRecordOperation = 0x00;
+                                }
+                            }
                         }
 
                         else if (lastCodeByte == tapeChannel1FromTAUCodeByte) {
@@ -301,6 +312,7 @@ namespace IBM1410Console
                     }
 
                     else {
+                        //  Not unit record device.
                         //  Normal byte: not code byte and previous byte was not the last byte
                         //  Stuff it into the dispatch array.
 

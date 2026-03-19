@@ -29,7 +29,6 @@
             punchStopButton = new System.Windows.Forms.Button();
             readerStartButton = new System.Windows.Forms.Button();
             readerStopButton = new System.Windows.Forms.Button();
-            readerEOFButton = new System.Windows.Forms.Button();
             labelPunchCheck = new System.Windows.Forms.Label();
             labelPunchReady = new System.Windows.Forms.Label();
             labelPunchStop = new System.Windows.Forms.Label();
@@ -50,6 +49,7 @@
             reader1StackerButton = new System.Windows.Forms.Button();
             reader0StackerButton = new System.Windows.Forms.Button();
             testButton = new System.Windows.Forms.Button();
+            readerEOFButton = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // punchStartButton
@@ -63,6 +63,7 @@
             punchStartButton.TabIndex = 44;
             punchStartButton.Text = "START";
             punchStartButton.UseVisualStyleBackColor = false;
+            punchStartButton.Click += punchStartButton_Click;
             // 
             // punchStopButton
             // 
@@ -75,6 +76,7 @@
             punchStopButton.TabIndex = 45;
             punchStopButton.Text = "STOP";
             punchStopButton.UseVisualStyleBackColor = false;
+            punchStopButton.Click += punchStopButton_Click;
             // 
             // readerStartButton
             // 
@@ -103,19 +105,6 @@
             readerStopButton.Text = "STOP";
             readerStopButton.UseVisualStyleBackColor = false;
             readerStopButton.Click += readerStopButton_Click;
-            // 
-            // readerEOFButton
-            // 
-            readerEOFButton.BackColor = System.Drawing.Color.SeaGreen;
-            readerEOFButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-            readerEOFButton.ForeColor = System.Drawing.SystemColors.ControlText;
-            readerEOFButton.Location = new System.Drawing.Point(606, 49);
-            readerEOFButton.Name = "readerEOFButton";
-            readerEOFButton.Size = new System.Drawing.Size(82, 53);
-            readerEOFButton.TabIndex = 48;
-            readerEOFButton.Text = "EOF";
-            readerEOFButton.UseVisualStyleBackColor = false;
-            readerEOFButton.Click += readerEOFButton_Click;
             // 
             // labelPunchCheck
             // 
@@ -332,6 +321,19 @@
             testButton.UseVisualStyleBackColor = false;
             testButton.Click += testButton_Click;
             // 
+            // readerEOFButton
+            // 
+            readerEOFButton.BackColor = System.Drawing.Color.SeaGreen;
+            readerEOFButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            readerEOFButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            readerEOFButton.Location = new System.Drawing.Point(606, 49);
+            readerEOFButton.Name = "readerEOFButton";
+            readerEOFButton.Size = new System.Drawing.Size(82, 53);
+            readerEOFButton.TabIndex = 48;
+            readerEOFButton.Text = "EOF";
+            readerEOFButton.UseVisualStyleBackColor = false;
+            readerEOFButton.Click += readerEOFButton_Click;
+            // 
             // IBM1402Form
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -372,7 +374,6 @@
         private System.Windows.Forms.Button punchStopButton;
         private System.Windows.Forms.Button readerStartButton;
         private System.Windows.Forms.Button readerStopButton;
-        private System.Windows.Forms.Button readerEOFButton;
         private System.Windows.Forms.Label labelPunchCheck;
         private System.Windows.Forms.Label labelPunchReady;
         private System.Windows.Forms.Label labelPunchStop;
@@ -393,5 +394,6 @@
         private System.Windows.Forms.Button reader1StackerButton;
         private System.Windows.Forms.Button reader0StackerButton;
         private System.Windows.Forms.Button testButton;
+        private System.Windows.Forms.Button readerEOFButton;
     }
 }

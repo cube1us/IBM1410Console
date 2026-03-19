@@ -58,13 +58,14 @@ namespace IBM1410Console
             switchesStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            cardReaderPunchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            cardReaderPunchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            printerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -251,7 +252,7 @@ namespace IBM1410Console
             // 
             // windowsStripMenuItem
             // 
-            windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { consoleStripMenuItem, lightStripMenuItem, switchesStripMenuItem, optionsToolStripMenuItem, tapesToolStripMenuItem, cardReaderPunchToolStripMenuItem });
+            windowsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { consoleStripMenuItem, lightStripMenuItem, switchesStripMenuItem, optionsToolStripMenuItem, tapesToolStripMenuItem, cardReaderPunchToolStripMenuItem, printerToolStripMenuItem });
             windowsStripMenuItem.Name = "windowsStripMenuItem";
             windowsStripMenuItem.Size = new System.Drawing.Size(68, 20);
             windowsStripMenuItem.Text = "&Windows";
@@ -291,6 +292,13 @@ namespace IBM1410Console
             tapesToolStripMenuItem.Text = "Tapes";
             tapesToolStripMenuItem.Click += tapesToolStripMenuItem_Click;
             // 
+            // cardReaderPunchToolStripMenuItem
+            // 
+            cardReaderPunchToolStripMenuItem.Name = "cardReaderPunchToolStripMenuItem";
+            cardReaderPunchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            cardReaderPunchToolStripMenuItem.Text = "Card Reader/Punch";
+            cardReaderPunchToolStripMenuItem.Click += cardReaderPunchToolStripMenuItem_Click;
+            // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { contentsToolStripMenuItem, indexToolStripMenuItem, searchToolStripMenuItem, toolStripSeparator5, aboutToolStripMenuItem });
@@ -328,12 +336,12 @@ namespace IBM1410Console
             aboutToolStripMenuItem.Text = "&About...";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
-            // cardReaderPunchToolStripMenuItem
+            // printerToolStripMenuItem
             // 
-            cardReaderPunchToolStripMenuItem.Name = "cardReaderPunchToolStripMenuItem";
-            cardReaderPunchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            cardReaderPunchToolStripMenuItem.Text = "Card Reader/Punch";
-            cardReaderPunchToolStripMenuItem.Click += cardReaderPunchToolStripMenuItem_Click;
+            printerToolStripMenuItem.Name = "printerToolStripMenuItem";
+            printerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            printerToolStripMenuItem.Text = "Printer";
+            printerToolStripMenuItem.Click += printerToolStripMenuItem_Click;
             // 
             // IBM1410Form
             // 
@@ -392,6 +400,7 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripMenuItem tapesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearCoreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cardReaderPunchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem printerToolStripMenuItem;
     }
 }
 

@@ -45,6 +45,7 @@ namespace IBM1410Console
         IBM1410SwitchForm IBM1410SwitchForm = null;
         IBM1410TapesForm IBM1410TapesForm = null;
         IBM1402Form IBM1402Form = null;
+        IBM1403Form IBM1403Form = null;
 
         SerialPort serialPort;
         SerialDataPublisher serialDataPublisher;
@@ -170,6 +171,14 @@ namespace IBM1410Console
 
             UI1415LForm UI1415LForm = new UI1415LForm(serialDataPublisher, udpDataPublisher, IBM1410SwitchForm);
 
+            //  And the card reader/punch and printer forms - but don't display them
+
+            IBM1402Form = new IBM1402Form(serialDataPublisher, udpDataPublisher,
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+
+            IBM1403Form = new IBM1403Form(serialDataPublisher, udpDataPublisher,
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+
             //  Next, tell the switch form about other forms that need to know about
             //  Computer and Program resets
 
@@ -235,6 +244,13 @@ namespace IBM1410Console
             IBM1402Form.Show();
         }
 
+        private void printerToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (IBM1403Form == null) {
+                IBM1403Form = new IBM1403Form(serialDataPublisher, udpDataPublisher,
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+            }
+            IBM1403Form.Show();
+        }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
             Form AboutBox = new AboutBox();

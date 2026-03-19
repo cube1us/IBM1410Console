@@ -35,6 +35,36 @@ using System.Windows.Forms.Design;
 using System.Xml;
 
 namespace IBM1410Console
+
+/*
+* Card Reader/Punch FPGA <-> PC Support Program protocols:
+* 
+* For PC => FPGA:
+* 
+*    Channel Character [CR]:            0x85 (Both Channels)
+*    Unit Record Device Char [UD]:      0x01 (Reader Ch1) or 0x04 (Punch Ch1)
+*    Status Operation Code Char [SO]:   0x01
+*    Status from PC to FPGA:            [CR] [UD] [SO] [Status]
+* 
+*    Channel Character [CR]:            0x85 (Both Channels)
+*    Unit Record Device Char [UD]:      0x01 (Reader Ch1)
+*    Status Operation Code Char [SO]:   0x02 (Reader Data to Buffer)
+*    Card Image from PC to FPGA:        [CR] [UD] [SO] [Card Read Data] [0x00]
+*    
+* For FPGA => PC
+* 
+*    Channel Character [CW]:            0x83 (Both channels)
+*    Unit Record Device Char [UD]:      0x01 (Reader Ch1)
+*    Unt Operation Char [OP]:           0x1x (Reader Stack and Feed)
+*    Message from FPGA to PC:           [CW] [UD] [OP] <Note: NO Trailing 0x00>
+* 
+*    Channel Character [CW]:            0x83 (Both channels)
+*    Unit Record Device Char [UD]:      0x04 (Punch Ch1)
+*    Unt Operation Char [OP]:           0x4x (Punch Data, Stack and Feed)
+*    Message from FPGA to PC:           [CW] [UD] [OP] [Card Punch Data] [0x00]
+* 
+*/
+
 {
     public partial class IBM1402Form : Form
     {
@@ -55,7 +85,11 @@ namespace IBM1410Console
         private Boolean readerEOF = false;
         private IBM1410Card readStation = null;
         private IBM1410Card checkStation = null;
+
         private String stackerBaseName = "stacker";
+
+        private Boolean punchReady = false;
+        private Boolean punchBusy = false;
 
         private int currentUnitRecordDevice = 0;
         private int currentReaderOperation = 0;
@@ -75,6 +109,9 @@ namespace IBM1410Console
         public const int readerIsLastCard = 0x10;   // EOF Button is pressed, active and last card in station
         public const int readerStackerFull = 0x20;  // Stacker is full
 
+        public const int punchIsReady = 0x01;
+        public const int punchIsBusy = 0x02;
+
         public const byte UNITRECORDFLAG = 0x85;
         public const byte READERCH1FLAG = 0x01;
         public const byte PUNCHCH1FLAG = 0x04;
@@ -90,7 +127,8 @@ namespace IBM1410Console
 
         public const byte PUNCHOPERATION = 0x40;
 
-        private byte readerStatus = 0;               // Not ready by default.
+        private byte readerStatus = 0;              // Not ready by default.
+        private byte punchStatus = 0;               // Not Ready by default
 
         IBM1410Card punchedCard = null;
 
@@ -129,6 +167,9 @@ namespace IBM1410Console
 
             udpDataPublisher.UDPUnitChannel1OutputEvent +=
                 new EventHandler<UDPUnitRecordChannelEventArgs>(unitChannel1UDPOperationAvailable);
+
+            Debug.WriteLine("Event Handlers for Serial and UDP Data Publishers (Reader/Punch) Registered.");
+
         }
 
         //  Right now, the unit record devices are just UDP, so ignore serial requests
@@ -150,11 +191,13 @@ namespace IBM1410Console
             //  Loop through the bytes (hopefully / typically, the entire packet)
 
             for (int i = 0; i < e.UDPLen; i++) {
+                //  TODO: Make sure the other unit record devices aren't active
                 if (currentUnitRecordDevice == 0) {
                     //  If we are not currently processing a device, this byte is
                     //  the device code.
                     currentUnitRecordDevice = e.UDPBytes[i];
                     currentReaderOperation = 0;
+                    currentPunchOperation = 0;
                 }
                 else if (currentUnitRecordDevice == READERCH1FLAG) {
                     //  The current unit record device is the reader, so process it.
@@ -164,7 +207,8 @@ namespace IBM1410Console
                     punchMessageInputAvailable((byte)e.UDPBytes[i]);
                 }
                 else if (e.UDPBytes[i] == 0) {
-                    //  For any other device (e.g., printer, for now, just swallow up data until we see a 0x00
+                    //  For any other device (e.g., printer, for now), just ignore the data until we see a 0x00
+                    //  This means that even the printer forms control message must have a 0x00 terminator.
                     currentUnitRecordDevice = 0;
                 }
             }
@@ -202,7 +246,7 @@ namespace IBM1410Console
 
         void punchMessageInputAvailable(byte c) {
 
-            if(c == 0) {
+            if (c == 0) {
 
                 //  A 0 byte terminates the card image.
 
@@ -220,7 +264,7 @@ namespace IBM1410Console
                 else {
                     stacker.Stack(punchedCard);
                 }
-                punchedCard = null; 
+                punchedCard = null;
             }
 
             if (currentPunchOperation == 0) {
@@ -235,7 +279,8 @@ namespace IBM1410Console
             }
 
             else {
-                if(punchedCard.addByte(c) == false) {
+                //  Add the character, stripping the 0x40 parity bit.
+                if (punchedCard.addByte((byte)(c & 0x3f)) == false) {
                     Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                     MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                 }
@@ -366,6 +411,34 @@ namespace IBM1410Console
             statusBuffer[3] = readerStatus;
             udpClient.Send(statusBuffer, statusBuffer.Length);
             udpOutputSemaphore.Release();
+        }
+
+        //  Method to send status of the punch.  For now, just the stop and start
+        //  buttons.  In theory, it should also deal with a full stacker.
+
+        private void sendPunchStatus() {
+            byte[] statusBuffer = new byte[4];
+
+            punchStatus = 0;
+            if (punchReady) {
+                punchStatus |= punchIsReady;
+            }
+            if (punchBusy) {
+                punchStatus |= punchIsBusy;
+            }
+
+            //  For now, serial port version NOT implemented.
+
+            //  Send the updated status to the FPGA...
+
+            udpOutputSemaphore.Wait();
+            statusBuffer[0] = UNITRECORDFLAG;
+            statusBuffer[1] = PUNCHCH1FLAG;
+            statusBuffer[2] = STATUSUPDATEOPERATION;
+            statusBuffer[3] = punchStatus;
+            udpClient.Send(statusBuffer, statusBuffer.Length);
+            udpOutputSemaphore.Release();
+
         }
 
         //  Method to process the 1402 Reader Load Button - as though we just
@@ -549,6 +622,7 @@ namespace IBM1410Console
             int i, n;
             byte[] card = readStation.image;
             byte[] message = new byte[readStation.image.Length + 4];
+            byte bcdChar;
 
             readerDataCheck = false;
             message[0] = UNITRECORDFLAG;
@@ -562,9 +636,16 @@ namespace IBM1410Console
             readStation.setDataCheck(false);
 
             for (i = 0; i < card.Length; ++i) {
-                if ((message[n++] = IBM1410BCD.ASCIItoBCD((char)card[i])) == 0xff) {
+                bcdChar = IBM1410BCD.ASCIItoBCD((char)(card[i]));
+                if(bcdChar == 0xff) {
                     readStation.setDataCheck(true);
+                    bcdChar = IBM1410BCD.BCD_ASTERISK; // Asterisk insert.  ;)
                 }
+                //  Calculate odd parity, and put it in bit SIX (because message data can't
+                //  set bit 7!).  We are sending odd parity - but it may have made mroe sense
+                //  to send even parity.  Oh well....
+
+                message[n++] = (byte)(bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6));                
             }
 
             message[n++] = 0;  //  Trailing 0 on the card image in the message by convention.
@@ -625,6 +706,18 @@ namespace IBM1410Console
             card.image = Encoding.ASCII.GetBytes("Test Card Image ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 @#$%+-()*");
             card.selectStacker(readerStacker2);
             card.Stack();
+        }
+
+        private void punchStartButton_Click(object sender, EventArgs e) {
+            punchReady = true;
+            punchBusy = false;
+            sendPunchStatus();
+        }
+
+        private void punchStopButton_Click(object sender, EventArgs e) {
+            punchReady = false; ;
+            punchBusy = false;
+            sendPunchStatus();
         }
     }
 }

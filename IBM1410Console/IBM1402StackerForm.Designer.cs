@@ -41,6 +41,7 @@
             // stackerClearButton
             // 
             stackerClearButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            stackerClearButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             stackerClearButton.Location = new System.Drawing.Point(12, 376);
             stackerClearButton.Name = "stackerClearButton";
             stackerClearButton.Size = new System.Drawing.Size(110, 48);
@@ -52,11 +53,12 @@
             // stackerSaveButton
             // 
             stackerSaveButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            stackerSaveButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             stackerSaveButton.Location = new System.Drawing.Point(675, 376);
             stackerSaveButton.Name = "stackerSaveButton";
             stackerSaveButton.Size = new System.Drawing.Size(110, 48);
             stackerSaveButton.TabIndex = 2;
-            stackerSaveButton.Text = "Save";
+            stackerSaveButton.Text = "Save...";
             stackerSaveButton.UseVisualStyleBackColor = false;
             stackerSaveButton.Click += stackerSaveButton_Click;
             // 

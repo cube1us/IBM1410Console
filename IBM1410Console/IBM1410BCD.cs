@@ -457,5 +457,13 @@ namespace IBM1410Console
 			return (bcd_shifted[bcdByte]);
         }
 
+		public static int CalculateOddParity(byte bcdByte) {
+			int parityBit = 0;
+			for (int i = 0; i < 6; i++) {
+				parityBit ^= bcdByte & 1;
+				bcdByte >>= 1;
+			}
+			return parityBit;
+		}
 	}
 }

@@ -354,7 +354,7 @@ namespace IBM1410Console
 
             //  Set the ready light to the correct state
 
-            labelReaderReady.ForeColor = readerReady ? Color.DimGray : Color.SeaGreen;
+            labelReaderReady.ForeColor = readerReady ? Color.SeaGreen : Color.DimGray;
             labelReaderStop.ForeColor = Color.DimGray;
             readerStartButton.Enabled = !readerReady;
             readerStopButton.Enabled = readerReady;
@@ -591,6 +591,8 @@ namespace IBM1410Console
                 }
             }
 
+            // Debug.WriteLine("Exit card read loop with i of " + i.ToString());
+
             //  The last character we saw should be the newline.
 
             if (c != '\n') {
@@ -601,17 +603,19 @@ namespace IBM1410Console
 
             if (i > 0 && temp[i - 1] == '\r') {
                 temp[i - 1] = (byte)' ';
+                // Debug.WriteLine("Changing carriage return at loction " + (i-1).ToString());
             }
 
             //  Change the newline and any trailing garbage to spaces
 
             for (; i < 80; ++i) {
                 temp[i] = (byte)' ';
+                // Debug.WriteLine("Adding padding at i of " + i.ToString());
             }
 
             //  Assign the data to the card image.
 
-            card.image = temp[0..79];
+            card.image = temp[0..80];
 
             return (card);
         }
@@ -635,17 +639,20 @@ namespace IBM1410Console
 
             readStation.setDataCheck(false);
 
+            // Debug.WriteLine("Card image length is " + card.Length.ToString());
             for (i = 0; i < card.Length; ++i) {
                 bcdChar = IBM1410BCD.ASCIItoBCD((char)(card[i]));
                 if(bcdChar == 0xff) {
                     readStation.setDataCheck(true);
                     bcdChar = IBM1410BCD.BCD_ASTERISK; // Asterisk insert.  ;)
                 }
+
                 //  Calculate odd parity, and put it in bit SIX (because message data can't
-                //  set bit 7!).  We are sending odd parity - but it may have made mroe sense
+                //  set bit 7!).  We are sending odd parity - but it may have made more sense
                 //  to send even parity.  Oh well....
 
                 message[n++] = (byte)(bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6));                
+                // Debug.WriteLine("Put character in reader buffer: " + ((bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6)).ToString("X2")) );
             }
 
             message[n++] = 0;  //  Trailing 0 on the card image in the message by convention.

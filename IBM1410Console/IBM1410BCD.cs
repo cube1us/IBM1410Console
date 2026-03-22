@@ -458,7 +458,7 @@ namespace IBM1410Console
         }
 
 		public static int CalculateOddParity(byte bcdByte) {
-			int parityBit = 0;
+			int parityBit = 1;  // We want to end up with ODD parity
 			for (int i = 0; i < 6; i++) {
 				parityBit ^= bcdByte & 1;
 				bcdByte >>= 1;

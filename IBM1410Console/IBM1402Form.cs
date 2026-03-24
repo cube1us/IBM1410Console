@@ -112,7 +112,8 @@ namespace IBM1410Console
         public const int punchIsReady = 0x01;
         public const int punchIsBusy = 0x02;
 
-        public const byte UNITRECORDFLAG = 0x85;
+        public const byte UNITRECORDTO1414FLAG = 0x85;
+        public const byte UNITRECORDFROM1414FLAG = 0x83;
         public const byte READERCH1FLAG = 0x01;
         public const byte PUNCHCH1FLAG = 0x04;
         public const byte READERCH2FLAG = 0x41;
@@ -184,9 +185,11 @@ namespace IBM1410Console
 
             //  If this really isn't for us, ignore it.
 
-            if (e.DispatchCode != UNITRECORDFLAG) {
+            if (e.DispatchCode != UNITRECORDFROM1414FLAG) {
                 return;
             }
+
+            Debug.WriteLine("IBM1402Form: Processing UDP Input.");
 
             //  Loop through the bytes (hopefully / typically, the entire packet)
 
@@ -196,6 +199,7 @@ namespace IBM1410Console
                     //  If we are not currently processing a device, this byte is
                     //  the device code.
                     currentUnitRecordDevice = e.UDPBytes[i];
+                    Debug.WriteLine("IBM1402Form: Current Unit Record Device is " + currentUnitRecordDevice.ToString("X2"));
                     currentReaderOperation = 0;
                     currentPunchOperation = 0;
                 }
@@ -262,14 +266,17 @@ namespace IBM1410Console
                     MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Unexpected punch operation received from FPGA: " + currentPunchOperation.ToString("X2"));
                 }
                 else {
-                    stacker.Stack(punchedCard);
+                    Debug.WriteLine("IBM1402Form: Stacking punched card.");
+                    stacker.Stack(this, punchedCard);
                 }
                 punchedCard = null;
+                return;
             }
 
             if (currentPunchOperation == 0) {
                 if ((c & PUNCHOPERATION) == PUNCHOPERATION) {
                     currentPunchOperation = c;
+                    Debug.WriteLine("IBM1402Form: Current Punch Operation is " + currentPunchOperation.ToString("X2"));
                     punchedCard = new IBM1410Card();
                 }
                 else {
@@ -279,11 +286,12 @@ namespace IBM1410Console
             }
 
             else {
-                //  Add the character, stripping the 0x40 parity bit.
-                if (punchedCard.addByte((byte)(c & 0x3f)) == false) {
+                //  Add the character, stripping the 0x40 parity bit, and translating to ASCII.
+                if (punchedCard.addByte((byte)IBM1410BCD.BCDtoASCII((byte)(c & 0x3f))) == false) {
                     Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                     MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                 }
+                Debug.WriteLine("IBM1402Form: Adding byte " + (c & 0x3f).ToString("X2"));
             }
         }
 
@@ -314,7 +322,7 @@ namespace IBM1410Console
                     MessageBox.Show("IBM1402Form.doSelectStackerFeed: Unexpected reader operation received from FPGA: " + currentReaderOperation.ToString("X2"));
                 }
                 else {
-                    stacker.Stack(readStation);
+                    stacker.Stack(this, readStation);
                 }
                 readStation = null;
             }
@@ -405,7 +413,7 @@ namespace IBM1410Console
             //  Send the updated status to the FPGA...
 
             udpOutputSemaphore.Wait();
-            statusBuffer[0] = UNITRECORDFLAG;
+            statusBuffer[0] = UNITRECORDTO1414FLAG;
             statusBuffer[1] = READERCH1FLAG;
             statusBuffer[2] = STATUSUPDATEOPERATION;
             statusBuffer[3] = readerStatus;
@@ -432,7 +440,7 @@ namespace IBM1410Console
             //  Send the updated status to the FPGA...
 
             udpOutputSemaphore.Wait();
-            statusBuffer[0] = UNITRECORDFLAG;
+            statusBuffer[0] = UNITRECORDTO1414FLAG;
             statusBuffer[1] = PUNCHCH1FLAG;
             statusBuffer[2] = STATUSUPDATEOPERATION;
             statusBuffer[3] = punchStatus;
@@ -454,8 +462,9 @@ namespace IBM1410Console
                     readerFileStream = new FileStream(readerOpenFileDialog.FileName,
                         FileMode.Open, FileAccess.Read);
                     loadButton.Enabled = false;
-                    labelReaderReady.ForeColor = Color.SeaGreen;
-                    readerReady = true;
+                    // labelReaderReady.ForeColor = Color.SeaGreen;
+                    // readerReady = true;
+                    readerReady = false;
                     readerLastCard = false;
                     readerStartButton.Enabled = true;
                 }
@@ -476,8 +485,9 @@ namespace IBM1410Console
 
         private void readerStartButton_Click(object sender, EventArgs e) {
 
-            if (readerFileStream == null || readerReady == false) {
-                MessageBox.Show("ERROR: Unexpected Reader Start when no file or not ready");
+            // if (readerFileStream == null || readerReady == false) {
+            if (readerFileStream == null) { 
+                MessageBox.Show("ERROR: Unexpected Reader Start when no file loaded");
                 return;
             }
 
@@ -518,7 +528,7 @@ namespace IBM1410Console
 
             //  Set the ready light to the correct state
 
-            labelReaderReady.ForeColor = readerReady ? Color.DimGray : Color.SeaGreen;
+            labelReaderReady.ForeColor = readerReady ? Color.SeaGreen : Color.DimGray;
             labelReaderStop.ForeColor = Color.DimGray;
             readerStartButton.Enabled = !readerReady;
             readerStopButton.Enabled = readerReady;
@@ -629,7 +639,7 @@ namespace IBM1410Console
             byte bcdChar;
 
             readerDataCheck = false;
-            message[0] = UNITRECORDFLAG;
+            message[0] = UNITRECORDTO1414FLAG;
             message[1] = READERCH1FLAG;
             message[2] = SENDCARDOPERATION;
             n = 3;
@@ -712,18 +722,20 @@ namespace IBM1410Console
             IBM1410Card card = new IBM1410Card();
             card.image = Encoding.ASCII.GetBytes("Test Card Image ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 @#$%+-()*");
             card.selectStacker(readerStacker2);
-            card.Stack();
+            card.Stack(this);
         }
 
         private void punchStartButton_Click(object sender, EventArgs e) {
             punchReady = true;
             punchBusy = false;
+            labelPunchReady.ForeColor = Color.SeaGreen;
             sendPunchStatus();
         }
 
         private void punchStopButton_Click(object sender, EventArgs e) {
-            punchReady = false; ;
+            punchReady = false;
             punchBusy = false;
+            labelPunchReady.ForeColor = Color.DimGray;
             sendPunchStatus();
         }
     }

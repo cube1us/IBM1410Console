@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -11,13 +12,25 @@ using System.Windows.Forms;
 namespace IBM1410Console
 {
     public partial class IBM1402StackerForm : Form
+
+
     {
         private IBM1402Stacker stacker;
+        
+        Font cardFont = new Font("IBM 1410 1403", 12, FontStyle.Regular);  // IBM 1410 1403 printer font
+
         public IBM1402StackerForm(IBM1402Stacker stacker) {
             InitializeComponent();
 
             this.Text = stacker.getStackerName();
             this.stacker = stacker;
+            if(cardFont != null) {
+                stackerRichTextBox1.Font = cardFont;
+            }
+            else {
+                Debug.WriteLine("Can't initialize 1403 Font.");
+            }
+
             stackerRichTextBox1.SuspendLayout();
             foreach (String s in stacker.getCardList()) {
                 stackerRichTextBox1.AppendText(s);

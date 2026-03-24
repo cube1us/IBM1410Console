@@ -76,11 +76,11 @@ namespace IBM1410Console
         
         //  Method to stack a card in a stacker
 
-        public bool Stack() {
+        public bool Stack(IBM1402Form form) {
             if (stacker == null) {
                 return false;
             }
-            return (stacker.Stack(this));
+            return (stacker.Stack(form,this));
         }
 
 
@@ -173,9 +173,10 @@ namespace IBM1410Console
         }
 
         //  Method to stack a card
-        public bool Stack(IBM1410Card card) {
+        public bool Stack(IBM1402Form form, IBM1410Card card) {
 
             int i;
+            Action safeButtonUpdate;
 
             ++count;
 
@@ -192,7 +193,9 @@ namespace IBM1410Console
             //  Add the card image to the card list.
 
             cardList.Add(System.Text.Encoding.ASCII.GetString(card.image,0,i) + "\n");
-            button.Text = stackerShortName + ": " + count.ToString("D5");
+            // button.Text = stackerShortName + ": " + count.ToString("D5");
+            safeButtonUpdate = delegate { button.Text = stackerShortName + ": " + count.ToString("D5"); };
+            form.Invoke(safeButtonUpdate);
             return true;
 
             /*

@@ -189,7 +189,7 @@ namespace IBM1410Console
                 return;
             }
 
-            Debug.WriteLine("IBM1402Form: Processing UDP Input.");
+            // Debug.WriteLine("IBM1402Form: Processing UDP Input.");
 
             //  Loop through the bytes (hopefully / typically, the entire packet)
 
@@ -199,7 +199,7 @@ namespace IBM1410Console
                     //  If we are not currently processing a device, this byte is
                     //  the device code.
                     currentUnitRecordDevice = e.UDPBytes[i];
-                    Debug.WriteLine("IBM1402Form: Current Unit Record Device is " + currentUnitRecordDevice.ToString("X2"));
+                    // Debug.WriteLine("IBM1402Form: Current Unit Record Device is " + currentUnitRecordDevice.ToString("X2"));
                     currentReaderOperation = 0;
                     currentPunchOperation = 0;
                 }
@@ -266,7 +266,7 @@ namespace IBM1410Console
                     MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Unexpected punch operation received from FPGA: " + currentPunchOperation.ToString("X2"));
                 }
                 else {
-                    Debug.WriteLine("IBM1402Form: Stacking punched card.");
+                    // Debug.WriteLine("IBM1402Form: Stacking punched card.");
                     stacker.Stack(this, punchedCard);
                 }
                 punchedCard = null;
@@ -278,7 +278,7 @@ namespace IBM1410Console
             if (currentPunchOperation == 0) {
                 if ((c & PUNCHOPERATION) == PUNCHOPERATION) {
                     currentPunchOperation = c;
-                    Debug.WriteLine("IBM1402Form: Current Punch Operation is " + currentPunchOperation.ToString("X2"));
+                    // Debug.WriteLine("IBM1402Form: Current Punch Operation is " + currentPunchOperation.ToString("X2"));
                     punchedCard = new IBM1410Card();
                 }
                 else {
@@ -293,7 +293,7 @@ namespace IBM1410Console
                     Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                     MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                 }
-                Debug.WriteLine("IBM1402Form: Adding byte " + (c & 0x3f).ToString("X2"));
+                // Debug.WriteLine("IBM1402Form: Adding byte " + (c & 0x3f).ToString("X2"));
             }
         }
 

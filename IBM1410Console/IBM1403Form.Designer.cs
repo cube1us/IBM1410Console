@@ -187,11 +187,13 @@
             // 
             // printerRichTextBox1
             // 
-            printerRichTextBox1.Location = new System.Drawing.Point(472, 12);
+            printerRichTextBox1.Location = new System.Drawing.Point(472, 29);
             printerRichTextBox1.Name = "printerRichTextBox1";
+            printerRichTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             printerRichTextBox1.Size = new System.Drawing.Size(773, 426);
             printerRichTextBox1.TabIndex = 60;
             printerRichTextBox1.Text = "";
+            printerRichTextBox1.WordWrap = false;
             // 
             // carriageTapeButton
             // 
@@ -231,7 +233,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1257, 473);
+            ClientSize = new System.Drawing.Size(1257, 510);
             Controls.Add(printerSaveButton);
             Controls.Add(printerClearButton);
             Controls.Add(carriageTapeButton);

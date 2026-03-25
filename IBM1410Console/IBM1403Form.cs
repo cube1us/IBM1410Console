@@ -125,7 +125,7 @@ namespace IBM1410Console
                 return;
             }
 
-            Debug.WriteLine("IBM1403Form: Processing UDP Input");
+            // Debug.WriteLine("IBM1403Form: Processing UDP Input");
 
             //  Loop through the bytes (hopefully / typically, the entire packet)
 
@@ -135,7 +135,7 @@ namespace IBM1410Console
                     //  If we are not currently processing a device, this byte is
                     //  the device code.
                     currentUnitRecordDevice = e.UDPBytes[i];
-                    Debug.WriteLine("IBM1403Form: Current Unit Record Device is " + currentUnitRecordDevice.ToString("X2"));
+                    // Debug.WriteLine("IBM1403Form: Current Unit Record Device is " + currentUnitRecordDevice.ToString("X2"));
                     currentPrinterOperation = 0;
                 }
                 else if (currentUnitRecordDevice == READERCH1FLAG) {
@@ -176,13 +176,13 @@ namespace IBM1410Console
 
                     //  Because this code is running on the UDP publisher thread, to update the UI we need to use Invoke.
 
-                    Debug.WriteLine("IBM1403Form: Printing line of length " + printLine.Length.ToString());
-                    for (int i = 0; i < printLine.Length; i++) {
-                        Debug.Write(printLine[i].ToString("X2") + " ");
-                    }
-                    Debug.WriteLine("");
+                    // Debug.WriteLine("IBM1403Form: Printing line of length " + printLine.Length.ToString());
+                    // for (int i = 0; i < printLine.Length; i++) {
+                    //     Debug.Write(printLine[i].ToString("X2") + " ");
+                    // }
+                    // Debug.WriteLine("");
 
-                    Debug.WriteLine("IBM1403Form: Printing line /" + System.Text.Encoding.ASCII.GetString(printLine) + "/");
+                    // Debug.WriteLine("IBM1403Form: Printing line /" + System.Text.Encoding.ASCII.GetString(printLine) + "/");
                     safePrinterTextBoxUpdate = delegate
                     {
                         printerRichTextBox1.AppendText(System.Text.Encoding.ASCII.GetString(printLine) + "\n");
@@ -212,7 +212,7 @@ namespace IBM1410Console
             if (currentPrinterOperation == 0) {
                 if ((c & PRINTEROPERATION) == PRINTEROPERATION) {
                     currentPrinterOperation = c;
-                    Debug.WriteLine("IBM1403Form: Current Print Operation is " + currentPrinterOperation.ToString("X2"));
+                    // Debug.WriteLine("IBM1403Form: Current Print Operation is " + currentPrinterOperation.ToString("X2"));
                     if (currentPrinterOperation == PRINTEROPERATION) {
                         printLine = new byte[PRINTERLINELENGTH];
                         currentPrinterColumn = 0;

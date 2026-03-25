@@ -193,9 +193,11 @@ namespace IBM1410Console
             //  Add the card image to the card list.
 
             cardList.Add(System.Text.Encoding.ASCII.GetString(card.image,0,i) + "\n");
-            // button.Text = stackerShortName + ": " + count.ToString("D5");
+
+            //  Because this code is running on the UDP publisher thread, to update the UI we need to use Invoke.
             safeButtonUpdate = delegate { button.Text = stackerShortName + ": " + count.ToString("D5"); };
             form.Invoke(safeButtonUpdate);
+
             return true;
 
             /*

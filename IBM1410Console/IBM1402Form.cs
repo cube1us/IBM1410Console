@@ -123,8 +123,8 @@ namespace IBM1410Console
         public const byte SENDCARDOPERATION = 0x02;
 
         public const byte READERFEEDOPERATION = 0x10;
-        public const byte STACKER1 = 0x1;
-        public const byte STACKER2 = 0x2;
+        // public const byte STACKER1 = 0x1;
+        // public const byte STACKER2 = 0x2;
 
         public const byte PUNCHOPERATION = 0x40;
 
@@ -270,6 +270,8 @@ namespace IBM1410Console
                     stacker.Stack(this, punchedCard);
                 }
                 punchedCard = null;
+                currentUnitRecordDevice = 0;
+                currentPunchOperation = 0;
                 return;
             }
 

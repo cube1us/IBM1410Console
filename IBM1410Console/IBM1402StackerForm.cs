@@ -28,7 +28,7 @@ namespace IBM1410Console
                 stackerRichTextBox1.Font = cardFont;
             }
             else {
-                Debug.WriteLine("Can't initialize 1403 Font.");
+                Debug.WriteLine("Can't initialize 1403 Font for card punch.");
             }
 
             stackerRichTextBox1.SuspendLayout();

@@ -170,6 +170,15 @@ namespace IBM1410Console
             // Debug.WriteLine("UDP Received " + rxBytes.Length.ToString() + " bytes from " +
             //    "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
 
+            // if (true || rxBytes[0] != lightCodeByte) {
+            //     String data = "";
+            //     for (int i = 0; i < rxBytes.Length; ++i) {
+            //         data = data + rxBytes[i].ToString("X2") + " ";
+            //     }
+            //     Debug.WriteLine("UDP received packet, length " + rxBytes.Length.ToString());
+            //     Debug.WriteLine("   UDP Packet: " + data);
+            //  }
+            
             //  Process the data
 
             dispatchLen = 0;
@@ -208,7 +217,7 @@ namespace IBM1410Console
                         }
                         */
                         else if (lastCodeByte == deviceFrom1414CodeByte) {
-                            Debug.WriteLine("Dispatching " + dispatchLen + " bytes for unit record");
+                            // Debug.WriteLine("Dispatching " + dispatchLen + " bytes for unit record");
 
                             if (lastUnitRecordDevice == 0x00) {
                                 Debug.WriteLine("UDPDataPublisher: No unit record device available yet - no Dispatch.");
@@ -224,8 +233,8 @@ namespace IBM1410Console
                                     MessageBox.Show("UDPDataPublisher: Reader Channel 1 Dispatch Length not 1 " +
                                         dispatchLen.ToString());
                                 }
-                                Debug.WriteLine("Dispatching Reader Channel 1 operation of " +
-                                    dispatchBytes[0].ToString("X2"));
+                                // Debug.WriteLine("Dispatching Reader Channel 1 operation of " +
+                                //    dispatchBytes[0].ToString("X2"));
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
                                     new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
                                 OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
@@ -236,7 +245,13 @@ namespace IBM1410Console
                             else if (lastUnitRecordDevice == punchChannel1Device) {
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
                                     new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                                Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 punch.");
+                                // Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 punch.");
+                                // String s = "";
+                                // for (int j = 0; j < dispatchLen; j++) {
+                                //     s = s + dispatchBytes[j].ToString("X2") + " ";
+                                // }
+                                // Debug.WriteLine("Dispatch Vector: " + s);
+
                                 OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
                                 //  If this byte is 0, then reset.
                                 if (readByte == 0x00) {
@@ -248,7 +263,12 @@ namespace IBM1410Console
                             else if (lastUnitRecordDevice == printerChannel1Device) {
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
                                     new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                                Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 printer.");
+                                // Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 printer.");
+                                // String s = "";
+                                // for (int j = 0; j < dispatchLen; j++) {
+                                //     s = s + dispatchBytes[j].ToString("X2") + " ";
+                                // }
+                                // Debug.WriteLine("Dispatch Vector: " + s);
                                 OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
                                 //  If this byte is 0, then reset.
                                 if (readByte == 0x00) {
@@ -297,13 +317,14 @@ namespace IBM1410Console
 
                     if (lastCodeByte == deviceFrom1414CodeByte) {
                         if (lastUnitRecordDevice == 0) {
-                            //  Do NOT increment the dispatchLen for the device code,
-                            //  and do NOT put it in the dispatchBytes vector.
                             lastUnitRecordDevice = readByte;
+                            dispatchBytes[dispatchLen++] = readByte;
+                            // Debug.WriteLine("Set unit record device to " + readByte.ToString("X2"));
                         }
                         else if (lastUnitRecordDevice != 0 && lastUnitRecordOperation == 0) {
                             // We DO include the operation code in the dispatch vector for unit record devices.
                             lastUnitRecordOperation = readByte;
+                            // Debug.WriteLine("Set unit record operation to " + readByte.ToString("X2"));
                             dispatchBytes[dispatchLen++] = readByte;
                         }
                         else {

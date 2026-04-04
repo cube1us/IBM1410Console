@@ -28,6 +28,7 @@ using System.Drawing.Printing;
 using System.IO.Ports;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IBM1410Console
@@ -137,9 +138,16 @@ namespace IBM1410Console
         public const int tapeChannel2ToTAUCodeByte = 0x83;
         public const int deviceTo1414CodeByte  = 0x85;
 
+        //  Nesting counters for debugging
+        private int udpPacketNest = 0;
+        private int udpLampNest = 0;
+        private int udpReaderNest = 0;
+
 
         IBM1410Form.udpStateStruct udpState;
         IPAddress fpgaIPAddress;
+
+        private static SemaphoreSlim udpReceiveSemaphore = new SemaphoreSlim(1);
 
         public UDPDataPublisher(IBM1410Console.IBM1410Form.udpStateStruct udpState,
             IPAddress fpgaAddress) {  
@@ -147,7 +155,9 @@ namespace IBM1410Console
             this.fpgaIPAddress = fpgaAddress;
 
             //  Start up the recieve - this is just the FIRST receive.
-            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
+            // udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
+
+            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), null);
 
             Debug.WriteLine("UDP BeginReceive called.");
         }
@@ -160,26 +170,39 @@ namespace IBM1410Console
             int dispatchLen = 0;
             int[] dispatchBytes = new int[2048];
 
+            Helpers.checkNesting("UDPDataPublisher UDP Packet Nesting", ++udpPacketNest);
+
             //  Verify it is coming from the right place.  Ignore if not.
 
             if (!IPAddress.Equals(udpState.ipEndPoint.Address, fpgaIPAddress)) {
-                Debug.WriteLine("UDP Packet from unexpected address.");
+                Debug.WriteLine("UDPDataPublisher: UDP Packet from unexpected address.");
+                --udpPacketNest;
                 return;
             }
 
-            // Debug.WriteLine("UDP Received " + rxBytes.Length.ToString() + " bytes from " +
-            //    "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
+            Debug.WriteLine("UDPDataPublisher: Calling Begin Receive...");
 
-            // if (true || rxBytes[0] != lightCodeByte) {
-            //     String data = "";
-            //     for (int i = 0; i < rxBytes.Length; ++i) {
-            //         data = data + rxBytes[i].ToString("X2") + " ";
-            //     }
-            //     Debug.WriteLine("UDP received packet, length " + rxBytes.Length.ToString());
-            //     Debug.WriteLine("   UDP Packet: " + data);
-            //  }
-            
+            // udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
+            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), null);
+
+            Debug.WriteLine("UDPDataPublisher: Returned from Beginreceive.");
+
+            udpReceiveSemaphore.Wait();
+
+
+            if (rxBytes[0] != lightCodeByte) {
+                String data = "";
+                for (int i = 0; i < rxBytes.Length; ++i) {
+                    data = data + rxBytes[i].ToString("X2") + " ";
+                }
+                Debug.WriteLine("UDPDataPublisher: UDP received packet, length " + rxBytes.Length.ToString());
+                Debug.WriteLine("UDPDataPublisher:     UDP Packet: " + data);
+            }
+
             //  Process the data
+
+            Debug.WriteLine("UDPDataPublisher: UDP Received " + rxBytes.Length.ToString() + " bytes from " +
+                "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
 
             dispatchLen = 0;
 
@@ -198,6 +221,16 @@ namespace IBM1410Console
 
                 if (readByte >= 0x80 || i == numBytes) {
 
+                    /*
+                    //  If this is a packet for the same device, continue on as though we were
+                    //  in the same packet, throwing away the device code byte.
+
+                    if(i < numBytes && readByte == lastCodeByte) {
+                        Debug.WriteLine("UDPDataPublisher: Continuing processing device code " + readByte.ToString("X2"));
+                        continue;
+                    }
+                    */
+
                     //  If this is a new device code, OR, if the previous
                     //  byte was the last byte of the packet (i == numBytes), we need to dispatch the
                     //  data we already grabbed, then reset the dispatchLen variable.
@@ -207,6 +240,7 @@ namespace IBM1410Console
                         if (lastCodeByte == lightCodeByte) {
                             UDPLightDataEventArgs udpLightDataEventArgs =
                                 new UDPLightDataEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                            Debug.WriteLine("UDPDataPublisher: Dispatching " + dispatchBytes + " to lamp form.");
                             OnRaiseUDPLightOutputEvent(udpLightDataEventArgs);
                             dispatchLen = 0;
                         }
@@ -227,12 +261,19 @@ namespace IBM1410Console
                             }
                             //  For a card reader, nothing follows the operation
                             else if (lastUnitRecordDevice == readerChannel1Device) {
-                                if (dispatchLen != 1) {
-                                    Debug.WriteLine("UDPDataPublisher: Reader Channel 1 Dispatch Length not 1 " +
+                                if (dispatchLen != 2) {
+                                    Debug.WriteLine("UDPDataPublisher: Reader Channel 1 Dispatch Length not 2 " +
                                         dispatchLen.ToString());
-                                    MessageBox.Show("UDPDataPublisher: Reader Channel 1 Dispatch Length not 1 " +
-                                        dispatchLen.ToString());
+                                    // MessageBox.Show("UDPDataPublisher: Reader Channel 1 Dispatch Length not 2 " +
+                                    //    dispatchLen.ToString());
                                 }
+                                Debug.WriteLine("UDPDataPublisher: Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 Reader.");
+                                String s = "";
+                                for (int j = 0; j < dispatchLen; j++) {
+                                    s = s + dispatchBytes[j].ToString("X2") + " ";
+                                }
+                                Debug.WriteLine("UDPDataPublisher: Dispatch Vector: " + s);
+
                                 // Debug.WriteLine("Dispatching Reader Channel 1 operation of " +
                                 //    dispatchBytes[0].ToString("X2"));
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
@@ -245,12 +286,12 @@ namespace IBM1410Console
                             else if (lastUnitRecordDevice == punchChannel1Device) {
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
                                     new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                                // Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 punch.");
-                                // String s = "";
-                                // for (int j = 0; j < dispatchLen; j++) {
-                                //     s = s + dispatchBytes[j].ToString("X2") + " ";
-                                // }
-                                // Debug.WriteLine("Dispatch Vector: " + s);
+                                Debug.WriteLine("UDPDataPublisher: Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 punch.");
+                                String s = "";
+                                for (int j = 0; j < dispatchLen; j++) {
+                                    s = s + dispatchBytes[j].ToString("X2") + " ";
+                                }
+                                Debug.WriteLine("UDPDataPublisher: Dispatch Vector: " + s);
 
                                 OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
                                 //  If this byte is 0, then reset.
@@ -302,7 +343,7 @@ namespace IBM1410Console
 
                     if (i != numBytes) {
                         if (lastCodeByte != readByte) {
-                            Debug.WriteLine("Changed input stream: code byte: " + readByte.ToString("X2"));
+                            Debug.WriteLine("UDPDataPublisher: Changed input stream: code byte: " + readByte.ToString("X2"));
                         }
                         lastCodeByte = readByte;
                     }
@@ -351,7 +392,21 @@ namespace IBM1410Console
 
             //  Start up the next receive right away...
 
-            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
+            --udpPacketNest;
+
+            /* 
+            Debug.WriteLine("UDPDataPublisher: Calling Begin Receive...");
+
+            // udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
+            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), null);
+
+            Debug.WriteLine("UDPDataPublisher: Returning after AsyncCallback.");
+            
+            */
+
+            udpReceiveSemaphore.Release();
+
+            Debug.WriteLine("UDPDataPublisher: Semaphore released.");
 
         }
 
@@ -368,9 +423,11 @@ namespace IBM1410Console
             EventHandler<UDPLightDataEventArgs> raiseEvent = UDPLightOutputEvent;
             // Debug.WriteLine("Signaling light event with code " + e.DispatchCode + " and character " +
             //  e.UDPByte.ToString("X2"));
+            Helpers.checkNesting("UDP Lamp Event", ++udpLampNest);
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
+            --udpLampNest;
         }
 
         protected void OnRaiseUDPTapeChannel1OutputEvent(UDPTapeChannelEventArgs e) {
@@ -397,9 +454,11 @@ namespace IBM1410Console
             EventHandler<UDPUnitRecordChannelEventArgs> raiseEvent = UDPUnitChannel1OutputEvent;
             // Debug.WriteLine("Signaling Reader Channel 1 event with code " + e.DispatchCode + " and character " + 
             //     e.UDPByte.ToString("X2"));
+            Helpers.checkNesting("UDP Unit Record", ++udpReaderNest);
             if (raiseEvent != null) {
                 raiseEvent(this, e);
             }
+            --udpReaderNest;
         }
 
     }

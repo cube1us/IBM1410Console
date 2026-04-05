@@ -170,11 +170,13 @@ namespace IBM1410Console
             //  We need the lamps form now, too, so it can learn about resets
 
             UI1415LForm UI1415LForm = new UI1415LForm(serialDataPublisher, udpDataPublisher, IBM1410SwitchForm);
+            // UI1415LForm.Show();
 
             //  And the card reader/punch and printer forms - but don't display them
 
             IBM1402Form = new IBM1402Form(serialDataPublisher, udpDataPublisher,
                     serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+            IBM1402Form.Show();
 
             IBM1403Form = new IBM1403Form(serialDataPublisher, udpDataPublisher,
                     serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);

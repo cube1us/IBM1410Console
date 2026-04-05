@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace IBM1410Console
@@ -43,6 +44,9 @@ namespace IBM1410Console
             wrongLengthRecord = false;
             dataCheck = false;
             lastCard = false;
+
+            //  We need a special code page provider to output characters as I expect to.
+            // Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
 
         //  Make the card image, wrong length and data check flags accessible
@@ -176,6 +180,7 @@ namespace IBM1410Console
         public bool Stack(IBM1402Form form, IBM1410Card card) {
 
             int i;
+            string s;
             Action safeButtonUpdate;
 
             ++count;
@@ -190,9 +195,24 @@ namespace IBM1410Console
                 }
             }
 
+            s = System.Text.Encoding.UTF8.GetString(card.image, 0, i) + "\n";
+
+            // s = System.Text.Encoding.GetEncoding(1252).GetString(card.image,0,i) + "\n";
+
             //  Add the card image to the card list.
 
-            cardList.Add(System.Text.Encoding.ASCII.GetString(card.image,0,i) + "\n");
+            Debug.Write("Card Being Stacked: ");
+            for (i = 0; i < card.image.Length; ++i) {
+                Debug.Write(card.image[i].ToString("X2") + " ");
+            }
+            Debug.WriteLine("");
+
+            Debug.WriteLine("Adding string to cardlist: ");
+            Debug.WriteLine(s);
+            // Debug.WriteLine("   " + string.Join(" ", System.Text.Encoding.GetEncoding(1252).GetBytes(s)));
+            
+            cardList.Add(s);
+
 
             //  Because this code is running on the UDP publisher thread, to update the UI we need to use Invoke.
             safeButtonUpdate = delegate { button.Text = stackerShortName + ": " + count.ToString("D5"); };

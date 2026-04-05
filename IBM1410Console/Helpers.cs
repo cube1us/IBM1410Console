@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace IBM1410Console
 {
@@ -51,6 +52,12 @@ namespace IBM1410Console
                 }
             }
             return comPorts;
+        }
+
+        internal static void checkNesting(string name, int value) {
+            if (value == 10 || (value > 0 && value % 100 == 0)) { 
+                Debug.WriteLine("Nesting Check: " + name + ", value = ", value);
+            }
         }
     }
 }

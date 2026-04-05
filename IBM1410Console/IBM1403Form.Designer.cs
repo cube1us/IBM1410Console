@@ -41,6 +41,7 @@
             carriageTapeButton = new System.Windows.Forms.Button();
             printerClearButton = new System.Windows.Forms.Button();
             printerSaveButton = new System.Windows.Forms.Button();
+            saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             SuspendLayout();
             // 
             // printerStartButton
@@ -217,6 +218,7 @@
             printerClearButton.TabIndex = 62;
             printerClearButton.Text = "Clear";
             printerClearButton.UseVisualStyleBackColor = false;
+            printerClearButton.Click += printerClearButton_Click;
             // 
             // printerSaveButton
             // 
@@ -228,6 +230,7 @@
             printerSaveButton.TabIndex = 63;
             printerSaveButton.Text = "Save...";
             printerSaveButton.UseVisualStyleBackColor = false;
+            printerSaveButton.Click += printerSaveButton_Click;
             // 
             // IBM1403Form
             // 
@@ -252,6 +255,7 @@
             Controls.Add(printerStartButton);
             Name = "IBM1403Form";
             Text = "IBM1403Form";
+            FormClosing += IBM1403Form_FormClosing;
             ResumeLayout(false);
         }
 
@@ -273,5 +277,6 @@
         private System.Windows.Forms.Button carriageTapeButton;
         private System.Windows.Forms.Button printerClearButton;
         private System.Windows.Forms.Button printerSaveButton;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }

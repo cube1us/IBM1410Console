@@ -35,7 +35,6 @@ namespace IBM1410Console
 {
     public partial class IBM1403Form : Form
     {
-
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
         private SerialDataPublisher serialDataPublisher;
@@ -90,20 +89,30 @@ namespace IBM1410Console
             printerStartButton.Enabled = true;
             printerStopButton.Enabled = true;
 
-            if(printerFont != null) {
+            if (printerFont != null) {
                 printerRichTextBox1.Font = printerFont;
             }
             else {
                 Debug.WriteLine("Can't initialize 1403 font for printer.");
             }
 
-                serialDataPublisher.UnitChannel1OutputEvent +=
-                    new EventHandler<UnitRecordChannelEventArgs>(unitChannel1OperationAvailable);
+            //  We unsubscribe first, becuase sometimes we ended up with two subscriptions.
+            //  Not sure why that happeneds, but unsubscribing when not subscribed is harmless.
+
+            serialDataPublisher.UnitChannel1OutputEvent -=
+                new EventHandler<UnitRecordChannelEventArgs>(unitChannel1OperationAvailable);
+
+            udpDataPublisher.UDPUnitChannel1OutputEvent -=
+                new EventHandler<UDPUnitRecordChannelEventArgs>(unitChannel1UDPOperationAvailable);
+
+            Debug.WriteLine("IBM1403Form: Event Handlers for Serial and UDP Data Publishers (Printer) Registered.");
+            serialDataPublisher.UnitChannel1OutputEvent +=
+                new EventHandler<UnitRecordChannelEventArgs>(unitChannel1OperationAvailable);
 
             udpDataPublisher.UDPUnitChannel1OutputEvent +=
                 new EventHandler<UDPUnitRecordChannelEventArgs>(unitChannel1UDPOperationAvailable);
 
-            Debug.WriteLine("Event Handlers for Serial and UDP Data Publishers (Printer) Registered.");
+            Debug.WriteLine("IBM1403Form: Event Handlers for Serial and UDP Data Publishers (Printer) Registered.");
 
         }
 
@@ -185,7 +194,7 @@ namespace IBM1410Console
                     // Debug.WriteLine("IBM1403Form: Printing line /" + System.Text.Encoding.ASCII.GetString(printLine) + "/");
                     safePrinterTextBoxUpdate = delegate
                     {
-                        printerRichTextBox1.AppendText(System.Text.Encoding.ASCII.GetString(printLine) + "\n");
+                        printerRichTextBox1.AppendText(System.Text.Encoding.UTF8.GetString(printLine) + "\n");
                         printerRichTextBox1.Update();
                     };
                     this.Invoke(safePrinterTextBoxUpdate);
@@ -297,7 +306,44 @@ namespace IBM1410Console
         }
 
         private void carriageStopButton_Click(object sender, EventArgs e) {
-            printerStopButton_Click(sender,e);
+            printerStopButton_Click(sender, e);
+        }
+
+        //  Method to clear out the print display area
+        private void printerClearButton_Click(object sender, EventArgs e) {
+            printerRichTextBox1.Clear();
+        }
+
+        private void printerSaveButton_Click(object sender, EventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.Filter = "Print file (*.prt)|*.prt|Text file (*.txt)|*.txt|All Files (*.*)|*.*";
+            saveFileDialog.FilterIndex = 0;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.Title = "Save Printer Output" + this.Text + " to a file";
+            saveFileDialog.DefaultExt = "prt";
+            saveFileDialog.AddExtension = true;
+
+            //  Display the save file dialog and check if the users clicked OK
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                string fileName = saveFileDialog.FileName;
+                try {
+                    // System.IO.File.WriteAllText(fileName, stackerRichTextBox1.Text, System.Text.Encoding.GetEncoding(1252));
+                    System.IO.File.WriteAllText(fileName, printerRichTextBox1.Text);
+                }
+                catch (Exception ex) {
+                    MessageBox.Show($"Error saving print to file {fileName} {ex.Message}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void IBM1403Form_FormClosing(object sender, FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                Hide();
+            }
         }
     }
 }

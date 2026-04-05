@@ -33,7 +33,6 @@ namespace IBM1410Console
 {
     public partial class IBM1410TapesForm : Form
     {
-
         private int currentChannel;
         private int currentUnit;
 
@@ -121,6 +120,23 @@ namespace IBM1410Console
             startButton.Enabled = false;
             unloadButton.Enabled = false;
 
+            //  We unsubscribe first, becuase sometimes we ended up with two subscriptions.
+            //  Not sure wh7 that happeneds, but unsubscribing when not subscribed is harmless.
+
+            serialDataPublisher.TapeChannel1OutputEvent -=
+                new EventHandler<TapeChannelEventArgs>(tapeChannel1OutputAvailable);
+
+            serialDataPublisher.TapeChannel2OutputEvent -=
+                new EventHandler<TapeChannelEventArgs>(tapeChannel2OutputAvailable);
+
+            udpDataPublisher.UDPTapeChannel1OutputEvent -=
+                new EventHandler<UDPTapeChannelEventArgs>(tapeChannel1UDPOutputAvailable);
+
+            udpDataPublisher.UDPTapeChannel2OutputEvent -=
+                new EventHandler<UDPTapeChannelEventArgs>(tapeChannel2UDPOutputAvailable);
+
+            Debug.WriteLine("IBM1410TapesForm: Unsubscribed from tape events.");
+            
             serialDataPublisher.TapeChannel1OutputEvent +=
                 new EventHandler<TapeChannelEventArgs>(tapeChannel1OutputAvailable);
 
@@ -133,7 +149,7 @@ namespace IBM1410Console
             udpDataPublisher.UDPTapeChannel2OutputEvent +=
                 new EventHandler<UDPTapeChannelEventArgs>(tapeChannel2UDPOutputAvailable);
 
-            Debug.WriteLine("Event Handlers for Serial and UDP Data Publishers (Tapes) Registered.");
+            Debug.WriteLine("IBM1410TapesForm: Event Handlers for Serial and UDP Data Publishers (Tapes) Registered.");
         }
 
         //  Methods that get called when serial data is available from the FPGA...

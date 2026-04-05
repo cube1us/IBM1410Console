@@ -365,6 +365,7 @@
             Controls.Add(punchStartButton);
             Name = "IBM1402Form";
             Text = "IBM1402Form";
+            FormClosing += IBM1402Form_FormClosing;
             ResumeLayout(false);
         }
 

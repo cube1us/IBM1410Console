@@ -68,7 +68,6 @@ namespace IBM1410Console
 {
     public partial class IBM1402Form : Form
     {
-
         private SerialPort serialPort;
         private SemaphoreSlim serialOutputSemaphore;
         private SerialDataPublisher serialDataPublisher;
@@ -133,6 +132,9 @@ namespace IBM1410Console
 
         IBM1410Card punchedCard = null;
 
+        private int readerNestCount = 0;
+        private int statusNestCount = 0;
+
         public IBM1402Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
             SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
@@ -163,14 +165,24 @@ namespace IBM1410Console
             readerReady = readerLastCard = false;
             readerFileStream = null;
 
+            //  We unsubscribe first, becuase sometimes we ended up with two subscriptions.
+            //  Not sure why that happeneds, but unsubscribing when not subscribed is harmless.
+
+            serialDataPublisher.UnitChannel1OutputEvent -=
+                new EventHandler<UnitRecordChannelEventArgs>(unitChannel1OperationAvailable);
+
+            udpDataPublisher.UDPUnitChannel1OutputEvent -=
+                new EventHandler<UDPUnitRecordChannelEventArgs>(unitChannel1UDPOperationAvailable);
+
+            Debug.WriteLine("IBM1402Form: Unsubscribed from unit record events.");
+
             serialDataPublisher.UnitChannel1OutputEvent +=
                 new EventHandler<UnitRecordChannelEventArgs>(unitChannel1OperationAvailable);
 
             udpDataPublisher.UDPUnitChannel1OutputEvent +=
                 new EventHandler<UDPUnitRecordChannelEventArgs>(unitChannel1UDPOperationAvailable);
 
-            Debug.WriteLine("Event Handlers for Serial and UDP Data Publishers (Reader/Punch) Registered.");
-
+            Debug.WriteLine("IBM1402Form: Subscribed to unit record events.");
         }
 
         //  Right now, the unit record devices are just UDP, so ignore serial requests
@@ -222,12 +234,15 @@ namespace IBM1410Console
 
         void readerMessageInputAvailable(byte c) {
 
+            Helpers.checkNesting("UDP Reader", ++readerNestCount);
+
             //  0 Terminates the reader request when receiving data, though this should
             //  never actually occur, for a reader...
 
             if (c == 0) {
                 currentReaderOperation = 0;
                 currentUnitRecordDevice = 0;
+                --readerNestCount;
                 return;
             }
 
@@ -246,6 +261,8 @@ namespace IBM1410Console
                 currentReaderOperation = 0;
                 currentUnitRecordDevice = 0;
             }
+
+            --readerNestCount;
         }
 
         void punchMessageInputAvailable(byte c) {
@@ -289,11 +306,13 @@ namespace IBM1410Console
 
             else {
                 //  Add the character, stripping the 0x40 parity bit, and translating to ASCII.
+                Debug.WriteLine("IBM1402Form: Adding byte to card: " + (c & 0x3f).ToString("X2"));
+                Debug.WriteLine("IBM1402Form: BCD to ASCII is:     " + ((byte)IBM1410BCD.BCDtoASCII((byte)(c & 0x3f))).ToString("X2"));
+
                 if (punchedCard.addByte((byte)IBM1410BCD.BCDtoASCII((byte)(c & 0x3f))) == false) {
                     Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                     MessageBox.Show("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
                 }
-                // Debug.WriteLine("IBM1402Form: Adding byte " + (c & 0x3f).ToString("X2"));
             }
         }
 
@@ -336,7 +355,7 @@ namespace IBM1410Console
             }
 
             //  At this point, the readStation is gauranteed to be empty, and
-            //  and check station is guarnateed to NOT be empty.
+            //  and check station is guaranteed to NOT be empty.
 
             readStation = checkStation;
             checkStation = FeedCard();
@@ -414,6 +433,7 @@ namespace IBM1410Console
 
             //  Send the updated status to the FPGA...
 
+            Helpers.checkNesting("Reader Status Semaphore: ", ++statusNestCount);
             udpOutputSemaphore.Wait();
             statusBuffer[0] = UNITRECORDTO1414FLAG;
             statusBuffer[1] = READERCH1FLAG;
@@ -421,6 +441,7 @@ namespace IBM1410Console
             statusBuffer[3] = readerStatus;
             udpClient.Send(statusBuffer, statusBuffer.Length);
             udpOutputSemaphore.Release();
+            --statusNestCount;
         }
 
         //  Method to send status of the punch.  For now, just the stop and start
@@ -488,7 +509,7 @@ namespace IBM1410Console
         private void readerStartButton_Click(object sender, EventArgs e) {
 
             // if (readerFileStream == null || readerReady == false) {
-            if (readerFileStream == null) { 
+            if (readerFileStream == null) {
                 MessageBox.Show("ERROR: Unexpected Reader Start when no file loaded");
                 return;
             }
@@ -560,8 +581,9 @@ namespace IBM1410Console
             readerLastCard = false;
             readerBusy = false;
             readerStartButton.Enabled = true;
-            readerStopButton.Enabled = false;
+            readerStopButton.Enabled = false; // Consider leaving it enabled?
             labelReaderReady.ForeColor = Color.DimGray;
+            loadButton.Enabled = true;
             sendReaderStatus();
         }
 
@@ -654,7 +676,7 @@ namespace IBM1410Console
             // Debug.WriteLine("Card image length is " + card.Length.ToString());
             for (i = 0; i < card.Length; ++i) {
                 bcdChar = IBM1410BCD.ASCIItoBCD((char)(card[i]));
-                if(bcdChar == 0xff) {
+                if (bcdChar == 0xff) {
                     readStation.setDataCheck(true);
                     bcdChar = IBM1410BCD.BCD_ASTERISK; // Asterisk insert.  ;)
                 }
@@ -663,7 +685,7 @@ namespace IBM1410Console
                 //  set bit 7!).  We are sending odd parity - but it may have made more sense
                 //  to send even parity.  Oh well....
 
-                message[n++] = (byte)(bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6));                
+                message[n++] = (byte)(bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6));
                 // Debug.WriteLine("Put character in reader buffer: " + ((bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6)).ToString("X2")) );
             }
 
@@ -739,6 +761,13 @@ namespace IBM1410Console
             punchBusy = false;
             labelPunchReady.ForeColor = Color.DimGray;
             sendPunchStatus();
+        }
+
+        private void IBM1402Form_FormClosing(object sender, FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing) {
+                e.Cancel = true;
+                Hide();
+            }
         }
     }
 }

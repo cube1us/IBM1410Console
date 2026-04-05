@@ -71,7 +71,7 @@ namespace IBM1410Console
 			'\'',	/* 12    84    - at sign @ or quote */
 			':',    /* 13    84 1  - colon */
 			'>',	/* 14    842   - greater than */
-			(char) 0xFB,	/* 15    8421  - radical */
+			'{',	/* 15    8421  - radical (was (char) 0xFB, ) */
 			'b',    /* 16   A      - substitute blank -- b -- */
 			'/',	/* 17   A   1  - slash */
 			'S',	/* 18   A  2   - S */
@@ -85,9 +85,9 @@ namespace IBM1410Console
 			'|',	/* 26   A8 2   - record mark */
 			',',	/* 27   A8 21  - comma */
 			'(',	/* 28   A84    - percent % or paren */
-			'^',	/* 29   A84 1  - word separator -- ^ -- */
+			'~',	/* 29   A84 1  - word separator -- (was ^ ) -- */
 			'\\',	/* 30   A842   - left oblique */
-			(char) 0xD7,    /* 31   A8421  - segment mark */
+			'\"',   /* 31   A8421  - segment mark ( was (char) 0xD7, ) */
 			'-',	/* 32  B       - hyphen */
 			'J',	/* 33  B    1  - J */
 			'K',	/* 34  B   2   - K */
@@ -103,7 +103,7 @@ namespace IBM1410Console
 			'*',	/* 44  B 84    - asterisk */
 			']',	/* 45  B 84 1  - right bracket */
 			';',    /* 46  B 842   - semicolon */
-			(char) 0x7F, /* 47  B 8421  - delta */
+			'_',    /* 47  B 8421  - delta ( was (char) 0x7F, )*/
 			'+',    /* 48  BA      - ampersand or plus */
 			'A',	/* 49  BA   1  - A */
 			'B',    /* 50  BA  2   - B */
@@ -119,7 +119,7 @@ namespace IBM1410Console
 			')',	/* 60  BA84    - lozenge or paren */
 			'[',	/* 61  BA84 1  - left bracket */
 			'<',	/* 62  BA842   - less than */
-			(char) 0xCE		/* 63  BA8421  - group mark -- { -- */
+			'}'		/* 63  BA8421  - group mark ( was (char) 0xCE ) */
 		};
 
 
@@ -137,19 +137,19 @@ namespace IBM1410Console
 
 				ASCII code	BCD		Notes
 				----------  ---     -----
-				"			N/A		illegal
+				"			N/A		illegal => Segment Mark on input
 				%			(		'H' character set representation
 				&			+		'H' character set representation
 				@			'		'H' character set representation
 				#			=		'H' character set representation
-				_			N/A		illegal
-				^			^		substitute graphic for word-separator
-				`			N/A		illegal
+				_			N/A		illegal => Delta on input
+				^			^		substitute graphic for Alt blank (was word-separator )
+				`			N/A		illegal (back tick)
 				a,c-z		A,C-Z	case folded
 				b			b		substitute blank
-				{			N/A		illegal
-				}           N/A     illegal
-				~			N/A		illegal
+				{			N/A		illegal => Tape Mark / radical on input
+				}           N/A     illegal => Group Mark on input
+				~			N/A		illegal => Word Separator on input
 				|			Ø		substitute for record mark
 
 				CTRL+d		47		delta
@@ -162,7 +162,7 @@ namespace IBM1410Console
 
 		static byte[] ascii_bcd = {
 			0xff,0xff,0xff,0xff,		/* 00 - 03 illegal */
-			47,0xff,0xff,63,			/* 04 - detla, 05, 06 illegal, 07 group mark */
+			47,0xff,0xff,63,			/* 04 - delta, 05, 06 illegal, 07 group mark */
 			0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,	/* 010 Backspace -> Index , 011 Word mark, 012 - 017 illegal */
 			0xff,0xff,15,31,			/* 020, 021 illegal, ctrl-r radical, ctrl-s segment mark */
 			0xff,0xff,0xff,0x00,		/* 024 - 026 illegal (027 is also ctrl-w - word mark) */
@@ -170,7 +170,7 @@ namespace IBM1410Console
 
 			0,				/* 040 space */
 			42,				/* 041 ! */
-			0xff,			/* 042 " illegal */
+			31, /*0xff,*/	/* 042 " illegal => Segment Mark on Input */
 			11,				/* 043 # */
 			43,				/* 044 $ */
 			28,				/* 045 % also ( */
@@ -237,8 +237,8 @@ namespace IBM1410Console
 			61,				/* 0133 [ */
 			30,				/* 0134 \ */
 			45,				/* 0135 ] */
-			29,				/* 0136 ^ word separator */
-			0xff,			/* 0137 _ illegal */
+			16,				/* 0136 Alternate Blank (was ^ word separator) */
+			47, /*0xff,*/	/* 0137 _ illegal => Delta on input */
 
 			0xff,			/* 0140 ` illegal */
 			49,				/* 0141 a is A */
@@ -270,10 +270,10 @@ namespace IBM1410Console
 			23,				/* 0170 x is X */
 			24,				/* 0171 y is Y */
 			25,				/* 0172 z is Z */
-			0xff,			/* 0173 { illegal */
+			15, /*0xff,*/	/* 0173 { illegal => Tape Mark/Radical on input */
 			26,				/* 0174 | substitute record mark */
-			0xff,			/* 0175	} illegal */
-			0xff,			/* 0176 ~ illegal */
+			63, /*0xff,*/	/* 0175	} illegal => Group mark on input */
+			29, /*0xff,*/	/* 0176 ~ illegal => Word Separator on input */
 			47,				/* 0177  delta */
 
 			0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,	/* 0200-0207 illegal */

@@ -31,7 +31,6 @@ namespace IBM1410Console
 {
     public partial class IBM1415ConsoleForm : Form
     {
-
         private enum state { ordinary, wordmark, backspace };
         state printerState = state.ordinary;
         bool wmInProgress = false;
@@ -83,9 +82,16 @@ namespace IBM1410Console
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
 
+            //  We unsubscribe first, becuase sometimes we ended up with two subscriptions.
+            //  Not sure why that happeneds, but unsubscribing when not subscribed is harmless.
+
+            serialPublisher.SerialOutputEvent -= new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
+            serialPublisher.ConsoleLockOutputEvent -= new EventHandler<ConsoleLockDataEventArgs>(consoleLockDataAvailable);
+            Debug.WriteLine("IBM1415ConsoleForm: Event Handlers for Console unsubscribed.");
+
             serialPublisher.SerialOutputEvent += new EventHandler<SerialDataEventArgs>(consoleOutputAvailable);
             serialPublisher.ConsoleLockOutputEvent += new EventHandler<ConsoleLockDataEventArgs>(consoleLockDataAvailable);
-            Debug.WriteLine("Event Handler in Console for SerialDataPublisher Registered.");
+            Debug.WriteLine("IBM1415ConsoleForm: Event Handlers for Console Registered.");
         }
 
         void consoleLockDataAvailable(object sender, ConsoleLockDataEventArgs e) {

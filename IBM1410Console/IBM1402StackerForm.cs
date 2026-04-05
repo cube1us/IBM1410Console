@@ -61,6 +61,7 @@ namespace IBM1410Console
             if(saveFileDialog.ShowDialog() == DialogResult.OK) {
                 string fileName = saveFileDialog.FileName;
                 try {
+                    // System.IO.File.WriteAllText(fileName, stackerRichTextBox1.Text, System.Text.Encoding.GetEncoding(1252));
                     System.IO.File.WriteAllText(fileName, stackerRichTextBox1.Text);
                 }
                 catch(Exception ex) {

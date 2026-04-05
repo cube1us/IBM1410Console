@@ -22,6 +22,7 @@
 #pragma warning disable IDE1005
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
@@ -96,10 +97,10 @@ namespace IBM1410Console
     public class UDPDataPublisher
     {
 
-        //  The following event is raised to subscribers as appropriate
+        //  The following events are raised to subscribers as appropriate
 
         public event EventHandler<UDPDataEventArgs> UDPOutputEvent;
-        public event EventHandler<UDPLightDataEventArgs> UDPLightOutputEvent;
+        public event EventHandler<UDPLightDataEventArgs> UDPLightOutputEvent = null;
         public event EventHandler<UDPTapeChannelEventArgs> UDPTapeChannel1OutputEvent;
         public event EventHandler<UDPTapeChannelEventArgs> UDPTapeChannel2OutputEvent;
         public event EventHandler<UDPUnitRecordChannelEventArgs> UDPUnitChannel1OutputEvent;
@@ -143,28 +144,104 @@ namespace IBM1410Console
         private int udpLampNest = 0;
         private int udpReaderNest = 0;
 
-
         IBM1410Form.udpStateStruct udpState;
         IPAddress fpgaIPAddress;
 
-        private static SemaphoreSlim udpReceiveSemaphore = new SemaphoreSlim(1);
+        BlockingCollection<Byte[]> udpMessages = new BlockingCollection<byte[]>();
+
+        // private static SemaphoreSlim udpReceiveSemaphore = new SemaphoreSlim(1);
 
         public UDPDataPublisher(IBM1410Console.IBM1410Form.udpStateStruct udpState,
             IPAddress fpgaAddress) {  
             this.udpState = udpState;
             this.fpgaIPAddress = fpgaAddress;
 
+            //  Start up the message queue consumer thread...
+
+            Thread consumerThread = new Thread(UDPMessageConsumer);
+            consumerThread.Start();
+
+            Debug.WriteLine("Message queue consumer thread started...");
+
+
             //  Start up the recieve - this is just the FIRST receive.
             // udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
 
-            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), null);
+            udpState.udpClient.BeginReceive(new AsyncCallback(NewUDPDataReceivedHandler), null);
 
             Debug.WriteLine("UDP BeginReceive called.");
         }
 
-        private void UDPDataReceivedHandler(IAsyncResult ar) { 
+        //  New method to get the UDP packets and put them onto a thread-safe FIFO queue
+        //  This producer runs on the calling UDP network thread.
 
+        private void NewUDPDataReceivedHandler(IAsyncResult ar) {
             Byte[] rxBytes = udpState.udpClient.EndReceive(ar, ref udpState.ipEndPoint);
+            int numBytes = rxBytes.Length;
+            String sample = "";
+
+            //  Verify it is coming from the right place.  Ignore if not.
+            //  This is probably useless code - it seems it will always be true!
+
+            if (!IPAddress.Equals(udpState.ipEndPoint.Address, fpgaIPAddress)) {
+                Debug.WriteLine("UDPDataPublisher: UDP Packet from unexpected address.");
+                --udpPacketNest;
+                return;
+            }
+
+            //  Put the message on the queue
+
+            udpMessages.Add(rxBytes);
+
+            for(int i = 0; i < numBytes && i < 4; ++i) {
+                sample = sample + " " + rxBytes[i].ToString("X2");
+            }
+
+            Debug.WriteLine("Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+
+            //  And get ready to receive the next message.
+
+            udpState.udpClient.BeginReceive(new AsyncCallback(NewUDPDataReceivedHandler), null);
+
+        }
+
+        //  Consumer method.  This runs on its own thread, and blocks when there are no
+        //  messages to recieve (he said, hopefully).
+        private void UDPMessageConsumer() {
+            Byte[] rxBytes = null;
+            String sample = "";
+
+            while (true) {
+
+                sample = "";
+
+                Debug.WriteLine("Getting next message from queue...");
+
+                rxBytes = udpMessages.Take();  // Expecting this to block when no msgs available.
+
+                int numBytes = rxBytes.Length;
+
+                for (int i = 0; i < numBytes && i < 4; ++i) {
+                    sample = sample + " " + rxBytes[i].ToString("X2");
+                }
+
+                Debug.WriteLine("De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+
+                //  Now call the original message routine...
+
+                UDPDataReceivedHandler(rxBytes);
+
+                rxBytes = null;
+            }
+
+        }
+
+        // private void UDPDataReceivedHandler(IAsyncResult ar) { 
+
+        private void UDPDataReceivedHandler(Byte[] rxBytes) {
+
+            // Byte[] rxBytes = udpState.udpClient.EndReceive(ar, ref udpState.ipEndPoint);
+
             int numBytes = rxBytes.Length;
             int readByte = 0;
             int dispatchLen = 0;
@@ -174,20 +251,25 @@ namespace IBM1410Console
 
             //  Verify it is coming from the right place.  Ignore if not.
 
+            /*
             if (!IPAddress.Equals(udpState.ipEndPoint.Address, fpgaIPAddress)) {
                 Debug.WriteLine("UDPDataPublisher: UDP Packet from unexpected address.");
                 --udpPacketNest;
                 return;
             }
+            */
 
-            Debug.WriteLine("UDPDataPublisher: Calling Begin Receive...");
+            // Debug.WriteLine("UDPDataPublisher: Calling Begin Receive...");
 
             // udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), udpState);
-            udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), null);
+            // udpState.udpClient.BeginReceive(new AsyncCallback(UDPDataReceivedHandler), null);
 
-            Debug.WriteLine("UDPDataPublisher: Returned from Beginreceive.");
+            // Debug.WriteLine("UDPDataPublisher: Returned from Beginreceive.");
 
-            udpReceiveSemaphore.Wait();
+
+            //  Hopefully this can be removed since the UDPMessageConsumer will be waiting for our return.
+
+            // udpReceiveSemaphore.Wait();
 
 
             if (rxBytes[0] != lightCodeByte) {
@@ -195,8 +277,8 @@ namespace IBM1410Console
                 for (int i = 0; i < rxBytes.Length; ++i) {
                     data = data + rxBytes[i].ToString("X2") + " ";
                 }
-                Debug.WriteLine("UDPDataPublisher: UDP received packet, length " + rxBytes.Length.ToString());
-                Debug.WriteLine("UDPDataPublisher:     UDP Packet: " + data);
+                // Debug.WriteLine("UDPDataPublisher: UDP received packet, length " + rxBytes.Length.ToString());
+                // Debug.WriteLine("UDPDataPublisher:     UDP Packet: " + data);
             }
 
             //  Process the data
@@ -240,7 +322,7 @@ namespace IBM1410Console
                         if (lastCodeByte == lightCodeByte) {
                             UDPLightDataEventArgs udpLightDataEventArgs =
                                 new UDPLightDataEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                            Debug.WriteLine("UDPDataPublisher: Dispatching " + dispatchBytes + " to lamp form.");
+                            Debug.WriteLine("UDPDataPublisher: Dispatching " + dispatchBytes + " to lamp form.  i is now " + i.ToString());
                             OnRaiseUDPLightOutputEvent(udpLightDataEventArgs);
                             dispatchLen = 0;
                         }
@@ -404,7 +486,9 @@ namespace IBM1410Console
             
             */
 
-            udpReceiveSemaphore.Release();
+            //  Hopefully this can be removed...
+
+            // udpReceiveSemaphore.Release();
 
             Debug.WriteLine("UDPDataPublisher: Semaphore released.");
 

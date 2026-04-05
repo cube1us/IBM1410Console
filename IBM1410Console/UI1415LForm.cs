@@ -49,6 +49,8 @@ namespace IBM1410Console
         private bool outOfSync = false;
         private enum lampSyncStates { lampSyncStart, lampSyncing, lampSyncCompleted };
         lampSyncStates lampSyncState = lampSyncStates.lampSyncStart;
+
+        private int lampNestCounter;
         
         public UI1415LForm(SerialDataPublisher lightOutputPublisher, 
             UDPDataPublisher udpLightOutputPublisher, IBM1410SwitchForm ibm1410SwitchForm) {
@@ -56,13 +58,25 @@ namespace IBM1410Console
             this.CreateHandle();    // This ensures that controls are created before receiving data from the FPGA 
             this.initLamps(ibm1410SwitchForm);
 
-            lightOutputPublisher.SerialLightOutputEvent += 
+            //  We unsubscribe first, becuase sometimes we ended up with two subscriptions.
+            //  Not sure why that happeneds, but unsubscribing when not subscribed is harmless.
+
+            lightOutputPublisher.SerialLightOutputEvent -=
                 new EventHandler<SerialLightDataEventArgs>(lampOutputAvailable);
-            Debug.WriteLine("Event Handler for SerialDataPublisher (Lamps) Registered.");
+            Debug.WriteLine("UI1415LForm: Event Handler for SerialDataPublisher (Lamps) Unsubscribed.");
+
+            udpLightOutputPublisher.UDPLightOutputEvent -=
+                new EventHandler<UDPLightDataEventArgs>(lampUDPOutputAvailable);
+            Debug.WriteLine("UI1415LForm: Event Handler for UDPDataPublisher (Lamps) Unsubscribed.");
+
+
+            lightOutputPublisher.SerialLightOutputEvent +=
+                new EventHandler<SerialLightDataEventArgs>(lampOutputAvailable);
+            Debug.WriteLine("UI1415LForm: Event Handler for SerialDataPublisher (Lamps) Registered.");
 
             udpLightOutputPublisher.UDPLightOutputEvent +=
                 new EventHandler<UDPLightDataEventArgs>(lampUDPOutputAvailable);
-            Debug.WriteLine("Event Handler for UDPDataPublisher (Lamps) Registered.");
+            Debug.WriteLine("UI1415LForm: Event Handler for UDPDataPublisher (Lamps) Registered.");
         }
 
         //  Initialize lamp arrays
@@ -327,15 +341,22 @@ namespace IBM1410Console
 
         void lampUDPOutputAvailable(object sender, UDPLightDataEventArgs e) {
 
-            if(e.DispatchCode != lampCodeByte) {
+            Helpers.checkNesting("UDP Reader", ++lampNestCounter);
+
+            if (e.DispatchCode != lampCodeByte) {
+                --lampNestCounter;
                 return;
             }
 
+            Debug.WriteLine("UI1414LForm: Processing lamp data: " + e.UDPLen + " bytes.");
+
             // processLampByte(c);
-            for(int i = 0; i < e.UDPLen; ++i) {
+
+            for (int i = 0; i < e.UDPLen; ++i) {
                 processLampByte(e.UDPBytes[i]);
             }
 
+            --lampNestCounter;
         }
 
 

@@ -161,7 +161,7 @@ namespace IBM1410Console
             Thread consumerThread = new Thread(UDPMessageConsumer);
             consumerThread.Start();
 
-            Debug.WriteLine("Message queue consumer thread started...");
+            Debug.WriteLine("UDPDataPublisher: Message queue consumer thread started...");
 
 
             //  Start up the recieve - this is just the FIRST receive.
@@ -197,7 +197,7 @@ namespace IBM1410Console
                 sample = sample + " " + rxBytes[i].ToString("X2");
             }
 
-            Debug.WriteLine("Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+            Debug.WriteLine("UDPDataPblisher: Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
 
             //  And get ready to receive the next message.
 
@@ -215,7 +215,7 @@ namespace IBM1410Console
 
                 sample = "";
 
-                Debug.WriteLine("Getting next message from queue...");
+                Debug.WriteLine("UDPDataPublisher: Consumer: Getting/waiting for next message from queue...");
 
                 rxBytes = udpMessages.Take();  // Expecting this to block when no msgs available.
 
@@ -225,7 +225,7 @@ namespace IBM1410Console
                     sample = sample + " " + rxBytes[i].ToString("X2");
                 }
 
-                Debug.WriteLine("De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+                Debug.WriteLine("UDPDataPublisher: De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
 
                 //  Now call the original message routine...
 
@@ -340,6 +340,10 @@ namespace IBM1410Console
                             }
                             else if (lastUnitRecordOperation == 0x00 || dispatchLen == 0) {
                                 Debug.WriteLine("UDPDataPublisher: No unit record operation available yet - no Dispatch");
+                                if(lastUnitRecordDevice == 0x10) {
+                                    Debug.WriteLine("UDPDataPublisher: Invalid Unit Record Device.  Ignoring/resetting.");
+                                    lastUnitRecordDevice = 0;
+                                }
                             }
                             //  For a card reader, nothing follows the operation
                             else if (lastUnitRecordDevice == readerChannel1Device) {

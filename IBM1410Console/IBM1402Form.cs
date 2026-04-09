@@ -201,7 +201,7 @@ namespace IBM1410Console
                 return;
             }
 
-            // Debug.WriteLine("IBM1402Form: Processing UDP Input.");
+            Debug.WriteLine("IBM1402Form: Processing UDP Input.");
 
             //  Loop through the bytes (hopefully / typically, the entire packet)
 
@@ -325,6 +325,7 @@ namespace IBM1410Console
             //  If the reader is currently busy or not ready, report that.
 
             if (readerBusy || !readerReady) {
+                Debug.WriteLine("IBM1402Form: Sending busy [which isn't done here anyway] or [so must be] not ready...");
                 sendReaderStatus();
                 return;
             }
@@ -348,9 +349,13 @@ namespace IBM1410Console
                 readStation = null;
             }
 
-            //  If there is no card presently at the check station, we are done.
+            //  If there is no card presently at the check station, we are done, and
+            //  are now net ready.
 
             if (checkStation == null) {
+                readerReady = false;
+                Debug.WriteLine("IBM1402Form: Reader out of cards.");
+                sendReaderStatus();
                 return;
             }
 
@@ -364,6 +369,7 @@ namespace IBM1410Console
             //  the read station, and the EOF button was pressed that is the last card.
 
             if (checkStation == null && readStation != null && readerEOF) {
+                Debug.WriteLine("IBM1402Form: Setting readerEOF to true - no more cards.");
                 readStation.setLastCard(true);
             }
 
@@ -373,9 +379,13 @@ namespace IBM1410Console
 
             if (checkStation != null || (readStation != null && readStation.getLastCard())) {
                 readerReady = true;
+                if (readStation.getLastCard() == true) {
+                    Debug.WriteLine("IBM1402Form: Reader still ready for last card.");
+                }
             }
             else {
                 readerReady = false;
+                Debug.WriteLine("IBM1402Form: Reader Not Ready after last card.");
             }
 
             //  TODO: The following code is identical to the startButton code, and should be
@@ -424,6 +434,7 @@ namespace IBM1410Console
             }
             if (readerLastCard) {
                 readerStatus |= readerIsLastCard;
+                Debug.WriteLine("IBM1402Form: Sending last card status.");
             }
             if (readerWLR) {
                 readerStatus |= readerIsWLR;
@@ -441,6 +452,8 @@ namespace IBM1410Console
             statusBuffer[3] = readerStatus;
             udpClient.Send(statusBuffer, statusBuffer.Length);
             udpOutputSemaphore.Release();
+
+            Debug.WriteLine("IBM1402Form: Updated reader status to " + statusBuffer[3].ToString("X2"));
             --statusNestCount;
         }
 
@@ -480,6 +493,12 @@ namespace IBM1410Console
                 if (readerFileStream != null) {
                     readerFileStream.Close();
                     readerFileStream = null;
+
+                    //  TODO: For now, just clear the read a check station as though the operator
+                    //  ran out the cards.  Later, maybe add an option/check box for that.
+
+                    readStation = null;
+                    checkStation = null;
                 }
                 try {
                     readerFileStream = new FileStream(readerOpenFileDialog.FileName,
@@ -661,6 +680,7 @@ namespace IBM1410Console
             byte[] card = readStation.image;
             byte[] message = new byte[readStation.image.Length + 4];
             byte bcdChar;
+            string debugMsg;
 
             readerDataCheck = false;
             message[0] = UNITRECORDTO1414FLAG;
@@ -673,20 +693,23 @@ namespace IBM1410Console
 
             readStation.setDataCheck(false);
 
-            // Debug.WriteLine("Card image length is " + card.Length.ToString());
+            Debug.WriteLine("IBM1402Form: Card image length is " + card.Length.ToString());
             for (i = 0; i < card.Length; ++i) {
                 bcdChar = IBM1410BCD.ASCIItoBCD((char)(card[i]));
                 if (bcdChar == 0xff) {
                     readStation.setDataCheck(true);
-                    bcdChar = IBM1410BCD.BCD_ASTERISK; // Asterisk insert.  ;)
+                    //  This messed up diagnostic... bcdChar = IBM1410BCD.BCD_ASTERISK; // Asterisk insert.  ;)
+                    message[n++] = (byte)(0x3f);    // Make this one even parity to cause an error
                 }
+                else {
+                    //  Calculate odd parity, and put it in bit SIX (because message data can't
+                    //  set bit 7!).  We are sending odd parity - but it may have made more sense
+                    //  to send even parity.  Oh well....
 
-                //  Calculate odd parity, and put it in bit SIX (because message data can't
-                //  set bit 7!).  We are sending odd parity - but it may have made more sense
-                //  to send even parity.  Oh well....
-
-                message[n++] = (byte)(bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6));
-                // Debug.WriteLine("Put character in reader buffer: " + ((bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6)).ToString("X2")) );
+                    message[n++] = (byte)(bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6));
+                    // Debug.WriteLine("Put character in reader buffer: " +
+                    //  ((bcdChar | (IBM1410BCD.CalculateOddParity(bcdChar) << 6)).ToString("X2")) );
+                }
             }
 
             message[n++] = 0;  //  Trailing 0 on the card image in the message by convention.
@@ -701,6 +724,14 @@ namespace IBM1410Console
             sendReaderStatus();
 
             //  Send the card image.
+
+
+            Debug.WriteLine("IBM1402Form: Sending BCD Card image: ");
+            debugMsg = "IBM1402Form: ";
+            for(int c = 0; c <= n && c < message.Length-1; ++c) {
+                debugMsg = debugMsg + message[c].ToString("X2") + " ";
+            }
+            Debug.WriteLine(debugMsg);
 
             udpOutputSemaphore.Wait();
             udpClient.Send(message, n);

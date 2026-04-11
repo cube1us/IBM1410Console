@@ -354,8 +354,8 @@ namespace IBM1410Console
 
             if (checkStation == null) {
                 readerReady = false;
-                Debug.WriteLine("IBM1402Form: Reader out of cards.");
-                sendReaderStatus();
+                Debug.WriteLine("IBM1402Form: Reader out of cards (Commented out).");
+                // sendReaderStatus();
                 return;
             }
 
@@ -380,7 +380,9 @@ namespace IBM1410Console
             if (checkStation != null || (readStation != null && readStation.getLastCard())) {
                 readerReady = true;
                 if (readStation.getLastCard() == true) {
-                    Debug.WriteLine("IBM1402Form: Reader still ready for last card.");
+                    readerLastCard = readStation.getLastCard();
+                    Debug.WriteLine("IBM1402Form: Reader still ready for last card.  Updating Status.");
+                    sendReaderStatus();
                 }
             }
             else {
@@ -390,6 +392,11 @@ namespace IBM1410Console
 
             //  TODO: The following code is identical to the startButton code, and should be
             //  factored out some day
+
+            if(readStation.getLastCard() == true) {
+                Debug.WriteLine("IBM1402Form: Sending status update for last card BEFORE sending data.");
+                sendReaderStatus();
+            }
 
             //  Set the ready light to the correct state
 
@@ -412,6 +419,7 @@ namespace IBM1410Console
             }
             else {
                 //  Send the reader status to the FPGA (1414) if we didn't just send it.
+                Debug.WriteLine("IBM1402Form: Updating reader status when read station is empty.");
                 sendReaderStatus();
             }
         }
@@ -577,7 +585,8 @@ namespace IBM1410Console
 
             //  Send the reader status to the FPGA (1414)
 
-            sendReaderStatus();
+            // Debug.WriteLine("IBM1402Form: Update reader status from StartButtonClick.");
+            // sendReaderStatus();
 
             //  If there is data at the read station, send that off to the FPGA
 
@@ -714,21 +723,11 @@ namespace IBM1410Console
 
             message[n++] = 0;  //  Trailing 0 on the card image in the message by convention.
 
-            //  Update the reader status first.  That will either set or clear the WLR and data check in the FPGA
-            //  It also updates the last card status in the 1414.
-
-            readerWLR = readStation.getWrongLengthRecord();
-            readerDataCheck = readStation.getDataCheck();
-            readerLastCard = readStation.getLastCard();
-
-            sendReaderStatus();
-
             //  Send the card image.
 
-
-            Debug.WriteLine("IBM1402Form: Sending BCD Card image: ");
+            Debug.WriteLine("IBM1402Form: Sending BCD Card image: Length is " + n.ToString());
             debugMsg = "IBM1402Form: ";
-            for(int c = 0; c <= n && c < message.Length-1; ++c) {
+            for(int c = 0; c <= n && c < message.Length; ++c) {
                 debugMsg = debugMsg + message[c].ToString("X2") + " ";
             }
             Debug.WriteLine(debugMsg);
@@ -736,6 +735,18 @@ namespace IBM1410Console
             udpOutputSemaphore.Wait();
             udpClient.Send(message, n);
             udpOutputSemaphore.Release();
+
+            //  Update the reader status.  That will either set or clear the WLR and data check in the FPGA
+            //  It also updates the last card status in the 1414.
+
+            readerWLR = readStation.getWrongLengthRecord();
+            readerDataCheck = readStation.getDataCheck();
+            readerLastCard = readStation.getLastCard();
+
+            Debug.WriteLine("IBM1402Form: Updating reader status after sending card...");
+            sendReaderStatus();
+
+            Thread.Sleep(100);
 
             //  Consider setting readStation to null here...
 

@@ -354,6 +354,7 @@ namespace IBM1410Console
 
             if (checkStation == null) {
                 readerReady = false;
+                labelReaderReady.ForeColor = Color.DimGray;
                 Debug.WriteLine("IBM1402Form: Reader out of cards (Commented out).");
                 // sendReaderStatus();
                 return;
@@ -379,6 +380,7 @@ namespace IBM1410Console
 
             if (checkStation != null || (readStation != null && readStation.getLastCard())) {
                 readerReady = true;
+                labelReaderReady.ForeColor = Color.SeaGreen;
                 if (readStation.getLastCard() == true) {
                     readerLastCard = readStation.getLastCard();
                     Debug.WriteLine("IBM1402Form: Reader still ready for last card.  Updating Status.");
@@ -387,6 +389,7 @@ namespace IBM1410Console
             }
             else {
                 readerReady = false;
+                labelReaderReady.ForeColor = Color.DimGray;
                 Debug.WriteLine("IBM1402Form: Reader Not Ready after last card.");
             }
 
@@ -414,7 +417,11 @@ namespace IBM1410Console
 
                 if (readStation.lastCard) {
                     readerEOF = false;
+                    readerEOFButton.BackColor = Color.SeaGreen;
                     readerLastCard = false;
+                    loadButton.Enabled = true;
+                    loadButton.ForeColor = Color.Black;
+                    loadButton.Text = "Load...";
                 }
             }
             else {
@@ -470,7 +477,7 @@ namespace IBM1410Console
 
         private void sendPunchStatus() {
             byte[] statusBuffer = new byte[4];
-
+    
             punchStatus = 0;
             if (punchReady) {
                 punchStatus |= punchIsReady;
@@ -495,25 +502,29 @@ namespace IBM1410Console
 
         //  Method to process the 1402 Reader Load Button - as though we just
         //  loaded in some cards.  It does not actually feed the cards, though.
+        //  However, if the RunOut check box is checked, it will empty the
+        //  check and read stations.
 
         private void loadButton_Click(object sender, EventArgs e) {
             if (readerOpenFileDialog.ShowDialog() == DialogResult.OK) {
                 if (readerFileStream != null) {
                     readerFileStream.Close();
                     readerFileStream = null;
-
-                    //  TODO: For now, just clear the read a check station as though the operator
-                    //  ran out the cards.  Later, maybe add an option/check box for that.
-
-                    readStation = null;
-                    checkStation = null;
+                    
+                    if (readerRunOutCheckbox.Checked) {
+                        readStation = null;
+                        checkStation = null;
+                    }
                 }
                 try {
                     readerFileStream = new FileStream(readerOpenFileDialog.FileName,
                         FileMode.Open, FileAccess.Read);
-                    loadButton.Enabled = false;
+                    // loadButton.Enabled = false;
+                    loadButton.Text = "(Loaded)";
+                    loadButton.ForeColor = Color.ForestGreen;
                     // labelReaderReady.ForeColor = Color.SeaGreen;
                     // readerReady = true;
+                    labelReaderReady.ForeColor = Color.DimGray;
                     readerReady = false;
                     readerLastCard = false;
                     readerStartButton.Enabled = true;
@@ -523,6 +534,8 @@ namespace IBM1410Console
                     Debug.WriteLine(e2.ToString());
                     MessageBox.Show("Open of file name " + readerOpenFileDialog.FileName + " Failed.");
                     loadButton.Enabled = true;
+                    loadButton.ForeColor = Color.Black;
+                    loadButton.Text = "Load...";
                     labelReaderReady.ForeColor = Color.DimGray;
                     readerReady = false;
                     readerLastCard = false;
@@ -597,6 +610,7 @@ namespace IBM1410Console
 
                 if (readStation.lastCard) {
                     readerEOF = false;
+                    readerEOFButton.BackColor = Color.SeaGreen;
                 }
             }
         }
@@ -605,13 +619,15 @@ namespace IBM1410Console
 
         private void readerStopButton_Click(object sender, EventArgs e) {
             readerReady = false;
-            readerEOF = false;
-            readerLastCard = false;
+            // readerEOF = false;
+            // readerLastCard = false;
             readerBusy = false;
             readerStartButton.Enabled = true;
             readerStopButton.Enabled = false; // Consider leaving it enabled?
             labelReaderReady.ForeColor = Color.DimGray;
             loadButton.Enabled = true;
+            loadButton.ForeColor = Color.Black;
+            loadButton.Text = "Load...";
             sendReaderStatus();
         }
 
@@ -619,7 +635,14 @@ namespace IBM1410Console
         //  Method to process the 1402 reader EOF button
 
         private void readerEOFButton_Click(object sender, EventArgs e) {
-            readerEOF = true;
+            if (!readerEOF) {
+                readerEOF = true;
+                readerEOFButton.BackColor = Color.LightGreen;
+            }
+            else {
+                readerEOF = false;
+                readerEOFButton.BackColor = Color.SeaGreen;
+            }
         }
 
         //  Method to feed a card on the IBM 1402 reader.
@@ -701,6 +724,7 @@ namespace IBM1410Console
             //  If invalid data is found, set that status too...
 
             readStation.setDataCheck(false);
+            labelValidity.ForeColor = Color.DimGray;
 
             Debug.WriteLine("IBM1402Form: Card image length is " + card.Length.ToString());
             for (i = 0; i < card.Length; ++i) {
@@ -709,6 +733,7 @@ namespace IBM1410Console
                     readStation.setDataCheck(true);
                     //  This messed up diagnostic... bcdChar = IBM1410BCD.BCD_ASTERISK; // Asterisk insert.  ;)
                     message[n++] = (byte)(0x3f);    // Make this one even parity to cause an error
+                    labelValidity.ForeColor = Color.DarkRed;
                 }
                 else {
                     //  Calculate odd parity, and put it in bit SIX (because message data can't
@@ -746,7 +771,7 @@ namespace IBM1410Console
             Debug.WriteLine("IBM1402Form: Updating reader status after sending card...");
             sendReaderStatus();
 
-            Thread.Sleep(100);
+            // Thread.Sleep(100);
 
             //  Consider setting readStation to null here...
 

@@ -50,6 +50,7 @@
             reader0StackerButton = new System.Windows.Forms.Button();
             testButton = new System.Windows.Forms.Button();
             readerEOFButton = new System.Windows.Forms.Button();
+            readerRunOutCheckbox = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // punchStartButton
@@ -242,6 +243,7 @@
             // 
             loadButton.BackColor = System.Drawing.SystemColors.ControlLight;
             loadButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            loadButton.ForeColor = System.Drawing.Color.Black;
             loadButton.Location = new System.Drawing.Point(782, 108);
             loadButton.Name = "loadButton";
             loadButton.Size = new System.Drawing.Size(82, 43);
@@ -334,11 +336,24 @@
             readerEOFButton.UseVisualStyleBackColor = false;
             readerEOFButton.Click += readerEOFButton_Click;
             // 
+            // readerRunOutCheckbox
+            // 
+            readerRunOutCheckbox.AutoSize = true;
+            readerRunOutCheckbox.Checked = true;
+            readerRunOutCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            readerRunOutCheckbox.Location = new System.Drawing.Point(761, 158);
+            readerRunOutCheckbox.Name = "readerRunOutCheckbox";
+            readerRunOutCheckbox.Size = new System.Drawing.Size(103, 19);
+            readerRunOutCheckbox.TabIndex = 74;
+            readerRunOutCheckbox.Text = "ReaderRunOut";
+            readerRunOutCheckbox.UseVisualStyleBackColor = true;
+            // 
             // IBM1402Form
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(876, 232);
+            Controls.Add(readerRunOutCheckbox);
             Controls.Add(testButton);
             Controls.Add(reader0StackerButton);
             Controls.Add(reader1StackerButton);
@@ -367,6 +382,7 @@
             Text = "IBM1402Form";
             FormClosing += IBM1402Form_FormClosing;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -396,5 +412,6 @@
         private System.Windows.Forms.Button reader0StackerButton;
         private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.Button readerEOFButton;
+        private System.Windows.Forms.CheckBox readerRunOutCheckbox;
     }
 }

@@ -321,6 +321,7 @@ namespace IBM1410Console
         private void doSelectStackerFeed() {
 
             IBM1402Stacker stacker = null;
+            Action safeUpdate;
 
             //  If the reader is currently busy or not ready, report that.
 
@@ -354,7 +355,13 @@ namespace IBM1410Console
 
             if (checkStation == null) {
                 readerReady = false;
-                labelReaderReady.ForeColor = Color.DimGray;
+                
+                safeUpdate = delegate
+                {
+                    labelReaderReady.ForeColor = Color.DimGray;
+                };
+                this.Invoke(safeUpdate);
+
                 Debug.WriteLine("IBM1402Form: Reader out of cards (Commented out).");
                 // sendReaderStatus();
                 return;
@@ -380,7 +387,13 @@ namespace IBM1410Console
 
             if (checkStation != null || (readStation != null && readStation.getLastCard())) {
                 readerReady = true;
-                labelReaderReady.ForeColor = Color.SeaGreen;
+
+                safeUpdate = delegate
+                {
+                    labelReaderReady.ForeColor = Color.SeaGreen;
+                };
+                this.Invoke(safeUpdate);
+
                 if (readStation.getLastCard() == true) {
                     readerLastCard = readStation.getLastCard();
                     Debug.WriteLine("IBM1402Form: Reader still ready for last card.  Updating Status.");
@@ -403,10 +416,14 @@ namespace IBM1410Console
 
             //  Set the ready light to the correct state
 
-            labelReaderReady.ForeColor = readerReady ? Color.SeaGreen : Color.DimGray;
-            labelReaderStop.ForeColor = Color.DimGray;
-            readerStartButton.Enabled = !readerReady;
-            readerStopButton.Enabled = readerReady;
+            safeUpdate = delegate
+            {
+                labelReaderReady.ForeColor = readerReady ? Color.SeaGreen : Color.DimGray;
+                labelReaderStop.ForeColor = Color.DimGray;
+                readerStartButton.Enabled = !readerReady;
+                readerStopButton.Enabled = readerReady;
+            };
+            this.Invoke(safeUpdate);
 
             //  If there is data at the read station, send that off to the 1414 (FPGA)
 
@@ -417,11 +434,15 @@ namespace IBM1410Console
 
                 if (readStation.lastCard) {
                     readerEOF = false;
-                    readerEOFButton.BackColor = Color.SeaGreen;
                     readerLastCard = false;
-                    loadButton.Enabled = true;
-                    loadButton.ForeColor = Color.Black;
-                    loadButton.Text = "Load...";
+                    safeUpdate = delegate
+                    {
+                        readerEOFButton.BackColor = Color.SeaGreen;
+                        loadButton.Enabled = true;
+                        loadButton.ForeColor = Color.Black;
+                        loadButton.Text = "Load...";
+                    };
+                    this.Invoke(safeUpdate);
                 }
             }
             else {

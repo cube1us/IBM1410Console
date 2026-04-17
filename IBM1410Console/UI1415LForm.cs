@@ -348,7 +348,7 @@ namespace IBM1410Console
                 return;
             }
 
-            Debug.WriteLine("UI1414LForm: Processing lamp data: " + e.UDPLen + " bytes.");
+            // Debug.WriteLine("UI1415LForm: Processing lamp data: " + e.UDPLen + " bytes.");
 
             // processLampByte(c);
 

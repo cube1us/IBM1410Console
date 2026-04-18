@@ -42,6 +42,8 @@
             printerClearButton = new System.Windows.Forms.Button();
             printerSaveButton = new System.Windows.Forms.Button();
             saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            openCarriageFileDialog = new System.Windows.Forms.OpenFileDialog();
+            printerRTFCheckBox = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // printerStartButton
@@ -199,7 +201,7 @@
             // carriageTapeButton
             // 
             carriageTapeButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            carriageTapeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            carriageTapeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             carriageTapeButton.ForeColor = System.Drawing.SystemColors.ControlText;
             carriageTapeButton.Location = new System.Drawing.Point(12, 390);
             carriageTapeButton.Name = "carriageTapeButton";
@@ -207,11 +209,12 @@
             carriageTapeButton.TabIndex = 61;
             carriageTapeButton.Text = "Carriage Tape...";
             carriageTapeButton.UseVisualStyleBackColor = false;
+            carriageTapeButton.Click += carriageTapeButton_Click;
             // 
             // printerClearButton
             // 
             printerClearButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            printerClearButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            printerClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             printerClearButton.Location = new System.Drawing.Point(141, 390);
             printerClearButton.Name = "printerClearButton";
             printerClearButton.Size = new System.Drawing.Size(110, 48);
@@ -223,7 +226,7 @@
             // printerSaveButton
             // 
             printerSaveButton.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            printerSaveButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            printerSaveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             printerSaveButton.Location = new System.Drawing.Point(257, 390);
             printerSaveButton.Name = "printerSaveButton";
             printerSaveButton.Size = new System.Drawing.Size(110, 48);
@@ -232,11 +235,29 @@
             printerSaveButton.UseVisualStyleBackColor = false;
             printerSaveButton.Click += printerSaveButton_Click;
             // 
+            // openCarriageFileDialog
+            // 
+            openCarriageFileDialog.FileName = "openFileDialog1";
+            // 
+            // printerRTFCheckBox
+            // 
+            printerRTFCheckBox.AutoSize = true;
+            printerRTFCheckBox.Checked = true;
+            printerRTFCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            printerRTFCheckBox.Location = new System.Drawing.Point(267, 460);
+            printerRTFCheckBox.Name = "printerRTFCheckBox";
+            printerRTFCheckBox.Size = new System.Drawing.Size(73, 19);
+            printerRTFCheckBox.TabIndex = 64;
+            printerRTFCheckBox.Text = "Print RTF";
+            printerRTFCheckBox.UseVisualStyleBackColor = true;
+            printerRTFCheckBox.CheckedChanged += printerRTFCheckBox_CheckedChanged;
+            // 
             // IBM1403Form
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1257, 510);
+            Controls.Add(printerRTFCheckBox);
             Controls.Add(printerSaveButton);
             Controls.Add(printerClearButton);
             Controls.Add(carriageTapeButton);
@@ -257,6 +278,7 @@
             Text = "IBM1403Form";
             FormClosing += IBM1403Form_FormClosing;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -278,5 +300,7 @@
         private System.Windows.Forms.Button printerClearButton;
         private System.Windows.Forms.Button printerSaveButton;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openCarriageFileDialog;
+        private System.Windows.Forms.CheckBox printerRTFCheckBox;
     }
 }

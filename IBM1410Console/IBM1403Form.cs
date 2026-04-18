@@ -1,9 +1,11 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Net.Sockets;
@@ -32,6 +34,30 @@ namespace IBM1410Console
     * 
     */
 
+    /*
+     * Carriage Tape INTERNAL format:  
+     * The carriage tape is an array with one member per line, 
+     * The default is 1-66 (11 inches, 6 lines/inch).
+     * Each array entry is a bitmap: channel 1 is 1, channel 2 is 2,
+     * channel 3 is 4 ... channel 12 is 1024.
+     * 
+     * There is a default carriage tape, with:
+     * Line 1 punched for channel 1,
+     * Line 4 punched for channels 2,3,4,5,6,7,8,10 and 11
+     * Line 61 punched for channel 9
+     * Line 63 punched for channel 12
+     * 
+     * Carriage Tape FILE Format:  We use the same format as used
+     * by Joseph Newcomer in his 1401 emulator:
+     * 
+     *      LENGTH n
+     *      CHAN c = l [[+]l]...
+     *      CHAN ...
+     *      (Where c is a number from 1 to 12 - channel number, and l
+     *      is a page line number from 1 to n (from the LENGTH line)
+     *      (A + in the first channel list entry is silently ignored)
+     */
+     
 {
     public partial class IBM1403Form : Form
     {
@@ -42,17 +68,30 @@ namespace IBM1410Console
         private UdpClient udpClient = null;
         private SemaphoreSlim udpOutputSemaphore = null;
         private byte[] printLine;
+        private int[] carriageTape = null;
+        private int formLength = 0;
+        private int currentPrintLine = 1;
 
         private Boolean printerReady = false;
         private Boolean printerBusy = false;
+        private Boolean carriageChannel9 = false;
+        private Boolean carriageChannel12 = false;
 
         public const int printerIsReady = 0x01;
         public const int printerIsBusy = 0x02;
+        public const int carriageIsChannel9 = 0x20;
+        public const int carriageIsChannel12 = 0x40;
+        public const int carriageChannel9Bit = 0x01 << 8;
+        public const int carriageChannel12Bit = 0x01 << 11;
 
         private int currentUnitRecordDevice = 0;
         private int currentPrinterOperation = 0;
         private int currentPrinterColumn = 0;
         private byte currentCarriageControlCharacter = 0;
+        private int printerDeferredSpace = 0;
+        private int printerDeferredSkip = 0;
+        private Boolean printerDeferredSuppressSpace = false;
+        private Boolean rtfInserted = false;
 
         public const byte UNITRECORDTO1414FLAG = 0x85;
         public const byte UNITRECORDFROM1414FLAG = 0x83;
@@ -68,8 +107,12 @@ namespace IBM1410Console
 
         private byte printerStatus = 0;               // Not Ready by default
 
-        Font printerFont = new Font("IBM 1410 1403", 10, FontStyle.Regular);  // IBM 1410 1403 printer font
+        //  Translate numerics to carriage channel.  0 is invalid.
 
+        private int[] BCDToCarriageChannel = {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0, 0, 0 };
+
+        Font printerFont = new Font("IBM 1410 1403", 10, FontStyle.Regular);  // IBM 1410 1403 printer font
 
         public IBM1403Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
@@ -95,6 +138,10 @@ namespace IBM1410Console
             else {
                 Debug.WriteLine("Can't initialize 1403 font for printer.");
             }
+
+            //  Set up default carriage tape
+
+            setCarriageDefault();
 
             //  We unsubscribe first, becuase sometimes we ended up with two subscriptions.
             //  Not sure why that happeneds, but unsubscribing when not subscribed is harmless.
@@ -194,13 +241,32 @@ namespace IBM1410Console
                     // Debug.WriteLine("IBM1403Form: Printing line /" + System.Text.Encoding.ASCII.GetString(printLine) + "/");
                     safePrinterTextBoxUpdate = delegate
                     {
-                        printerRichTextBox1.AppendText(System.Text.Encoding.UTF8.GetString(printLine) + "\n");
+                        printerRichTextBox1.AppendText(System.Text.Encoding.UTF8.GetString(printLine));
                         printerRichTextBox1.Update();
                     };
                     this.Invoke(safePrinterTextBoxUpdate);
                     printLine = null;
 
+                    if (!printerDeferredSuppressSpace && printerDeferredSpace == 0) {
+                        advanceCarriage();
+                    }
+
+                    if (printerDeferredSpace != 0) {
+                        for (int i = 0; i < printerDeferredSpace; i++) {
+                            advanceCarriage();
+                        }
+                    }
+
+                    if (printerDeferredSkip != 0) {
+                        skipCarriage(printerDeferredSkip);
+                    }
+
+                    printerDeferredSuppressSpace = false;
+                    printerDeferredSpace = 0;
+                    printerDeferredSkip = 0;
+                    sendPrinterStatus();
                 }
+
                 else if (currentPrinterOperation == FORMSOPERATION) {
                     if (currentCarriageControlCharacter == 0) {
                         Debug.WriteLine("IBM1403Form.printerMessageInputAvailable: Empty carriage control message received.");
@@ -208,6 +274,37 @@ namespace IBM1410Console
                     }
                     else {
                         //  TODO:  Actually do the carriage control operation.
+                        Debug.WriteLine("IBM1403Form: Carriage Control Operation character = " + currentCarriageControlCharacter.ToString("X2"));
+
+                        switch (currentCarriageControlCharacter & (IBM1410BCD.BITA | IBM1410BCD.BITB)) {
+                            case 0:
+                                skipCarriage(BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f]);
+                                break;
+                            case IBM1410BCD.BITA:
+                                printerDeferredSpace = BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f];
+                                if (printerDeferredSpace == 0) {
+                                    printerDeferredSuppressSpace = true;
+                                }
+                                break;
+                            case IBM1410BCD.BITB:
+                                int i;
+                                for (i = 0; i < BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f]; ++i) {
+                                    advanceCarriage();
+                                }
+                                //  If the numeric part is 0, suppress the next space...
+                                if (i == 0) {
+                                    printerDeferredSuppressSpace = true;
+                                }
+                                break;
+                            case IBM1410BCD.BITA | IBM1410BCD.BITB:
+                                printerDeferredSkip = BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f];
+                                break;
+                        }
+
+                        // Sending status will urn of carriage busy in CPU -- even for deferred skipping - may not be correct.
+
+                        sendPrinterStatus();
+                        currentCarriageControlCharacter = 0;
                     }
                 }
 
@@ -238,7 +335,6 @@ namespace IBM1410Console
                 }
             }
 
-
             else {
 
                 if (currentPrinterOperation == FORMSOPERATION) {
@@ -263,8 +359,79 @@ namespace IBM1410Console
 
         }
 
-        //  Method to send status of the punch.  For now, just the stop and start
-        //  buttons.  In theory, it should also deal with a full stacker.
+        //  Method to do a carriage skip.  It has a built in carriage stop as well.
+
+        private void skipCarriage(int channel) {
+            int skipped = 0;
+
+            Debug.WriteLine("Skipping carriage to channel " + channel.ToString());
+
+            if (channel == 0) {
+                return;
+            }
+
+            for (skipped = 0; skipped < formLength + 2; ++skipped) {
+                if ((carriageTape[currentPrintLine] & (1 << channel - 1)) != 0) {
+                    break;
+                }
+                advanceCarriage();
+            }
+
+            Debug.WriteLine("Skipped " + skipped.ToString() + " lines...");
+
+            //  Force a carriage stop in extreme circumstances...
+
+            if (skipped >= formLength + 1) {
+                stopPrinter();
+            }
+        }
+
+        //  Method to advance the carriage and check for holes in the carriage tape
+        //  and set appropriate status.
+
+        private void advanceCarriage() {
+
+            if (++currentPrintLine > formLength) {
+                currentPrintLine = 1;
+            }
+
+            Action safePrinterTextBoxUpdate = delegate
+            {
+                printerRichTextBox1.AppendText("\n");
+                printerRichTextBox1.Update();
+            };
+
+            this.Invoke(safePrinterTextBoxUpdate);
+
+            //  The carriage channel signals are latched.  Once set, they stay
+            //  that way until the next hole is sensed.  Note than if just channel
+            //  9 is punched, it will reset 12, and vice-versa.
+
+            if ((carriageTape[currentPrintLine] & carriageChannel9Bit) != 0) {
+                carriageChannel9 = true;
+                carriageChannel12 = (carriageTape[currentPrintLine] & carriageChannel12Bit) != 0;
+            }
+            else if ((carriageTape[currentPrintLine] & carriageChannel12Bit) != 0) {
+                carriageChannel12 = true;
+                carriageChannel9 = (carriageTape[currentPrintLine] & carriageChannel9Bit) != 0;
+            }
+            else if (carriageTape[currentPrintLine] != 0) {
+                carriageChannel9 = false;
+                carriageChannel12 = false;
+            }
+        }
+
+
+        //  Method to stop the printer (Stop or carriage stop)
+
+        private void stopPrinter() {
+            printerReady = false;
+            printerBusy = false;
+            labelPrintReady.ForeColor = Color.DimGray;  // Might need a delegate?
+            sendPrinterStatus();
+        }
+
+        //  Method to send status of the Printer to the FPGA.
 
         private void sendPrinterStatus() {
             byte[] statusBuffer = new byte[4];
@@ -275,6 +442,12 @@ namespace IBM1410Console
             }
             if (printerBusy) {
                 printerStatus |= printerIsBusy;
+            }
+            if (carriageChannel9) {
+                printerStatus |= carriageIsChannel9;
+            }
+            if (carriageChannel12) {
+                printerStatus |= carriageIsChannel12;
             }
 
             //  For now, serial port version NOT implemented.
@@ -288,7 +461,18 @@ namespace IBM1410Console
             statusBuffer[3] = printerStatus;
             udpClient.Send(statusBuffer, statusBuffer.Length);
             udpOutputSemaphore.Release();
+        }
 
+        //  Method to set up a default carriage tape
+
+        private void setCarriageDefault() {
+            formLength = 66;
+            carriageTape = new int[formLength + 1];   // 1-66 (C# inits to 0!)
+
+            carriageTape[1] = 1;
+            carriageTape[4] = 2 | 4 | 8 | 16 | 32 | 64 | 128 | 512 | 1024;
+            carriageTape[61] = 256;         // Channel 9
+            carriageTape[63] = 2048;        // Channel 12 
         }
 
         private void printerStartButton_Click(object sender, EventArgs e) {
@@ -299,29 +483,41 @@ namespace IBM1410Console
         }
 
         private void printerStopButton_Click(object sender, EventArgs e) {
-            printerReady = false;
-            printerBusy = false;
-            labelPrintReady.ForeColor = Color.DimGray;
-            sendPrinterStatus();
+            stopPrinter();
         }
 
         private void carriageStopButton_Click(object sender, EventArgs e) {
-            printerStopButton_Click(sender, e);
+            stopPrinter();
         }
 
         //  Method to clear out the print display area
         private void printerClearButton_Click(object sender, EventArgs e) {
             printerRichTextBox1.Clear();
+            rtfInserted = false;
         }
 
         private void printerSaveButton_Click(object sender, EventArgs e) {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
 
-            saveFileDialog.Filter = "Print file (*.prt)|*.prt|Text file (*.txt)|*.txt|All Files (*.*)|*.*";
+            if (printerRTFCheckBox.Checked) {
+                // The following did not work - the Rich Text Box just threw it away.
+                // if (!rtfInserted) {
+                //    printerRichTextBox1.SelectionStart = 0;
+                //    printerRichTextBox1.SelectionLength = 0;
+                //    printerRichTextBox1.SelectedText =
+                //       @"{\rtf1\ansi \paperw18000 \paperh15840 \margl1440 \margr1440 \margt720 \marg720}";
+                //    rtfInserted = true;
+                }
+                saveFileDialog.Filter = "RTF file (*.rtf)|*.rtf|Text file (*.txt)|*.txt|All Files (*.*)|*.*";
+            }
+            else {
+                saveFileDialog.Filter = "Text file (*.txt)|*.txt|All Files (*.*)|*.*";
+            }
+            
             saveFileDialog.FilterIndex = 0;
             saveFileDialog.RestoreDirectory = true;
             saveFileDialog.Title = "Save Printer Output" + this.Text + " to a file";
-            saveFileDialog.DefaultExt = "prt";
+            saveFileDialog.DefaultExt = printerRTFCheckBox.Checked ? "rtf" : "txt";
             saveFileDialog.AddExtension = true;
 
             //  Display the save file dialog and check if the users clicked OK
@@ -329,8 +525,12 @@ namespace IBM1410Console
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 string fileName = saveFileDialog.FileName;
                 try {
-                    // System.IO.File.WriteAllText(fileName, stackerRichTextBox1.Text, System.Text.Encoding.GetEncoding(1252));
-                    System.IO.File.WriteAllText(fileName, printerRichTextBox1.Text);
+                    if (printerRTFCheckBox.Checked) {
+                        printerRichTextBox1.SaveFile(fileName, RichTextBoxStreamType.RichText);
+                    }
+                    else {
+                        System.IO.File.WriteAllText(fileName, printerRichTextBox1.Text);
+                    }
                 }
                 catch (Exception ex) {
                     MessageBox.Show($"Error saving print to file {fileName} {ex.Message}",
@@ -344,6 +544,151 @@ namespace IBM1410Console
                 e.Cancel = true;
                 Hide();
             }
+        }
+
+        //  Method to load a carriage tape from a file.  If the file cannot be
+        //  accessed, the existing carriageTape used.  If the file has an error,
+        //  erroneous lines are ignored.  If the LENGTH lineis missing, 66 is
+        //  assumed.
+
+        private void carriageTapeButton_Click(object sender, EventArgs e) {
+            FileStream carriageFileStream = null;
+            StreamReader carriageStreamReader = null;
+            String carriageLine = null;
+            int lineno = 1;
+
+            if (openCarriageFileDialog.ShowDialog() == DialogResult.OK) {
+                try {
+                    carriageFileStream = new FileStream(openCarriageFileDialog.FileName,
+                        FileMode.Open, FileAccess.Read);
+                    carriageStreamReader = new StreamReader(carriageFileStream);
+                }
+                catch (Exception eCarriage) {
+                    Debug.WriteLine("IBM1403Form: ERROR: Cannot open carriage tape file " +
+                        openCarriageFileDialog.FileName);
+                    Debug.WriteLine("IBM1403Form:   " + eCarriage.Message);
+                    MessageBox.Show("IBM1403Form: Open of carriage tape file " +
+                        openCarriageFileDialog.FileName + " failed.");
+                    return;
+                }
+            }
+            else {
+                return;
+            }
+
+            //  Process the lines in the carriage control file one a a time.
+
+            while ((carriageLine = carriageStreamReader.ReadLine()) != null) {
+                Int32 temp;
+                int channelLine = 0;
+                int channel;
+                string s;
+
+                String[] tokens = carriageLine.Split(
+                    (char[])null, StringSplitOptions.RemoveEmptyEntries |
+                    StringSplitOptions.TrimEntries);
+
+                for (int i = 0; i < tokens.Length; ++i) {
+                    Debug.Write(tokens[i] + " ");
+                }
+                Debug.WriteLine("");
+
+                if (lineno == 1) {
+                    //  Validate first line is LENGTH nnn
+                    formLength = 66;
+                    if (tokens.Length != 2 || !tokens[0].ToUpper().Equals("LENGTH")) {
+                        MessageBox.Show("IBM1403Form: First Line of Carriage Tape File must start with LENGTH nnn");
+                    }
+                    else {
+                        if (Int32.TryParse(tokens[1], out temp)) {
+                            formLength = temp;
+                        }
+                        else {
+                            MessageBox.Show("IBM1403Form: First Line of Carriage Tape File must start with LENGTH nnn");
+                        }
+                    }
+
+                    carriageTape = new int[formLength + 1];
+                }
+
+                else {
+                    //  Validate Channel line CHAN c = n [[+]n]...
+                    if (tokens.Length < 4 || !tokens[0].ToUpper().Equals("CHAN") ||
+                        !tokens[2].Equals("=")) {
+                        MessageBox.Show("IBM1403Form: Line " + lineno.ToString() + " CHAN improper format - missing CHAN or =.");
+                        continue;
+                    }
+                    if (Int32.TryParse(tokens[1], out temp) && temp > 0 || temp <= 12) {
+                        channel = temp;
+                    }
+                    else {
+                        MessageBox.Show("IBM1403Form: Line " + lineno.ToString() + " CHAN improper format or invalid channel.");
+                        continue;
+                    }
+
+                    channelLine = 0;
+                    for (int i = 3; i < tokens.Length; i++) {
+                        if (tokens[i].Substring(0, 1).Equals("+")) {        // So, this one is +n
+                            if (tokens[i].Length >= 2 && Int32.TryParse(tokens[i].Substring(1), out temp) && temp > 0) {
+                                if (channelLine + temp <= formLength) {
+                                    channelLine = channelLine + temp;
+                                }
+                                else {
+                                    MessageBox.Show("IBM1403Form: Line " + lineno.ToString() + " CHAN: line # is > LENGTH");
+                                    break;
+                                }
+                            }
+                            else {
+                                MessageBox.Show("IBM1403Form: Line " + lineno.ToString() + " CHAN: Missing or invalid +#");
+                                break;
+                            }
+                        }
+                        else {
+                            if (Int32.TryParse(tokens[i], out temp) && temp >= 1 && temp <= formLength) {
+                                channelLine = temp;
+                            }
+                            else {
+                                MessageBox.Show("IBM1403Form: Line " + lineno.ToString() + " CHAN: invalid line #");
+                                break;
+                            }
+                        }
+
+                        //  If we get here, we had a valid CHAN = Line # entry.  Enter it, and move on to the
+                        //  next entry in the line.
+
+                        carriageTape[channelLine] |= (1 << (channel - 1));
+                    }
+                }
+
+                //  Move on to the next line
+
+                ++lineno;
+
+            }
+
+            carriageStreamReader.Close();
+            carriageFileStream.Close();
+
+            //  Debugging
+
+            for (int i = 1; i <= formLength; ++i) {
+                if (carriageTape[i] != 0) {
+                    Debug.Write("IBM1403Form: Carriage Tape Line " + i.ToString() + ", Channels: ");
+                    int temp = carriageTape[i];
+                    for (int c = 1; c <= 12; ++c) {
+                        if ((temp & 1) == 1) {
+                            Debug.Write(c.ToString());
+                        }
+                        temp = temp >> 1;
+                    }
+                    Debug.WriteLine("");
+                }
+            }
+
+        }
+
+        private void printerRTFCheckBox_CheckedChanged(object sender, EventArgs e) {
+            //  Don't really need to do anything, it just toggles.
         }
     }
 }

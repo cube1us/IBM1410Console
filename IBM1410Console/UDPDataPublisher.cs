@@ -197,7 +197,9 @@ namespace IBM1410Console
                 sample = sample + " " + rxBytes[i].ToString("X2");
             }
 
-            Debug.WriteLine("UDPDataPblisher: Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+            if(rxBytes.Length != 35 || rxBytes[0] != 0x81) {
+                Debug.WriteLine("UDPDataPblisher: Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+            }
 
             //  And get ready to receive the next message.
 
@@ -215,7 +217,7 @@ namespace IBM1410Console
 
                 sample = "";
 
-                Debug.WriteLine("UDPDataPublisher: Consumer: Getting/waiting for next message from queue...");
+                // Debug.WriteLine("UDPDataPublisher: Consumer: Getting/waiting for next message from queue...");
 
                 rxBytes = udpMessages.Take();  // Expecting this to block when no msgs available.
 
@@ -225,7 +227,9 @@ namespace IBM1410Console
                     sample = sample + " " + rxBytes[i].ToString("X2");
                 }
 
-                Debug.WriteLine("UDPDataPublisher: De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+                if (rxBytes.Length != 35 || rxBytes[0] != 0x81) {
+                    Debug.WriteLine("UDPDataPublisher: De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+                }
 
                 //  Now call the original message routine...
 
@@ -283,8 +287,10 @@ namespace IBM1410Console
 
             //  Process the data
 
-            Debug.WriteLine("UDPDataPublisher: UDP Received " + rxBytes.Length.ToString() + " bytes from " +
-                "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
+            if (rxBytes.Length != 35 || rxBytes[0] != 0x81) {
+                Debug.WriteLine("UDPDataPublisher: UDP Received " + rxBytes.Length.ToString() + " bytes from " +
+                    "1410 IP Address " + udpState.ipEndPoint.Address.ToString());
+            }
 
             dispatchLen = 0;
 
@@ -322,7 +328,7 @@ namespace IBM1410Console
                         if (lastCodeByte == lightCodeByte) {
                             UDPLightDataEventArgs udpLightDataEventArgs =
                                 new UDPLightDataEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                            Debug.WriteLine("UDPDataPublisher: Dispatching " + dispatchBytes + " to lamp form.  i is now " + i.ToString());
+                            // Debug.WriteLine("UDPDataPublisher: Dispatching " + dispatchBytes + " to lamp form.  i is now " + i.ToString());
                             OnRaiseUDPLightOutputEvent(udpLightDataEventArgs);
                             dispatchLen = 0;
                         }
@@ -493,9 +499,6 @@ namespace IBM1410Console
             //  Hopefully this can be removed...
 
             // udpReceiveSemaphore.Release();
-
-            Debug.WriteLine("UDPDataPublisher: Semaphore released.");
-
         }
 
         protected void OnRaiseUDPOutputEvent(UDPDataEventArgs e) {

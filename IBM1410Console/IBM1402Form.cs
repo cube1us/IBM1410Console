@@ -132,6 +132,7 @@ namespace IBM1410Console
 
         IBM1410Card punchedCard = null;
 
+        private int readerLineNumber = 0;
         private int readerNestCount = 0;
         private int statusNestCount = 0;
 
@@ -306,8 +307,8 @@ namespace IBM1410Console
 
             else {
                 //  Add the character, stripping the 0x40 parity bit, and translating to ASCII.
-                Debug.WriteLine("IBM1402Form: Adding byte to card: " + (c & 0x3f).ToString("X2"));
-                Debug.WriteLine("IBM1402Form: BCD to ASCII is:     " + ((byte)IBM1410BCD.BCDtoASCII((byte)(c & 0x3f))).ToString("X2"));
+                // Debug.WriteLine("IBM1402Form: Adding byte to card: " + (c & 0x3f).ToString("X2"));
+                // Debug.WriteLine("IBM1402Form: BCD to ASCII is:     " + ((byte)IBM1410BCD.BCDtoASCII((byte)(c & 0x3f))).ToString("X2"));
 
                 if (punchedCard.addByte((byte)IBM1410BCD.BCDtoASCII((byte)(c & 0x3f))) == false) {
                     Debug.WriteLine("IBM1402Form.punchMessageInputAvailable: Punched card data image > 80 characters.");
@@ -549,6 +550,7 @@ namespace IBM1410Console
                     readerReady = false;
                     readerLastCard = false;
                     readerStartButton.Enabled = true;
+                    readerLineNumber = 0;
                 }
                 catch (Exception e2) {
                     Debug.WriteLine("ERROR: IBM1402: Load: new FileStream failed on reader");
@@ -681,7 +683,7 @@ namespace IBM1410Console
 
             //  Read up to 80 columns, looking for a newline.  If we hit EOF first before
             //  the newline, throw away the card.  Turn any trailing \r or \n into spaces.
-            //  We have up to 82 characters to get to the newline.  If we don't signal WLR.
+            //  We have up to 82 characters to get to the newline.  If we don't we signal WLR.
 
             for (i = 0; i < temp.Length; ++i) {
                 c = readerFileStream.ReadByte();
@@ -697,13 +699,15 @@ namespace IBM1410Console
                 }
             }
 
+            ++readerLineNumber;
+
             // Debug.WriteLine("Exit card read loop with i of " + i.ToString());
 
             //  The last character we saw should be the newline.
 
             if (c != '\n') {
-                Debug.WriteLine("Warning: IBM1402Form.Feed: No newline found within 82 characters of card image.");
-                MessageBox.Show("Warning: IBM1402Form.Feed: No newline found within 82 characters of card image.");
+                Debug.WriteLine("Warning: IBM1402Form.Feed: Line " + readerLineNumber.ToString() + ", No newline found within 82 characters of card image.");
+                MessageBox.Show("Warning: IBM1402Form.Feed: Line " + readerLineNumber.ToString() + ", No newline found within 82 characters of card image.");
                 card.setWrongLengthRecord(true);
             }
 

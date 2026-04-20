@@ -245,6 +245,7 @@ namespace IBM1410Console
                         printerRichTextBox1.Update();
                     };
                     this.Invoke(safePrinterTextBoxUpdate);
+                    Debug.WriteLine("IBM1403Form: Print /" + System.Text.Encoding.UTF8.GetString(printLine) + "/");
                     printLine = null;
 
                     if (!printerDeferredSuppressSpace && printerDeferredSpace == 0) {
@@ -264,6 +265,9 @@ namespace IBM1410Console
                     printerDeferredSuppressSpace = false;
                     printerDeferredSpace = 0;
                     printerDeferredSkip = 0;
+
+                    //  Need to send the printer status in part so that it turns off the busy flag in the FPGA
+
                     sendPrinterStatus();
                 }
 
@@ -278,15 +282,18 @@ namespace IBM1410Console
 
                         switch (currentCarriageControlCharacter & (IBM1410BCD.BITA | IBM1410BCD.BITB)) {
                             case 0:
+                                //  Immediate Skip
                                 skipCarriage(BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f]);
                                 break;
                             case IBM1410BCD.BITA:
+                                // Space after print
                                 printerDeferredSpace = BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f];
                                 if (printerDeferredSpace == 0) {
                                     printerDeferredSuppressSpace = true;
                                 }
                                 break;
                             case IBM1410BCD.BITB:
+                                //  Immediate Space
                                 int i;
                                 for (i = 0; i < BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f]; ++i) {
                                     advanceCarriage();
@@ -297,11 +304,12 @@ namespace IBM1410Console
                                 }
                                 break;
                             case IBM1410BCD.BITA | IBM1410BCD.BITB:
+                                // Skip after print
                                 printerDeferredSkip = BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f];
                                 break;
                         }
 
-                        // Sending status will urn of carriage busy in CPU -- even for deferred skipping - may not be correct.
+                        // Sending status will turn off carriage busy in CPU -- even for deferred skipping - may not be correct.
 
                         sendPrinterStatus();
                         currentCarriageControlCharacter = 0;
@@ -328,8 +336,8 @@ namespace IBM1410Console
                     }
                 }
                 else {
-                    Debug.WriteLine("IBM1402Form.printerMessageInputAvailable: Invalid printer operation code: " + c.ToString("X2"));
-                    MessageBox.Show("IBM1402Form.printerMessageInputAvailable: Invalid printer operation code: " + c.ToString("X2"));
+                    Debug.WriteLine("IBM1403Form.printerMessageInputAvailable: Invalid printer operation code: " + c.ToString("X2"));
+                    MessageBox.Show("IBM1403Form.printerMessageInputAvailable: Invalid printer operation code: " + c.ToString("X2"));
                     currentPrinterOperation = 0;
                     currentUnitRecordDevice = 0;
                 }
@@ -445,10 +453,14 @@ namespace IBM1410Console
             }
             if (carriageChannel9) {
                 printerStatus |= carriageIsChannel9;
+                Debug.WriteLine("IBM1403Form: Sending Carriage Channel 9 Status.");
             }
             if (carriageChannel12) {
                 printerStatus |= carriageIsChannel12;
+                Debug.WriteLine("IBM1403Form: Sending Carriage Channel 12 Status.");
             }
+
+            Debug.WriteLine("Sending status byte of " + printerStatus.ToString("X2"));
 
             //  For now, serial port version NOT implemented.
 
@@ -507,7 +519,7 @@ namespace IBM1410Console
                 //    printerRichTextBox1.SelectedText =
                 //       @"{\rtf1\ansi \paperw18000 \paperh15840 \margl1440 \margr1440 \margt720 \marg720}";
                 //    rtfInserted = true;
-                }
+                // }
                 saveFileDialog.Filter = "RTF file (*.rtf)|*.rtf|Text file (*.txt)|*.txt|All Files (*.*)|*.*";
             }
             else {

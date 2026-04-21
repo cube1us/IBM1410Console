@@ -90,7 +90,8 @@ namespace IBM1410Console
         private byte currentCarriageControlCharacter = 0;
         private int printerDeferredSpace = 0;
         private int printerDeferredSkip = 0;
-        private Boolean printerDeferredSuppressSpace = false;
+        private Boolean printerRequiresSpace = false;
+        private Boolean printerSuppressSpace = false;
         private Boolean rtfInserted = false;
 
         public const byte UNITRECORDTO1414FLAG = 0x85;
@@ -238,19 +239,23 @@ namespace IBM1410Console
                     // }
                     // Debug.WriteLine("");
 
-                    // Debug.WriteLine("IBM1403Form: Printing line /" + System.Text.Encoding.ASCII.GetString(printLine) + "/");
+                    //  If we did not advance or suppress spacing after the last print, then advance it now.
+                    //  But if we suppressed it, add a carriage return in front of the print line.
+
+                    if(printerRequiresSpace) {
+                        advanceCarriage();
+                    }
+
                     safePrinterTextBoxUpdate = delegate
                     {
-                        printerRichTextBox1.AppendText(System.Text.Encoding.UTF8.GetString(printLine));
+                        printerRichTextBox1.AppendText((printerSuppressSpace ? "\r" : "") + System.Text.Encoding.UTF8.GetString(printLine));
                         printerRichTextBox1.Update();
                     };
                     this.Invoke(safePrinterTextBoxUpdate);
                     Debug.WriteLine("IBM1403Form: Print /" + System.Text.Encoding.UTF8.GetString(printLine) + "/");
-                    printLine = null;
 
-                    if (!printerDeferredSuppressSpace && printerDeferredSpace == 0) {
-                        advanceCarriage();
-                    }
+                    printLine = null;
+                    printerRequiresSpace = true;   // Must have CC advance/suppress or we will advance before next line.
 
                     if (printerDeferredSpace != 0) {
                         for (int i = 0; i < printerDeferredSpace; i++) {
@@ -262,9 +267,9 @@ namespace IBM1410Console
                         skipCarriage(printerDeferredSkip);
                     }
 
-                    printerDeferredSuppressSpace = false;
                     printerDeferredSpace = 0;
                     printerDeferredSkip = 0;
+                    printerSuppressSpace = false;
 
                     //  Need to send the printer status in part so that it turns off the busy flag in the FPGA
 
@@ -288,9 +293,9 @@ namespace IBM1410Console
                             case IBM1410BCD.BITA:
                                 // Space after print
                                 printerDeferredSpace = BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f];
-                                if (printerDeferredSpace == 0) {
-                                    printerDeferredSuppressSpace = true;
-                                }
+                                // if (printerDeferredSpace == 0) {
+                                //     printerRequiresSpace = false;
+                                // }
                                 break;
                             case IBM1410BCD.BITB:
                                 //  Immediate Space
@@ -300,7 +305,8 @@ namespace IBM1410Console
                                 }
                                 //  If the numeric part is 0, suppress the next space...
                                 if (i == 0) {
-                                    printerDeferredSuppressSpace = true;
+                                    printerRequiresSpace = false;
+                                    printerSuppressSpace = true;
                                 }
                                 break;
                             case IBM1410BCD.BITA | IBM1410BCD.BITB:
@@ -408,6 +414,8 @@ namespace IBM1410Console
                 printerRichTextBox1.AppendText("\n");
                 printerRichTextBox1.Update();
             };
+
+            printerRequiresSpace = false;
 
             this.Invoke(safePrinterTextBoxUpdate);
 

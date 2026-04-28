@@ -33,7 +33,8 @@ using System.Net;
 namespace IBM1410Console
 {
 
-    public partial class IBM1410SwitchForm : Form {
+    public partial class IBM1410SwitchForm : Form
+    {
 
         public const int switchVectorBits = 280;
         public const int SLEEPTIME = 10;
@@ -142,7 +143,7 @@ namespace IBM1410Console
             densityCh1ComboBox.SelectedIndex = 0;
             densityCh2ComboBox.SelectedIndex = 0;
             modeComboBox.SelectedIndex = 3;
-            priorityUnitSelectcomboBox.SelectedIndex = 0;
+            priorityUnitSelectcomboBox.SelectedIndex = 0;  // OFF
             BCharSelComboBox.SelectedIndex = 0;
             addrTransferComboBox.SelectedIndex = 6;
             scanGateComboBox.SelectedIndex = 0;
@@ -177,7 +178,7 @@ namespace IBM1410Console
             switchVector[SWITCH_ROT_HUNDS_SYNC_DK1_INDEX + 10] = true;
             switchVector[SWITCH_ROT_TENS_SYNC_DK1_INDEX + 10] = true;
             switchVector[SWITCH_ROT_UNITS_SYNC_DK1_INDEX + 10] = true;
-            
+
             initalizing = false;
         }
 
@@ -244,7 +245,7 @@ namespace IBM1410Console
 
         private void sendSwitchVector() {
 
-            Byte[] switchBytes = new byte[(switchVector.Length / 7)+1];   // +1 for flag byte
+            Byte[] switchBytes = new byte[(switchVector.Length / 7) + 1];   // +1 for flag byte
             byte tempByte = 0x00;
             int currentByte = 0;
 
@@ -261,7 +262,7 @@ namespace IBM1410Console
                     tempByte = (byte)((tempByte << 1) | (switchVector[i - j] ? 1 : 0));
                 }
 
-                switchBytes[currentByte+1] = tempByte;
+                switchBytes[currentByte + 1] = tempByte;
                 ++currentByte;
             }
 
@@ -605,20 +606,45 @@ namespace IBM1410Console
 
         private void resetFormStates() {
 
-            if(lampForm == null || tapesForm == null) return;
+            if (lampForm == null || tapesForm == null) return;
 
-            Action resetLampOffset = delegate {
+            Action resetLampOffset = delegate
+            {
                 lampForm.resetLampOffset();
             };
 
-            Action resetTapeSerialState = delegate { 
+            Action resetTapeSerialState = delegate
+            {
                 tapesForm.tapeSerialStateReset();
             };
 
             this.Invoke(resetLampOffset);
-            this.Invoke(resetTapeSerialState);            
+            this.Invoke(resetTapeSerialState);
         }
 
+        private void priorityUnitSelectcomboBox_SelectedIndexChanged(object sender, EventArgs e) {
+            bool[] unitSwitch = new bool[SWITCH_ROT_I_O_UNIT_DK1_LEN];
+            
+            //  Ignore index changes during initialization.
 
+            if(initalizing) {
+                return;
+            }
+            
+            //  Preset all of the switch entries to false
+            for (int i = 0; i < SWITCH_ROT_I_O_UNIT_DK1_LEN; i++) {
+                unitSwitch[i] = false;
+            }
+            
+            //  Set the selected entry true (except for off which isn't used
+
+            if(priorityUnitSelectcomboBox.SelectedIndex != 0) {
+                unitSwitch[priorityUnitSelectcomboBox.SelectedIndex + 1] = true;
+            }
+
+            //  Send the results to the FPGA
+
+            setRotarySwitch(unitSwitch, SWITCH_ROT_I_O_UNIT_DK1_INDEX, SWITCH_ROT_I_O_UNIT_DK1_LEN);
+        }
     }
 }

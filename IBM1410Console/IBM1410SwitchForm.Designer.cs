@@ -127,7 +127,7 @@ namespace IBM1410Console
             addressEntryLabel.AutoSize = true;
             addressEntryLabel.Location = new System.Drawing.Point(28, 59);
             addressEntryLabel.Name = "addressEntryLabel";
-            addressEntryLabel.Size = new System.Drawing.Size(94, 15);
+            addressEntryLabel.Size = new System.Drawing.Size(95, 15);
             addressEntryLabel.TabIndex = 1;
             addressEntryLabel.Text = "ADDRESS ENTRY";
             // 
@@ -136,7 +136,7 @@ namespace IBM1410Console
             storageScanLabel.AutoSize = true;
             storageScanLabel.Location = new System.Drawing.Point(30, 136);
             storageScanLabel.Name = "storageScanLabel";
-            storageScanLabel.Size = new System.Drawing.Size(90, 15);
+            storageScanLabel.Size = new System.Drawing.Size(91, 15);
             storageScanLabel.TabIndex = 3;
             storageScanLabel.Text = "STORAGE SCAN";
             // 
@@ -157,7 +157,7 @@ namespace IBM1410Console
             cycleControlLabel.AutoSize = true;
             cycleControlLabel.Location = new System.Drawing.Point(26, 214);
             cycleControlLabel.Name = "cycleControlLabel";
-            cycleControlLabel.Size = new System.Drawing.Size(99, 15);
+            cycleControlLabel.Size = new System.Drawing.Size(100, 15);
             cycleControlLabel.TabIndex = 5;
             cycleControlLabel.Text = "CYCLE CONTROL";
             // 
@@ -178,7 +178,7 @@ namespace IBM1410Console
             checkControlLabel.AutoSize = true;
             checkControlLabel.Location = new System.Drawing.Point(24, 294);
             checkControlLabel.Name = "checkControlLabel";
-            checkControlLabel.Size = new System.Drawing.Size(102, 15);
+            checkControlLabel.Size = new System.Drawing.Size(103, 15);
             checkControlLabel.TabIndex = 7;
             checkControlLabel.Text = "CHECK CONTROL";
             // 
@@ -212,7 +212,7 @@ namespace IBM1410Console
             densityCH1Label.AutoSize = true;
             densityCH1Label.Location = new System.Drawing.Point(171, 199);
             densityCH1Label.Name = "densityCH1Label";
-            densityCH1Label.Size = new System.Drawing.Size(78, 15);
+            densityCH1Label.Size = new System.Drawing.Size(79, 15);
             densityCH1Label.TabIndex = 10;
             densityCH1Label.Text = "DENSITY CH1";
             // 
@@ -233,7 +233,7 @@ namespace IBM1410Console
             densityCh2Label.AutoSize = true;
             densityCh2Label.Location = new System.Drawing.Point(171, 253);
             densityCh2Label.Name = "densityCh2Label";
-            densityCh2Label.Size = new System.Drawing.Size(78, 15);
+            densityCh2Label.Size = new System.Drawing.Size(79, 15);
             densityCh2Label.TabIndex = 12;
             densityCh2Label.Text = "DENSITY CH1";
             // 
@@ -467,7 +467,7 @@ namespace IBM1410Console
             senseBitLabel.AutoSize = true;
             senseBitLabel.Location = new System.Drawing.Point(434, 35);
             senseBitLabel.Name = "senseBitLabel";
-            senseBitLabel.Size = new System.Drawing.Size(71, 15);
+            senseBitLabel.Size = new System.Drawing.Size(72, 15);
             senseBitLabel.TabIndex = 33;
             senseBitLabel.Text = "SENSE     BIT";
             // 
@@ -727,7 +727,7 @@ namespace IBM1410Console
             unitsLabel.ForeColor = System.Drawing.Color.White;
             unitsLabel.Location = new System.Drawing.Point(478, 252);
             unitsLabel.Name = "unitsLabel";
-            unitsLabel.Size = new System.Drawing.Size(39, 15);
+            unitsLabel.Size = new System.Drawing.Size(40, 15);
             unitsLabel.TabIndex = 15;
             unitsLabel.Text = "UNITS";
             // 
@@ -746,7 +746,7 @@ namespace IBM1410Console
             tensLabel.ForeColor = System.Drawing.Color.White;
             tensLabel.Location = new System.Drawing.Point(379, 252);
             tensLabel.Name = "tensLabel";
-            tensLabel.Size = new System.Drawing.Size(34, 15);
+            tensLabel.Size = new System.Drawing.Size(35, 15);
             tensLabel.TabIndex = 13;
             tensLabel.Text = "TENS";
             // 
@@ -784,7 +784,7 @@ namespace IBM1410Console
             thousandsLabel.ForeColor = System.Drawing.Color.White;
             thousandsLabel.Location = new System.Drawing.Point(160, 252);
             thousandsLabel.Name = "thousandsLabel";
-            thousandsLabel.Size = new System.Drawing.Size(76, 15);
+            thousandsLabel.Size = new System.Drawing.Size(77, 15);
             thousandsLabel.TabIndex = 9;
             thousandsLabel.Text = "THOUSANDS";
             // 
@@ -803,7 +803,7 @@ namespace IBM1410Console
             scanGateLabel.ForeColor = System.Drawing.Color.White;
             scanGateLabel.Location = new System.Drawing.Point(43, 252);
             scanGateLabel.Name = "scanGateLabel";
-            scanGateLabel.Size = new System.Drawing.Size(68, 15);
+            scanGateLabel.Size = new System.Drawing.Size(69, 15);
             scanGateLabel.TabIndex = 7;
             scanGateLabel.Text = "SCAN GATE";
             // 
@@ -878,7 +878,7 @@ namespace IBM1410Console
             addrStopCheckBox.ForeColor = System.Drawing.Color.White;
             addrStopCheckBox.Location = new System.Drawing.Point(43, 43);
             addrStopCheckBox.Name = "addrStopCheckBox";
-            addrStopCheckBox.Size = new System.Drawing.Size(72, 33);
+            addrStopCheckBox.Size = new System.Drawing.Size(73, 33);
             addrStopCheckBox.TabIndex = 0;
             addrStopCheckBox.Text = "ADDR STOP";
             addrStopCheckBox.UseVisualStyleBackColor = true;
@@ -914,7 +914,7 @@ namespace IBM1410Console
             priorityProcessingLabel.ForeColor = System.Drawing.Color.White;
             priorityProcessingLabel.Location = new System.Drawing.Point(128, 198);
             priorityProcessingLabel.Name = "priorityProcessingLabel";
-            priorityProcessingLabel.Size = new System.Drawing.Size(128, 15);
+            priorityProcessingLabel.Size = new System.Drawing.Size(129, 15);
             priorityProcessingLabel.TabIndex = 48;
             priorityProcessingLabel.Text = "PRIORITY PROCESSING";
             // 
@@ -928,6 +928,7 @@ namespace IBM1410Console
             priorityUnitSelectcomboBox.Name = "priorityUnitSelectcomboBox";
             priorityUnitSelectcomboBox.Size = new System.Drawing.Size(150, 23);
             priorityUnitSelectcomboBox.TabIndex = 47;
+            priorityUnitSelectcomboBox.SelectedIndexChanged += priorityUnitSelectcomboBox_SelectedIndexChanged;
             // 
             // IBM1410SwitchForm
             // 

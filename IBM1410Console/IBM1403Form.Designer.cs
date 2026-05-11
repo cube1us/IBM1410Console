@@ -43,7 +43,7 @@
             printerSaveButton = new System.Windows.Forms.Button();
             saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             openCarriageFileDialog = new System.Windows.Forms.OpenFileDialog();
-            printerRTFCheckBox = new System.Windows.Forms.CheckBox();
+            printerPDFCheckBox = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // printerStartButton
@@ -239,25 +239,25 @@
             // 
             openCarriageFileDialog.FileName = "openFileDialog1";
             // 
-            // printerRTFCheckBox
+            // printerPDFCheckBox
             // 
-            printerRTFCheckBox.AutoSize = true;
-            printerRTFCheckBox.Checked = true;
-            printerRTFCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            printerRTFCheckBox.Location = new System.Drawing.Point(267, 460);
-            printerRTFCheckBox.Name = "printerRTFCheckBox";
-            printerRTFCheckBox.Size = new System.Drawing.Size(73, 19);
-            printerRTFCheckBox.TabIndex = 64;
-            printerRTFCheckBox.Text = "Print RTF";
-            printerRTFCheckBox.UseVisualStyleBackColor = true;
-            printerRTFCheckBox.CheckedChanged += printerRTFCheckBox_CheckedChanged;
+            printerPDFCheckBox.AutoSize = true;
+            printerPDFCheckBox.Checked = true;
+            printerPDFCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            printerPDFCheckBox.Location = new System.Drawing.Point(267, 460);
+            printerPDFCheckBox.Name = "printerPDFCheckBox";
+            printerPDFCheckBox.Size = new System.Drawing.Size(75, 19);
+            printerPDFCheckBox.TabIndex = 64;
+            printerPDFCheckBox.Text = "Print PDF";
+            printerPDFCheckBox.UseVisualStyleBackColor = true;
+            printerPDFCheckBox.CheckedChanged += printerRTFCheckBox_CheckedChanged;
             // 
             // IBM1403Form
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1257, 510);
-            Controls.Add(printerRTFCheckBox);
+            Controls.Add(printerPDFCheckBox);
             Controls.Add(printerSaveButton);
             Controls.Add(printerClearButton);
             Controls.Add(carriageTapeButton);
@@ -301,6 +301,6 @@
         private System.Windows.Forms.Button printerSaveButton;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openCarriageFileDialog;
-        private System.Windows.Forms.CheckBox printerRTFCheckBox;
+        private System.Windows.Forms.CheckBox printerPDFCheckBox;
     }
 }

@@ -15,6 +15,34 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+//  The following is only needed for PDF output
+
+using PdfSharp.Drawing;
+using PdfSharp.Events;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
+
+public class MyFontResolver : IFontResolver
+{
+
+    public string DefaultFontName => "Arial";
+
+    public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic) {
+        if (familyName.Equals("IBM 1410 1403", StringComparison.OrdinalIgnoreCase)) {
+            return new FontResolverInfo("IBM 1410 1403-Regular", isBold, isItalic);
+        }
+        return null;
+    }
+
+    public byte[]? GetFont(string faceName) {
+        if (faceName == "IBM 1410 1403-Regular") {
+            return File.ReadAllBytes("C:\\Users\\jay\\AppData\\Local\\Microsoft\\Windows\\Fonts\\I1403FNT.TTF");
+        }
+        return null;
+    }
+}
+
+
 namespace IBM1410Console
 
     /*
@@ -84,6 +112,13 @@ namespace IBM1410Console
         public const int carriageChannel9Bit = 0x01 << 8;
         public const int carriageChannel12Bit = 0x01 << 11;
 
+        public const int FORMSLINES = 66;
+        public const double FORMSWIDTH = 14.875;
+        public const double FORMSHEIGHT = 8.5;
+        public const double LINEHEIGHT = 0.115;
+        public const double FORMSLEFTMARGIN = 0.5;
+        public const double FORMSTOPMARGIN = 0.5;
+
         private int currentUnitRecordDevice = 0;
         private int currentPrinterOperation = 0;
         private int currentPrinterColumn = 0;
@@ -92,7 +127,7 @@ namespace IBM1410Console
         private int printerDeferredSkip = 0;
         private Boolean printerRequiresSpace = false;
         private Boolean printerSuppressSpace = false;
-        private Boolean rtfInserted = false;
+        // private Boolean rtfInserted = false;
 
         public const byte UNITRECORDTO1414FLAG = 0x85;
         public const byte UNITRECORDFROM1414FLAG = 0x83;
@@ -114,6 +149,10 @@ namespace IBM1410Console
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0, 0, 0 };
 
         Font printerFont = new Font("IBM 1410 1403", 10, FontStyle.Regular);  // IBM 1410 1403 printer font
+
+        //  The following are only needed for PDF output
+
+        XFont font1403;
 
         public IBM1403Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
@@ -162,6 +201,21 @@ namespace IBM1410Console
 
             Debug.WriteLine("IBM1403Form: Event Handlers for Serial and UDP Data Publishers (Printer) Registered.");
 
+            //  The following is only needed for PDF output
+
+            GlobalFontSettings.FontResolver = new MyFontResolver();
+            font1403 = new XFont("IBM 1410 1403", 10, XFontStyleEx.Regular,
+                new XPdfFontOptions(PdfFontEncoding.Unicode));
+        }
+
+        public void pdfTextEvent(object sender, RenderTextEventArgs args) {
+            CodePointGlyphIndexPair[] pairs = args.CodePointGlyphIndexPairs;
+            for (int i = 0; i < pairs.Length; i++) {
+                Debug.WriteLine("Unicode code point: " + pairs[i].CodePoint + ", Glyph Index: " + pairs[i].GlyphIndex);
+                if (pairs[i].CodePoint == 0xce) {
+                    pairs[i].GlyphIndex = 101;
+                }
+            }
         }
 
         //  Right now, the unit record devices are just UDP, so ignore serial requests
@@ -486,7 +540,7 @@ namespace IBM1410Console
         //  Method to set up a default carriage tape
 
         private void setCarriageDefault() {
-            formLength = 66;
+            formLength = FORMSLINES;
             carriageTape = new int[formLength + 1];   // 1-66 (C# inits to 0!)
 
             carriageTape[1] = 1;
@@ -513,13 +567,15 @@ namespace IBM1410Console
         //  Method to clear out the print display area
         private void printerClearButton_Click(object sender, EventArgs e) {
             printerRichTextBox1.Clear();
-            rtfInserted = false;
+            currentPrintLine = 1;
         }
 
         private void printerSaveButton_Click(object sender, EventArgs e) {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            XGraphics gfx = null;
+            string s;
 
-            if (printerRTFCheckBox.Checked) {
+            if (printerPDFCheckBox.Checked) {
                 // The following did not work - the Rich Text Box just threw it away.
                 // if (!rtfInserted) {
                 //    printerRichTextBox1.SelectionStart = 0;
@@ -528,7 +584,7 @@ namespace IBM1410Console
                 //       @"{\rtf1\ansi \paperw18000 \paperh15840 \margl1440 \margr1440 \margt720 \marg720}";
                 //    rtfInserted = true;
                 // }
-                saveFileDialog.Filter = "RTF file (*.rtf)|*.rtf|Text file (*.txt)|*.txt|All Files (*.*)|*.*";
+                saveFileDialog.Filter = "PDF file (*.pdf)|*.pdf|Text file (*.txt)|*.txt|All Files (*.*)|*.*";
             }
             else {
                 saveFileDialog.Filter = "Text file (*.txt)|*.txt|All Files (*.*)|*.*";
@@ -537,7 +593,7 @@ namespace IBM1410Console
             saveFileDialog.FilterIndex = 0;
             saveFileDialog.RestoreDirectory = true;
             saveFileDialog.Title = "Save Printer Output" + this.Text + " to a file";
-            saveFileDialog.DefaultExt = printerRTFCheckBox.Checked ? "rtf" : "txt";
+            saveFileDialog.DefaultExt = printerPDFCheckBox.Checked ? "rtf" : "txt";
             saveFileDialog.AddExtension = true;
 
             //  Display the save file dialog and check if the users clicked OK
@@ -545,8 +601,45 @@ namespace IBM1410Console
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 string fileName = saveFileDialog.FileName;
                 try {
-                    if (printerRTFCheckBox.Checked) {
-                        printerRichTextBox1.SaveFile(fileName, RichTextBoxStreamType.RichText);
+                    if (printerPDFCheckBox.Checked) {
+
+                        // printerRichTextBox1.SaveFile(fileName, RichTextBoxStreamType.RichText);
+
+                        PdfDocument printerDoc = new PdfDocument();
+                        // printerDoc.RenderEvents.RenderTextEvent += pdfTextEvent;
+                        printerDoc.Info.Title = "IBM 1410 FPGA Implementation 1403 Output";
+
+                        string[] printerLines = printerRichTextBox1.Lines;
+                        for (int i = 0; i < printerLines.Length; ++i) {
+                            if (i % FORMSLINES == 0) {
+                                PdfPage newPage = printerDoc.AddPage();
+                                //  TODO: Eventuall, modify these from carriage tape?
+                                newPage.Width = XUnit.FromInch(FORMSWIDTH);
+                                newPage.Height = XUnit.FromInch(FORMSHEIGHT);
+                                newPage.Orientation = PdfSharp.PageOrientation.Landscape;
+                                gfx = XGraphics.FromPdfPage(newPage);
+                            }
+
+                            s = printerLines[i].TrimEnd();
+
+                            //  The following are left as is when saving print as text, but
+                            //  for the PDF, I used the special characters unique to my font.
+                            //  Unfortunately, when I converted from my .FON file to .TTF
+                            //  using an online converter, it dropped everything > 0x7f
+                            //  and I haven't been able to convert it using FontForge so far.
+                            
+                            /*
+                            s = s.Replace('}', '\u00ce');       // } => Group Mark
+                            s = s.Replace('{', '\xfb');         // { => Radical (tape mark)
+                            s = s.Replace('\x7e', '\xd7');      // " => Segment mark
+                            s = s.Replace('_', '\x7f');         // _ => Delta
+                            */
+
+                            gfx.DrawString(s, font1403, XBrushes.Black,
+                                new XPoint(XUnit.FromInch(FORMSLEFTMARGIN).Point,
+                                           XUnit.FromInch(FORMSTOPMARGIN + LINEHEIGHT * (i % FORMSLINES)).Point));
+                        }
+                        printerDoc.Save(fileName);
                     }
                     else {
                         System.IO.File.WriteAllText(fileName, printerRichTextBox1.Text);
@@ -615,7 +708,7 @@ namespace IBM1410Console
 
                 if (lineno == 1) {
                     //  Validate first line is LENGTH nnn
-                    formLength = 66;
+                    formLength = FORMSLINES;
                     if (tokens.Length != 2 || !tokens[0].ToUpper().Equals("LENGTH")) {
                         MessageBox.Show("IBM1403Form: First Line of Carriage Tape File must start with LENGTH nnn");
                     }

@@ -61,6 +61,8 @@ namespace IBM1410Console
         private Boolean writeIRG;         // Write IRG on next write
         private Boolean modified;
 
+        private int[] lastChars;
+
         //  Set up many of the fields as properties...
 
         internal String FileName { get { return _fileName; } }
@@ -87,6 +89,7 @@ namespace IBM1410Console
             this.udpClient = udpClient;
             this.udpOutputSemaphore = udpOutputSemaphore;
             Init(channel,unit);
+            lastChars = [ -1, -1, -1, -1];
         }
 
         //  Initializer - used by the constructor, and externally.
@@ -548,6 +551,11 @@ namespace IBM1410Console
 
         internal Boolean Write(int c, bool forceWrite) {
 
+            lastChars[0] = lastChars[1];
+            lastChars[1] = lastChars[2];
+            lastChars[2] = lastChars[3];
+            lastChars[3] = c;
+
             // Debug.WriteLine("TapeUnit Write unit " + channel.ToString() + unit.ToString());
 
             if ((!forceWrite && (!_loaded || !_ready || !_selected)) || fd == null) {
@@ -568,11 +576,11 @@ namespace IBM1410Console
 
             if (irgRead) {
                 try {
-                    Debug.WriteLine("   TapeUnit unit " + channel.ToString() + unit.ToString() +
-                        " seeking back over EOR from: " + fd.Position.ToString());
+                    // Debug.WriteLine("   TapeUnit unit " + channel.ToString() + unit.ToString() +
+                    //     " seeking back over EOR from: " + fd.Position.ToString());
                     fd.Seek(-1, SeekOrigin.Current);
-                    Debug.WriteLine("   TapeUnit unit " + channel.ToString() + unit.ToString() +
-                        " seeked back over EOR to: " + fd.Position.ToString());
+                    // Debug.WriteLine("   TapeUnit unit " + channel.ToString() + unit.ToString() +
+                    //    " seeked back over EOR to: " + fd.Position.ToString());
                     irgRead = false;
                     writeIRG = modified = true;     // Set to write IRG later
                 }
@@ -615,13 +623,21 @@ namespace IBM1410Console
         }
 
 
-        //  Mark the end of a record.  Called at the end of a trnsfer - sets the IRG flag
+        //  Mark the end of a record.  Called at the end of a transfer - sets the IRG flag
         //  for the start of the next record
 
         internal void WriteIRG() {
             writeIRG = modified = true;
             _bot = irgRead = false;
             ++_recordNumber;
+            Debug.WriteLine("  Tape End of Record unit " + channel.ToString() + unit.ToString() +
+                ", Last 4 bytes: " + lastChars[0].ToString("X2") + " " + lastChars[1].ToString("X2") + " " +
+                lastChars[2].ToString("X2") + " " + lastChars[3].ToString("X2"));
+            if (lastChars[3] == 0x5d) {
+                Debug.WriteLine("   *** WARNING *** last character is a word separator in Odd Parity");
+            }
+            lastChars = [-1, -1, -1, -1];
+
             // UpdateFPGATape();
         }
 
@@ -677,8 +693,8 @@ namespace IBM1410Console
                 tape_buffer = rc;
             }
             else {
-                Debug.WriteLine("   TapeUnit unit " + channel.ToString() + unit.ToString() +
-                    " character already in buffer, position " + fd.Position.ToString());
+                // Debug.WriteLine("   TapeUnit unit " + channel.ToString() + unit.ToString() +
+                //    " character already in buffer, position " + fd.Position.ToString());
             }
 
             //  If we are at BOT or an IRG, strip the IRG bit from the character and 
@@ -701,8 +717,8 @@ namespace IBM1410Console
 
             if ((tape_buffer & TAPE_IRG) != 0) {
                 #if TAPEDEBUG
-                    Debug.WriteLine("   TapeUnit Read " + channel.ToString() + unit.ToString() +
-                        " found IRG character at position: " + fd.Position.ToString());
+                    // Debug.WriteLine("   TapeUnit Read " + channel.ToString() + unit.ToString() +
+                    //    " found IRG character at position: " + fd.Position.ToString());
                 #endif
                 irgRead = true;
                 _bot = false;
@@ -781,15 +797,19 @@ namespace IBM1410Console
             }
 
             udpClient.Send(serialBuffer,serialBuffer.Length);
+            /*
             Debug.WriteLine("   Sent UDP TAU Status update packet /" +
                 serialBuffer[0].ToString("X2") + serialBuffer[1].ToString("X2") +
                 serialBuffer[2].ToString("X2") + "/");
+            */
             udpOutputSemaphore.Release();
             serialOutputSemaphore.Release();
 
+            /*
             Debug.WriteLine("   TapeUnit: Sent updated status to FPGA for unit " +
                 channel.ToString() + unit.ToString() + 
                 ", Operation: " + origin + ", status: " + unitStatus.ToString("X2"));
+            */
 
          }
 

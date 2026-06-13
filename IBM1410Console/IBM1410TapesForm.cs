@@ -454,7 +454,7 @@ namespace IBM1410Console
                 if (packetIx > packet.Length -4) {
                     udpClient.Send(packet, packetIx);
                     //  Sleep so that we don't overrun the IBM 1410 channel at 9us / char
-                    System.Threading.Thread.Sleep(10);  // TAPEPACKETSLEEPTIME
+                    System.Threading.Thread.Sleep(5);  // TAPEPACKETSLEEPTIME
                     /*
                     Debug.WriteLine("Sent UDP Tape Read packet: ");
                     for (int i = 0; i < packetIx; ++i) {

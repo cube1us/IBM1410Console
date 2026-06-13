@@ -635,10 +635,14 @@ namespace IBM1410Console
             for (int i = 0; i < SWITCH_ROT_I_O_UNIT_DK1_LEN; i++) {
                 unitSwitch[i] = false;
             }
-            
+
+            //  Update the FPGA with all of them off before selecting the actual entry
+
+            setRotarySwitch(unitSwitch, SWITCH_ROT_I_O_UNIT_DK1_INDEX, SWITCH_ROT_I_O_UNIT_DK1_LEN);
+
             //  Set the selected entry true (except for off which isn't used
 
-            if(priorityUnitSelectcomboBox.SelectedIndex != 0) {
+            if (priorityUnitSelectcomboBox.SelectedIndex != 0) {
                 unitSwitch[priorityUnitSelectcomboBox.SelectedIndex + 1] = true;
             }
 

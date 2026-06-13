@@ -109,6 +109,10 @@ namespace IBM1410Console
                 }
             }
 
+            //  Temporary Fix??
+
+            portName = "COM4";
+
             //  If we didn't find one and if none were saved save this one...
 
             if (portName == null) {

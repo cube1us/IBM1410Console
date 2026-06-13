@@ -44,6 +44,11 @@
             saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             openCarriageFileDialog = new System.Windows.Forms.OpenFileDialog();
             printerPDFCheckBox = new System.Windows.Forms.CheckBox();
+            radioButton1 = new System.Windows.Forms.RadioButton();
+            formsLengthGroupBox = new System.Windows.Forms.GroupBox();
+            radioButton66 = new System.Windows.Forms.RadioButton();
+            radioButton55 = new System.Windows.Forms.RadioButton();
+            formsLengthGroupBox.SuspendLayout();
             SuspendLayout();
             // 
             // printerStartButton
@@ -252,11 +257,59 @@
             printerPDFCheckBox.UseVisualStyleBackColor = true;
             printerPDFCheckBox.CheckedChanged += printerRTFCheckBox_CheckedChanged;
             // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Location = new System.Drawing.Point(141, 444);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new System.Drawing.Size(94, 19);
+            radioButton1.TabIndex = 65;
+            radioButton1.TabStop = true;
+            radioButton1.Text = "radioButton1";
+            radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // formsLengthGroupBox
+            // 
+            formsLengthGroupBox.Controls.Add(radioButton66);
+            formsLengthGroupBox.Controls.Add(radioButton55);
+            formsLengthGroupBox.Location = new System.Drawing.Point(12, 294);
+            formsLengthGroupBox.Name = "formsLengthGroupBox";
+            formsLengthGroupBox.Size = new System.Drawing.Size(123, 75);
+            formsLengthGroupBox.TabIndex = 66;
+            formsLengthGroupBox.TabStop = false;
+            formsLengthGroupBox.Text = "Forms Length";
+            // 
+            // radioButton66
+            // 
+            radioButton66.AutoSize = true;
+            radioButton66.Checked = true;
+            radioButton66.Location = new System.Drawing.Point(6, 44);
+            radioButton66.Name = "radioButton66";
+            radioButton66.Size = new System.Drawing.Size(98, 19);
+            radioButton66.TabIndex = 1;
+            radioButton66.TabStop = true;
+            radioButton66.Text = "66 Lines/Page";
+            radioButton66.UseVisualStyleBackColor = true;
+            radioButton66.CheckedChanged += radioButton66_CheckedChanged;
+            // 
+            // radioButton55
+            // 
+            radioButton55.AutoSize = true;
+            radioButton55.Location = new System.Drawing.Point(6, 19);
+            radioButton55.Name = "radioButton55";
+            radioButton55.Size = new System.Drawing.Size(98, 19);
+            radioButton55.TabIndex = 0;
+            radioButton55.Text = "55 Lines/Page";
+            radioButton55.UseVisualStyleBackColor = true;
+            radioButton55.CheckedChanged += radioButton55_CheckedChanged;
+            // 
             // IBM1403Form
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1257, 510);
+            Controls.Add(formsLengthGroupBox);
+            Controls.Add(radioButton1);
             Controls.Add(printerPDFCheckBox);
             Controls.Add(printerSaveButton);
             Controls.Add(printerClearButton);
@@ -277,6 +330,8 @@
             Name = "IBM1403Form";
             Text = "IBM1403Form";
             FormClosing += IBM1403Form_FormClosing;
+            formsLengthGroupBox.ResumeLayout(false);
+            formsLengthGroupBox.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -302,5 +357,9 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openCarriageFileDialog;
         private System.Windows.Forms.CheckBox printerPDFCheckBox;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.GroupBox formsLengthGroupBox;
+        private System.Windows.Forms.RadioButton radioButton66;
+        private System.Windows.Forms.RadioButton radioButton55;
     }
 }

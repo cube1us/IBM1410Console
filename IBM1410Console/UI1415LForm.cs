@@ -341,7 +341,7 @@ namespace IBM1410Console
 
         void lampUDPOutputAvailable(object sender, UDPLightDataEventArgs e) {
 
-            Helpers.checkNesting("UDP Reader", ++lampNestCounter);
+            Helpers.checkNesting("Lamp UDP Reader", ++lampNestCounter);
 
             if (e.DispatchCode != lampCodeByte) {
                 --lampNestCounter;

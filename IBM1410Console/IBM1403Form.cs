@@ -22,27 +22,6 @@ using PdfSharp.Events;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
 
-public class MyFontResolver : IFontResolver
-{
-
-    public string DefaultFontName => "Arial";
-
-    public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic) {
-        if (familyName.Equals("IBM 1410 1403", StringComparison.OrdinalIgnoreCase)) {
-            return new FontResolverInfo("IBM 1410 1403-Regular", isBold, isItalic);
-        }
-        return null;
-    }
-
-    public byte[]? GetFont(string faceName) {
-        if (faceName == "IBM 1410 1403-Regular") {
-            return File.ReadAllBytes("C:\\Users\\jay\\AppData\\Local\\Microsoft\\Windows\\Fonts\\I1403FNT.TTF");
-        }
-        return null;
-    }
-}
-
-
 namespace IBM1410Console
 
     /*
@@ -112,10 +91,10 @@ namespace IBM1410Console
         public const int carriageChannel9Bit = 0x01 << 8;
         public const int carriageChannel12Bit = 0x01 << 11;
 
-        public const int FORMSLINES = 66;
         public const double FORMSWIDTH = 14.875;
         public const double FORMSHEIGHT = 8.5;
-        public const double LINEHEIGHT = 0.115;
+        public const double LINEHEIGHT66 = 0.115;
+        public const double LINEHEIGHT55 = 0.118;
         public const double FORMSLEFTMARGIN = 0.5;
         public const double FORMSTOPMARGIN = 0.5;
 
@@ -142,6 +121,9 @@ namespace IBM1410Console
         public const int PRINTERLINELENGTH = 132;
 
         private byte printerStatus = 0;               // Not Ready by default
+        public int formLines = 66;
+        public double lineHeight = LINEHEIGHT66;
+
 
         //  Translate numerics to carriage channel.  0 is invalid.
 
@@ -296,7 +278,7 @@ namespace IBM1410Console
                     //  If we did not advance or suppress spacing after the last print, then advance it now.
                     //  But if we suppressed it, add a carriage return in front of the print line.
 
-                    if(printerRequiresSpace) {
+                    if (printerRequiresSpace) {
                         advanceCarriage();
                     }
 
@@ -306,7 +288,7 @@ namespace IBM1410Console
                         printerRichTextBox1.Update();
                     };
                     this.Invoke(safePrinterTextBoxUpdate);
-                    Debug.WriteLine("IBM1403Form: Print /" + System.Text.Encoding.UTF8.GetString(printLine) + "/");
+                    // Debug.WriteLine("IBM1403Form: Print /" + System.Text.Encoding.UTF8.GetString(printLine) + "/");
 
                     printLine = null;
                     printerRequiresSpace = true;   // Must have CC advance/suppress or we will advance before next line.
@@ -337,7 +319,7 @@ namespace IBM1410Console
                     }
                     else {
                         //  TODO:  Actually do the carriage control operation.
-                        Debug.WriteLine("IBM1403Form: Carriage Control Operation character = " + currentCarriageControlCharacter.ToString("X2"));
+                        //  Debug.WriteLine("IBM1403Form: Carriage Control Operation character = " + currentCarriageControlCharacter.ToString("X2"));
 
                         switch (currentCarriageControlCharacter & (IBM1410BCD.BITA | IBM1410BCD.BITB)) {
                             case 0:
@@ -432,7 +414,7 @@ namespace IBM1410Console
         private void skipCarriage(int channel) {
             int skipped = 0;
 
-            Debug.WriteLine("Skipping carriage to channel " + channel.ToString());
+            // Debug.WriteLine("Skipping carriage to channel " + channel.ToString());
 
             if (channel == 0) {
                 return;
@@ -445,7 +427,7 @@ namespace IBM1410Console
                 advanceCarriage();
             }
 
-            Debug.WriteLine("Skipped " + skipped.ToString() + " lines...");
+            // Debug.WriteLine("Skipped " + skipped.ToString() + " lines...");
 
             //  Force a carriage stop in extreme circumstances...
 
@@ -515,14 +497,14 @@ namespace IBM1410Console
             }
             if (carriageChannel9) {
                 printerStatus |= carriageIsChannel9;
-                Debug.WriteLine("IBM1403Form: Sending Carriage Channel 9 Status.");
+                // Debug.WriteLine("IBM1403Form: Sending Carriage Channel 9 Status.");
             }
             if (carriageChannel12) {
                 printerStatus |= carriageIsChannel12;
-                Debug.WriteLine("IBM1403Form: Sending Carriage Channel 12 Status.");
+                // Debug.WriteLine("IBM1403Form: Sending Carriage Channel 12 Status.");
             }
 
-            Debug.WriteLine("Sending status byte of " + printerStatus.ToString("X2"));
+            // Debug.WriteLine("Sending status byte of " + printerStatus.ToString("X2"));
 
             //  For now, serial port version NOT implemented.
 
@@ -540,13 +522,13 @@ namespace IBM1410Console
         //  Method to set up a default carriage tape
 
         private void setCarriageDefault() {
-            formLength = FORMSLINES;
+            formLength = formLines;
             carriageTape = new int[formLength + 1];   // 1-66 (C# inits to 0!)
 
             carriageTape[1] = 1;
             carriageTape[4] = 2 | 4 | 8 | 16 | 32 | 64 | 128 | 512 | 1024;
-            carriageTape[61] = 256;         // Channel 9
-            carriageTape[63] = 2048;        // Channel 12 
+            carriageTape[formLines - 3] = 256;         // Channel 9
+            carriageTape[formLines - 2] = 2048;        // Channel 12 
         }
 
         private void printerStartButton_Click(object sender, EventArgs e) {
@@ -589,7 +571,7 @@ namespace IBM1410Console
             else {
                 saveFileDialog.Filter = "Text file (*.txt)|*.txt|All Files (*.*)|*.*";
             }
-            
+
             saveFileDialog.FilterIndex = 0;
             saveFileDialog.RestoreDirectory = true;
             saveFileDialog.Title = "Save Printer Output" + this.Text + " to a file";
@@ -611,7 +593,7 @@ namespace IBM1410Console
 
                         string[] printerLines = printerRichTextBox1.Lines;
                         for (int i = 0; i < printerLines.Length; ++i) {
-                            if (i % FORMSLINES == 0) {
+                            if (i % formLines == 0) {
                                 PdfPage newPage = printerDoc.AddPage();
                                 //  TODO: Eventuall, modify these from carriage tape?
                                 newPage.Width = XUnit.FromInch(FORMSWIDTH);
@@ -627,7 +609,7 @@ namespace IBM1410Console
                             //  Unfortunately, when I converted from my .FON file to .TTF
                             //  using an online converter, it dropped everything > 0x7f
                             //  and I haven't been able to convert it using FontForge so far.
-                            
+
                             /*
                             s = s.Replace('}', '\u00ce');       // } => Group Mark
                             s = s.Replace('{', '\xfb');         // { => Radical (tape mark)
@@ -637,7 +619,7 @@ namespace IBM1410Console
 
                             gfx.DrawString(s, font1403, XBrushes.Black,
                                 new XPoint(XUnit.FromInch(FORMSLEFTMARGIN).Point,
-                                           XUnit.FromInch(FORMSTOPMARGIN + LINEHEIGHT * (i % FORMSLINES)).Point));
+                                           XUnit.FromInch(FORMSTOPMARGIN + lineHeight * (i % formLines)).Point));
                         }
                         printerDoc.Save(fileName);
                     }
@@ -701,14 +683,16 @@ namespace IBM1410Console
                     (char[])null, StringSplitOptions.RemoveEmptyEntries |
                     StringSplitOptions.TrimEntries);
 
+                /*
                 for (int i = 0; i < tokens.Length; ++i) {
                     Debug.Write(tokens[i] + " ");
                 }
                 Debug.WriteLine("");
+                */
 
                 if (lineno == 1) {
                     //  Validate first line is LENGTH nnn
-                    formLength = FORMSLINES;
+                    formLength = formLines;
                     if (tokens.Length != 2 || !tokens[0].ToUpper().Equals("LENGTH")) {
                         MessageBox.Show("IBM1403Form: First Line of Carriage Tape File must start with LENGTH nnn");
                     }
@@ -722,6 +706,7 @@ namespace IBM1410Console
                     }
 
                     carriageTape = new int[formLength + 1];
+                    formLines = formLength;
                 }
 
                 else {
@@ -803,5 +788,38 @@ namespace IBM1410Console
         private void printerRTFCheckBox_CheckedChanged(object sender, EventArgs e) {
             //  Don't really need to do anything, it just toggles.
         }
+
+        private void radioButton66_CheckedChanged(object sender, EventArgs e) {
+            formLines = 66;
+            lineHeight = LINEHEIGHT66;
+            setCarriageDefault();
+        }
+
+        private void radioButton55_CheckedChanged(object sender, EventArgs e) {
+            formLines = 55;
+            lineHeight = LINEHEIGHT55;
+            setCarriageDefault();
+
+        }
+    }
+}
+
+public class MyFontResolver : IFontResolver
+{
+
+    public string DefaultFontName => "Arial";
+
+    public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic) {
+        if (familyName.Equals("IBM 1410 1403", StringComparison.OrdinalIgnoreCase)) {
+            return new FontResolverInfo("IBM 1410 1403-Regular", isBold, isItalic);
+        }
+        return null;
+    }
+
+    public byte[]? GetFont(string faceName) {
+        if (faceName == "IBM 1410 1403-Regular") {
+            return File.ReadAllBytes("C:\\Users\\jay\\AppData\\Local\\Microsoft\\Windows\\Fonts\\I1403FNT.TTF");
+        }
+        return null;
     }
 }

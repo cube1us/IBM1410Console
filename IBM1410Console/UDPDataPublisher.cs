@@ -193,12 +193,12 @@ namespace IBM1410Console
 
             udpMessages.Add(rxBytes);
 
-            for(int i = 0; i < numBytes && i < 4; ++i) {
+            for(int i = 0; i < numBytes && i < 32; ++i) {
                 sample = sample + " " + rxBytes[i].ToString("X2");
             }
 
             if(rxBytes.Length != 35 || rxBytes[0] != 0x81) {
-                Debug.WriteLine("UDPDataPblisher: Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+                Debug.WriteLine("UDPDataPublisher: Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
             }
 
             //  And get ready to receive the next message.
@@ -212,10 +212,12 @@ namespace IBM1410Console
         private void UDPMessageConsumer() {
             Byte[] rxBytes = null;
             String sample = "";
+            String lastSample = "";
 
             while (true) {
 
                 sample = "";
+                lastSample = "";
 
                 // Debug.WriteLine("UDPDataPublisher: Consumer: Getting/waiting for next message from queue...");
 
@@ -227,8 +229,13 @@ namespace IBM1410Console
                     sample = sample + " " + rxBytes[i].ToString("X2");
                 }
 
+                for(int i = (numBytes > 8 ? numBytes - 8 : 0); i < numBytes; ++i) {
+                    lastSample = lastSample + " " + rxBytes[i].ToString("X2");
+                }
+
                 if (rxBytes.Length != 35 || rxBytes[0] != 0x81) {
-                    Debug.WriteLine("UDPDataPublisher: De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample);
+                    Debug.WriteLine("UDPDataPublisher: De-Queuing message with " + numBytes + " to queue.  First bytes: " + sample +
+                        ", Last bytes: " + lastSample);
                 }
 
                 //  Now call the original message routine...

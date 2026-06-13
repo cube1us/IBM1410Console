@@ -193,9 +193,11 @@ namespace IBM1410Console
                     ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length - 1;
                     ConsoleOutput.SelectionLength = 1;
                     ConsoleOutput.SelectionFont = consoleUnderlineFont;
+                    ConsoleOutput.Select();
                     ConsoleOutput.SelectionLength = 0;
                     ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
                     ConsoleOutput.SelectionFont = consoleFont;
+                    ConsoleOutput.Select();
                 };
                 ConsoleOutput.Invoke(safeUnderline);
             }
@@ -203,9 +205,11 @@ namespace IBM1410Console
                 ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length - 1;
                 ConsoleOutput.SelectionLength = 1;
                 ConsoleOutput.SelectionFont = consoleUnderlineFont;
+                ConsoleOutput.Select();
                 ConsoleOutput.SelectionLength = 0;
                 ConsoleOutput.SelectionStart = ConsoleOutput.Text.Length;
                 ConsoleOutput.SelectionFont = consoleFont;
+                ConsoleOutput.Select();
             }
         }
 
@@ -400,6 +404,7 @@ namespace IBM1410Console
         }
         private void InquiryRequestButton_Click(object sender, EventArgs e) {
             doInquiryKey(consoleInquiryRequest);
+            ConsoleOutput.Select();     //  Set focus on the text box
         }
 
         private void inquiryReleaseButton_Click(object sender, EventArgs e) {

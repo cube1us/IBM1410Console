@@ -133,8 +133,8 @@ namespace IBM1410Console
         IBM1410Card punchedCard = null;
 
         private int readerLineNumber = 0;
-        private int readerNestCount = 0;
-        private int statusNestCount = 0;
+        // private int readerNestCount = 0;
+        // private int statusNestCount = 0;
 
         public IBM1402Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
@@ -235,7 +235,7 @@ namespace IBM1410Console
 
         void readerMessageInputAvailable(byte c) {
 
-            Helpers.checkNesting("UDP Reader", ++readerNestCount);
+            // Helpers.checkNesting("UDP Reader", ++readerNestCount);
 
             //  0 Terminates the reader request when receiving data, though this should
             //  never actually occur, for a reader...
@@ -243,7 +243,7 @@ namespace IBM1410Console
             if (c == 0) {
                 currentReaderOperation = 0;
                 currentUnitRecordDevice = 0;
-                --readerNestCount;
+                // --readerNestCount;
                 return;
             }
 
@@ -263,7 +263,7 @@ namespace IBM1410Console
                 currentUnitRecordDevice = 0;
             }
 
-            --readerNestCount;
+            // --readerNestCount;
         }
 
         void punchMessageInputAvailable(byte c) {
@@ -481,7 +481,7 @@ namespace IBM1410Console
 
             //  Send the updated status to the FPGA...
 
-            Helpers.checkNesting("Reader Status Semaphore: ", ++statusNestCount);
+            // Helpers.checkNesting("Reader Status Semaphore: ", ++statusNestCount);
             udpOutputSemaphore.Wait();
             statusBuffer[0] = UNITRECORDTO1414FLAG;
             statusBuffer[1] = READERCH1FLAG;
@@ -491,7 +491,7 @@ namespace IBM1410Console
             udpOutputSemaphore.Release();
 
             Debug.WriteLine("IBM1402Form: Updated reader status to " + statusBuffer[3].ToString("X2"));
-            --statusNestCount;
+            // --statusNestCount;
         }
 
         //  Method to send status of the punch.  For now, just the stop and start

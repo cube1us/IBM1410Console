@@ -37,18 +37,19 @@ namespace IBM1410Console
             // 
             ConsoleOutput.AcceptsTab = true;
             ConsoleOutput.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            ConsoleOutput.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            ConsoleOutput.Font = new System.Drawing.Font("Courier New", 12F);
             ConsoleOutput.Location = new System.Drawing.Point(12, 12);
             ConsoleOutput.Name = "ConsoleOutput";
             ConsoleOutput.Size = new System.Drawing.Size(776, 389);
             ConsoleOutput.TabIndex = 0;
             ConsoleOutput.Text = "";
+            ConsoleOutput.WordWrap = false;
             ConsoleOutput.KeyPress += ConsoleOutput_KeyPress;
             // 
             // keyboardLockLabel
             // 
             keyboardLockLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            keyboardLockLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            keyboardLockLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             keyboardLockLabel.ForeColor = System.Drawing.Color.Crimson;
             keyboardLockLabel.Location = new System.Drawing.Point(27, 404);
             keyboardLockLabel.Name = "keyboardLockLabel";
@@ -60,7 +61,7 @@ namespace IBM1410Console
             // InquiryRequestButton
             // 
             InquiryRequestButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            InquiryRequestButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            InquiryRequestButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             InquiryRequestButton.Location = new System.Drawing.Point(794, 201);
             InquiryRequestButton.Name = "InquiryRequestButton";
             InquiryRequestButton.Size = new System.Drawing.Size(89, 111);

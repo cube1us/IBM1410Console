@@ -44,7 +44,6 @@
             saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             openCarriageFileDialog = new System.Windows.Forms.OpenFileDialog();
             printerPDFCheckBox = new System.Windows.Forms.CheckBox();
-            radioButton1 = new System.Windows.Forms.RadioButton();
             formsLengthGroupBox = new System.Windows.Forms.GroupBox();
             radioButton66 = new System.Windows.Forms.RadioButton();
             radioButton55 = new System.Windows.Forms.RadioButton();
@@ -257,17 +256,6 @@
             printerPDFCheckBox.UseVisualStyleBackColor = true;
             printerPDFCheckBox.CheckedChanged += printerRTFCheckBox_CheckedChanged;
             // 
-            // radioButton1
-            // 
-            radioButton1.AutoSize = true;
-            radioButton1.Location = new System.Drawing.Point(141, 444);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new System.Drawing.Size(94, 19);
-            radioButton1.TabIndex = 65;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "radioButton1";
-            radioButton1.UseVisualStyleBackColor = true;
-            // 
             // formsLengthGroupBox
             // 
             formsLengthGroupBox.Controls.Add(radioButton66);
@@ -309,7 +297,6 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1257, 510);
             Controls.Add(formsLengthGroupBox);
-            Controls.Add(radioButton1);
             Controls.Add(printerPDFCheckBox);
             Controls.Add(printerSaveButton);
             Controls.Add(printerClearButton);
@@ -357,7 +344,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openCarriageFileDialog;
         private System.Windows.Forms.CheckBox printerPDFCheckBox;
-        private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.GroupBox formsLengthGroupBox;
         private System.Windows.Forms.RadioButton radioButton66;
         private System.Windows.Forms.RadioButton radioButton55;

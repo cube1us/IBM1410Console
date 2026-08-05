@@ -136,10 +136,13 @@ namespace IBM1410Console
         // private int readerNestCount = 0;
         // private int statusNestCount = 0;
 
+        private IBM1410SwitchForm ibm1410SwitchForm = null;
+
         public IBM1402Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
             SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
-            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore) {
+            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore,
+            IBM1410SwitchForm ibm1410SwitchForm) {
 
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
@@ -149,6 +152,8 @@ namespace IBM1410Console
 
             InitializeComponent();  // Create the buttons before we create the stackers.
             this.CreateHandle();    // Ensures controls are created before we get FPGA data
+
+            this.ibm1410SwitchForm = ibm1410SwitchForm;
 
             //  Create the various stackers.
 
@@ -331,6 +336,25 @@ namespace IBM1410Console
                 sendReaderStatus();
                 return;
             }
+
+            //
+            //  In 1401 mode, this could really be for the punch (or even the reader).  For now, ignore those.
+            //  So, if in 1401 mode we get a read card (op code 1), followed by Select Stacker (K) we are going
+            //  to skip a card, because right now we cannot tell the difference.  A fix for that would have to come in the FPGA.
+            //
+            //  Also, this causes the reader to go busy, so we have to tell the FPGA it isn't busy.
+            //
+
+            if(ibm1410SwitchForm.get1401Mode()) {
+                if( currentReaderOperation == 0x14 || currentReaderOperation == 0x18) {
+                    Debug.WriteLine(
+                        "IBM1402Form.doSelectStackerFeed: Stacker operation for Punch received from FPGA in 1401 mode, ignoring for now: " 
+                        + currentReaderOperation.ToString("X2"));
+                    sendReaderStatus();
+                    return;
+                }
+            }
+
 
             //  If there is a card at the read station, stack it.
 
@@ -571,6 +595,11 @@ namespace IBM1410Console
 
         private void readerStartButton_Click(object sender, EventArgs e) {
 
+            //  We might be restarting.  Remember if the readstation is not null,
+            //  in which case we have already sent the card to the 1414.
+
+            bool readStationAlreadyFull = readStation != null;
+
             // if (readerFileStream == null || readerReady == false) {
             if (readerFileStream == null) {
                 MessageBox.Show("ERROR: Unexpected Reader Start when no file loaded");
@@ -624,9 +653,12 @@ namespace IBM1410Console
             // Debug.WriteLine("IBM1402Form: Update reader status from StartButtonClick.");
             // sendReaderStatus();
 
-            //  If there is data at the read station, send that off to the FPGA
+            //  If there is data at the read station, and it was not null when
+            //  start was pressed (in which case we already sent the card),
+            //  send that off to the FPGA.  Otherwise, just send the updated status
+            //  to the FPGA.
 
-            if (readStation != null) {
+            if (readStation != null && !readStationAlreadyFull) {
                 sendReadStation();
 
                 //  If we just sent the last card, reset the EOF status
@@ -636,6 +668,12 @@ namespace IBM1410Console
                     readerEOFButton.BackColor = Color.SeaGreen;
                 }
             }
+            else if (readStationAlreadyFull) {
+                loadButton.Text = "(Loaded)";
+                loadButton.ForeColor = Color.ForestGreen;
+                sendReaderStatus();
+            }
+            
         }
 
         //  Method to process the 1402 Reader STOP button

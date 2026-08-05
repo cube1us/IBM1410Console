@@ -207,7 +207,7 @@ namespace IBM1410Console
             }
             Debug.WriteLine("");
 
-            Debug.WriteLine("Adding string to cardlist: ");
+            Debug.WriteLine("1410Card: Adding string to cardlist for stacker " + stackerName + ": ");
             Debug.WriteLine(s);
             // Debug.WriteLine("   " + string.Join(" ", System.Text.Encoding.GetEncoding(1252).GetBytes(s)));
             

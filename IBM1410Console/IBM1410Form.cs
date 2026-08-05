@@ -179,7 +179,7 @@ namespace IBM1410Console
             //  And the card reader/punch and printer forms - but don't display them
 
             IBM1402Form = new IBM1402Form(serialDataPublisher, udpDataPublisher,
-                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore, IBM1410SwitchForm);
             IBM1402Form.Show();
 
             IBM1403Form = new IBM1403Form(serialDataPublisher, udpDataPublisher,
@@ -245,7 +245,7 @@ namespace IBM1410Console
         private void cardReaderPunchToolStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1402Form == null) {
                 IBM1402Form = new IBM1402Form(serialDataPublisher, udpDataPublisher,
-                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore, IBM1410SwitchForm);
             }
             IBM1402Form.Show();
         }

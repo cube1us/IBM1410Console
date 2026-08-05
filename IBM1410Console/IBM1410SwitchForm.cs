@@ -650,5 +650,9 @@ namespace IBM1410Console
 
             setRotarySwitch(unitSwitch, SWITCH_ROT_I_O_UNIT_DK1_INDEX, SWITCH_ROT_I_O_UNIT_DK1_LEN);
         }
+
+        public bool get1401Mode() {
+            return (switchVector[SWITCH_TOG_1401_MODE_PL1_INDEX]);
+        }
     }
 }

@@ -288,7 +288,7 @@ namespace IBM1410Console
                         printerRichTextBox1.Update();
                     };
                     this.Invoke(safePrinterTextBoxUpdate);
-                    // Debug.WriteLine("IBM1403Form: Print /" + System.Text.Encoding.UTF8.GetString(printLine) + "/");
+                    Debug.WriteLine("IBM1403Form: Print /" + System.Text.Encoding.UTF8.GetString(printLine) + "/");
 
                     printLine = null;
                     printerRequiresSpace = true;   // Must have CC advance/suppress or we will advance before next line.
@@ -414,7 +414,7 @@ namespace IBM1410Console
         private void skipCarriage(int channel) {
             int skipped = 0;
 
-            // Debug.WriteLine("Skipping carriage to channel " + channel.ToString());
+            Debug.WriteLine("IBM1403Form: Skipping carriage to channel " + channel.ToString());
 
             if (channel == 0) {
                 return;

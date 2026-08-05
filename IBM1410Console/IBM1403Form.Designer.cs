@@ -194,6 +194,7 @@
             // 
             // printerRichTextBox1
             // 
+            printerRichTextBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             printerRichTextBox1.Location = new System.Drawing.Point(472, 29);
             printerRichTextBox1.Name = "printerRichTextBox1";
             printerRichTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;

@@ -32,6 +32,7 @@
             // 
             // stackerRichTextBox1
             // 
+            stackerRichTextBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             stackerRichTextBox1.Location = new System.Drawing.Point(12, 30);
             stackerRichTextBox1.Name = "stackerRichTextBox1";
             stackerRichTextBox1.Size = new System.Drawing.Size(773, 328);

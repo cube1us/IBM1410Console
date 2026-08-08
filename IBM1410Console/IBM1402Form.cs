@@ -27,6 +27,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -376,7 +377,7 @@ namespace IBM1410Console
             }
 
             //  If there is no card presently at the check station, we are done, and
-            //  are now net ready.
+            //  are now not ready.
 
             if (checkStation == null) {
                 readerReady = false;
@@ -384,6 +385,7 @@ namespace IBM1410Console
                 safeUpdate = delegate
                 {
                     labelReaderReady.ForeColor = Color.DimGray;
+                    readerStartButton.BackColor = Color.SeaGreen;
                 };
                 this.Invoke(safeUpdate);
 
@@ -416,6 +418,7 @@ namespace IBM1410Console
                 safeUpdate = delegate
                 {
                     labelReaderReady.ForeColor = Color.SeaGreen;
+                    readerStartButton.BackColor = Color.LightGreen;
                 };
                 this.Invoke(safeUpdate);
 
@@ -428,6 +431,7 @@ namespace IBM1410Console
             else {
                 readerReady = false;
                 labelReaderReady.ForeColor = Color.DimGray;
+                readerStartButton.BackColor = Color.SeaGreen;
                 Debug.WriteLine("IBM1402Form: Reader Not Ready after last card.");
             }
 
@@ -447,6 +451,7 @@ namespace IBM1410Console
                 labelReaderStop.ForeColor = Color.DimGray;
                 readerStartButton.Enabled = !readerReady;
                 readerStopButton.Enabled = readerReady;
+                readerStartButton.BackColor = readerReady ? Color.LightGreen : Color.SeaGreen;
             };
             this.Invoke(safeUpdate);
 
@@ -553,47 +558,60 @@ namespace IBM1410Console
 
         private void loadButton_Click(object sender, EventArgs e) {
             if (readerOpenFileDialog.ShowDialog() == DialogResult.OK) {
-                if (readerFileStream != null) {
-                    readerFileStream.Close();
-                    readerFileStream = null;
-                    
-                    if (readerRunOutCheckbox.Checked) {
-                        readStation = null;
-                        checkStation = null;
-                    }
+                doReaderLoad(readerOpenFileDialog.FileName);
+            }
+        }
+
+        //  Method to do the actual work - so we can call it from .ini file
+        //  processing...
+
+        public void doReaderLoad(String filename) {
+            if (readerFileStream != null) {
+                readerFileStream.Close();
+                readerFileStream = null;
+
+                if (readerRunOutCheckbox.Checked) {
+                    readStation = null;
+                    checkStation = null;
                 }
-                try {
-                    readerFileStream = new FileStream(readerOpenFileDialog.FileName,
-                        FileMode.Open, FileAccess.Read);
-                    // loadButton.Enabled = false;
-                    loadButton.Text = "(Loaded)";
-                    loadButton.ForeColor = Color.ForestGreen;
-                    // labelReaderReady.ForeColor = Color.SeaGreen;
-                    // readerReady = true;
-                    labelReaderReady.ForeColor = Color.DimGray;
-                    readerReady = false;
-                    readerLastCard = false;
-                    readerStartButton.Enabled = true;
-                    readerLineNumber = 0;
-                }
-                catch (Exception e2) {
-                    Debug.WriteLine("ERROR: IBM1402: Load: new FileStream failed on reader");
-                    Debug.WriteLine(e2.ToString());
-                    MessageBox.Show("Open of file name " + readerOpenFileDialog.FileName + " Failed.");
-                    loadButton.Enabled = true;
-                    loadButton.ForeColor = Color.Black;
-                    loadButton.Text = "Load...";
-                    labelReaderReady.ForeColor = Color.DimGray;
-                    readerReady = false;
-                    readerLastCard = false;
-                    readerStartButton.Enabled = false;
-                }
+            }
+            try {
+                readerFileStream = new FileStream(filename,
+                    FileMode.Open, FileAccess.Read);
+                // loadButton.Enabled = false;
+                loadButton.Text = "(Loaded)";
+                loadButton.ForeColor = Color.ForestGreen;
+                // labelReaderReady.ForeColor = Color.SeaGreen;
+                // readerReady = true;
+                labelReaderReady.ForeColor = Color.DimGray;
+                readerReady = false;
+                readerLastCard = false;
+                readerStartButton.Enabled = true;
+                readerStartButton.BackColor = Color.SeaGreen;
+                readerLineNumber = 0;
+            }
+            catch (Exception e2) {
+                Debug.WriteLine("ERROR: IBM1402: Load: new FileStream failed on reader");
+                Debug.WriteLine(e2.ToString());
+                MessageBox.Show("Open of file name " + readerOpenFileDialog.FileName + " Failed.");
+                loadButton.Enabled = true;
+                loadButton.ForeColor = Color.Black;
+                loadButton.Text = "Load...";
+                labelReaderReady.ForeColor = Color.DimGray;
+                readerReady = false;
+                readerLastCard = false;
+                readerStartButton.Enabled = false;
+                readerStartButton.BackColor = Color.SeaGreen;
             }
         }
 
         //  Method to process the 1402 Reader Start Button
 
         private void readerStartButton_Click(object sender, EventArgs e) {
+            doReaderStart();
+        }
+
+        public void doReaderStart() {
 
             //  We might be restarting.  Remember if the readstation is not null,
             //  in which case we have already sent the card to the 1414.
@@ -647,6 +665,7 @@ namespace IBM1410Console
             labelReaderStop.ForeColor = Color.DimGray;
             readerStartButton.Enabled = !readerReady;
             readerStopButton.Enabled = readerReady;
+            readerStartButton.BackColor = readerReady ? Color.LightGreen : Color.SeaGreen;
 
             //  Send the reader status to the FPGA (1414)
 
@@ -673,12 +692,18 @@ namespace IBM1410Console
                 loadButton.ForeColor = Color.ForestGreen;
                 sendReaderStatus();
             }
-            
+
+            this.Refresh();
+
         }
 
         //  Method to process the 1402 Reader STOP button
 
         private void readerStopButton_Click(object sender, EventArgs e) {
+            doReaderStop();
+        }
+
+        public void doReaderStop() {
             readerReady = false;
             // readerEOF = false;
             // readerLastCard = false;
@@ -686,9 +711,10 @@ namespace IBM1410Console
             readerStartButton.Enabled = true;
             readerStopButton.Enabled = false; // Consider leaving it enabled?
             labelReaderReady.ForeColor = Color.DimGray;
+            readerStartButton.BackColor = Color.SeaGreen;
             loadButton.Enabled = true;
             loadButton.ForeColor = Color.Black;
-            loadButton.Text = "Load...";
+            // loadButton.Text = "Load...";
             sendReaderStatus();
         }
 
@@ -696,7 +722,11 @@ namespace IBM1410Console
         //  Method to process the 1402 reader EOF button
 
         private void readerEOFButton_Click(object sender, EventArgs e) {
-            if (!readerEOF) {
+            doReaderEOF(false);
+        }
+
+        public void doReaderEOF(bool forceReaderEOF) {
+            if (forceReaderEOF || readerEOF == false) {
                 readerEOF = true;
                 readerEOFButton.BackColor = Color.LightGreen;
             }

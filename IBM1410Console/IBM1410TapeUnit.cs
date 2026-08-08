@@ -12,6 +12,7 @@ using System.Reflection.Metadata;
 using System.IO.Ports;
 using System.Threading;
 using System.Net.Sockets;
+using System.Reflection.Emit;
 
 namespace IBM1410Console
 {
@@ -62,6 +63,7 @@ namespace IBM1410Console
         private Boolean modified;
 
         private int[] lastChars;
+        private System.Windows.Forms.Label driveLabel;
 
         //  Set up many of the fields as properties...
 
@@ -82,12 +84,14 @@ namespace IBM1410Console
         // if a new tape is mounted.
 
         public IBM1410TapeUnit(SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
-            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore, int channel, int unit) {
+            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore, int channel, int unit,
+            System.Windows.Forms.Label driveLabel) {
             fd = null;
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
             this.udpClient = udpClient;
             this.udpOutputSemaphore = udpOutputSemaphore;
+            this.driveLabel = driveLabel;
             Init(channel,unit);
             lastChars = [ -1, -1, -1, -1];
         }

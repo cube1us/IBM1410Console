@@ -654,5 +654,10 @@ namespace IBM1410Console
         public bool get1401Mode() {
             return (switchVector[SWITCH_TOG_1401_MODE_PL1_INDEX]);
         }
+
+        public void set1410or1401(bool set1401) {
+            setToggleSwitch(SWITCH_TOG_1401_MODE_PL1_INDEX, set1401);
+            compat1401CheckBox.Checked = set1401;
+        }
     }
 }

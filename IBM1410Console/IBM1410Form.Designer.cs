@@ -59,13 +59,15 @@ namespace IBM1410Console
             optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             cardReaderPunchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            printerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            printerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            initializationFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            iniFileOpenDialog = new System.Windows.Forms.OpenFileDialog();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -102,7 +104,7 @@ namespace IBM1410Console
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, clearCoreToolStripMenuItem, toolStripSeparator, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, newToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, clearCoreToolStripMenuItem, toolStripSeparator, initializationFileToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, newToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
@@ -261,43 +263,50 @@ namespace IBM1410Console
             // consoleStripMenuItem
             // 
             consoleStripMenuItem.Name = "consoleStripMenuItem";
-            consoleStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            consoleStripMenuItem.Size = new System.Drawing.Size(177, 22);
             consoleStripMenuItem.Text = "Console";
             consoleStripMenuItem.Click += consoleStripMenuItem_Click;
             // 
             // lightStripMenuItem
             // 
             lightStripMenuItem.Name = "lightStripMenuItem";
-            lightStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            lightStripMenuItem.Size = new System.Drawing.Size(177, 22);
             lightStripMenuItem.Text = "Console Lights";
             lightStripMenuItem.Click += lightStripMenuItem_Click;
             // 
             // switchesStripMenuItem
             // 
             switchesStripMenuItem.Name = "switchesStripMenuItem";
-            switchesStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            switchesStripMenuItem.Size = new System.Drawing.Size(177, 22);
             switchesStripMenuItem.Text = "&Switches";
             switchesStripMenuItem.Click += switchesStripMenuItem_Click;
             // 
             // optionsToolStripMenuItem
             // 
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            optionsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             optionsToolStripMenuItem.Text = "&Options";
             // 
             // tapesToolStripMenuItem
             // 
             tapesToolStripMenuItem.Name = "tapesToolStripMenuItem";
-            tapesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            tapesToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             tapesToolStripMenuItem.Text = "Tapes";
             tapesToolStripMenuItem.Click += tapesToolStripMenuItem_Click;
             // 
             // cardReaderPunchToolStripMenuItem
             // 
             cardReaderPunchToolStripMenuItem.Name = "cardReaderPunchToolStripMenuItem";
-            cardReaderPunchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            cardReaderPunchToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             cardReaderPunchToolStripMenuItem.Text = "Card Reader/Punch";
             cardReaderPunchToolStripMenuItem.Click += cardReaderPunchToolStripMenuItem_Click;
+            // 
+            // printerToolStripMenuItem
+            // 
+            printerToolStripMenuItem.Name = "printerToolStripMenuItem";
+            printerToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            printerToolStripMenuItem.Text = "Printer";
+            printerToolStripMenuItem.Click += printerToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -336,12 +345,16 @@ namespace IBM1410Console
             aboutToolStripMenuItem.Text = "&About...";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
-            // printerToolStripMenuItem
+            // initializationFileToolStripMenuItem
             // 
-            printerToolStripMenuItem.Name = "printerToolStripMenuItem";
-            printerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            printerToolStripMenuItem.Text = "Printer";
-            printerToolStripMenuItem.Click += printerToolStripMenuItem_Click;
+            initializationFileToolStripMenuItem.Name = "initializationFileToolStripMenuItem";
+            initializationFileToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            initializationFileToolStripMenuItem.Text = "Initialization File";
+            initializationFileToolStripMenuItem.Click += initializationFileToolStripMenuItem_Click;
+            // 
+            // iniFileOpenDialog
+            // 
+            iniFileOpenDialog.Filter = "ini files (*.ini)|*.ini|Text files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
             // IBM1410Form
             // 
@@ -401,6 +414,8 @@ namespace IBM1410Console
         private System.Windows.Forms.ToolStripMenuItem clearCoreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cardReaderPunchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem printerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem initializationFileToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog iniFileOpenDialog;
     }
 }
 

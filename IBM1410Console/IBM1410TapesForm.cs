@@ -75,7 +75,12 @@ namespace IBM1410Console
         // Sleep this amount for each tape packet sent so that we don't
         // overrun the 1410 channel at 9us per character.
 
-        const int TAPEPACKETSLEEPTIME = 10;     
+        const int TAPEPACKETSLEEPTIME = 10;
+
+        //  An array of labels to handle the individual drive lights
+
+        private System.Windows.Forms.Label[,] driveLightLabels;
+        private System.Windows.Forms.Label[] lastDriveLightLabels;   // Last light lit for each channel
 
         //  Constructor
 
@@ -100,10 +105,19 @@ namespace IBM1410Console
 
             TapeUnits = new IBM1410TapeUnit[3, 10];
 
+            driveLightLabels = new System.Windows.Forms.Label[3, 10] {
+                { null, null, null, null, null, null, null, null, null, null } ,
+                {labelDriveLight10, labelDriveLight11, labelDriveLight12, labelDriveLight13, labelDriveLight14,
+                 labelDriveLight15, labelDriveLight16, labelDriveLight17, labelDriveLight18, labelDriveLight19} ,
+                {labelDriveLight20, labelDriveLight21, labelDriveLight22, labelDriveLight23, labelDriveLight24,
+                 labelDriveLight25, labelDriveLight26, labelDriveLight27, labelDriveLight28, labelDriveLight29} };
+
+            lastDriveLightLabels = new System.Windows.Forms.Label[3] { null, null, null};
+
             for (c = 1; c < 3; ++c) {
                 for (u = 0; u < 10; ++u) {
                     TapeUnits[c, u] = new IBM1410TapeUnit(serialPort, serialOutputSemaphore,
-                        udpClient, udpOutputSemaphore, c, u);
+                        udpClient, udpOutputSemaphore, c, u, driveLightLabels[c,u]);
                     TapeUnits[0, u] = null;
                 }
             }
@@ -136,7 +150,7 @@ namespace IBM1410Console
                 new EventHandler<UDPTapeChannelEventArgs>(tapeChannel2UDPOutputAvailable);
 
             Debug.WriteLine("IBM1410TapesForm: Unsubscribed from tape events.");
-            
+
             serialDataPublisher.TapeChannel1OutputEvent +=
                 new EventHandler<TapeChannelEventArgs>(tapeChannel1OutputAvailable);
 
@@ -150,6 +164,17 @@ namespace IBM1410Console
                 new EventHandler<UDPTapeChannelEventArgs>(tapeChannel2UDPOutputAvailable);
 
             Debug.WriteLine("IBM1410TapesForm: Event Handlers for Serial and UDP Data Publishers (Tapes) Registered.");
+        }
+
+        //  Getter to return a tape unit.
+
+        internal IBM1410TapeUnit getTapeUnit(int channel, int unit) {
+            if (channel < 1 || channel > 2 || unit < 0 || unit > 9) {
+                return null;
+            }
+            else {
+                return (TapeUnits[channel, unit]);
+            }
         }
 
         //  Methods that get called when serial data is available from the FPGA...
@@ -180,14 +205,14 @@ namespace IBM1410Console
 
         void tapeChannel1UDPOutputAvailable(object sender, UDPTapeChannelEventArgs e) {
 
-            if(e.DispatchCode != UDPDataPublisher.tapeChannel1FromTAUCodeByte) {
+            if (e.DispatchCode != UDPDataPublisher.tapeChannel1FromTAUCodeByte) {
                 return;
             }
 
             // tapeSerialInputAvailable(1, (byte)e.UDPByte);
 
-            for(int i = 0; i < e.UDPLen; ++i) {
-                tapeSerialInputAvailable(1, (byte) e.UDPBytes[i]);
+            for (int i = 0; i < e.UDPLen; ++i) {
+                tapeSerialInputAvailable(1, (byte)e.UDPBytes[i]);
             }
         }
 
@@ -331,9 +356,22 @@ namespace IBM1410Console
                             //  In this case do NOT update the state variable for the affected channel.
                             return;
                     }
+
+                    //  Turn off the light for the old unit if different from this one.
+
+                    if (lastDriveLightLabels[channel] != null &&
+                        lastDriveLightLabels[channel] != driveLightLabels[tapeUnit.ChannelNumber,tapeUnit.UnitNumber]) {
+                        lastDriveLightLabels[channel].ForeColor = Color.DarkGray;
+                    }
+
+                    lastDriveLightLabels[channel] = driveLightLabels[tapeUnit.ChannelNumber, tapeUnit.UnitNumber];
+
+                    driveLightLabels[tapeUnit.ChannelNumber, tapeUnit.UnitNumber].ForeColor =
+                        (c == TAPEOPERWRITE || c == TAPEOPERWTM) ? Color.Red : Color.White;
+
                     break;
 
-                //  State for receivng data (Write to tape).  X'00' marks the end of the record
+                //  State for receiving data (Write to tape).  X'00' marks the end of the record
 
                 case ChannelReceiveState.receivingData:
                     if (c == TAPEENDOFRECORD) {
@@ -430,7 +468,6 @@ namespace IBM1410Console
             serialPort.Write(bytes, 0, 1);
             */
 
-
             while (true) {
                 c = tapeUnit.Read();
                 if (c == IBM1410TapeUnit.TAPEUNITNOTREADY || c == IBM1410TapeUnit.TAPEUNITIRG) {
@@ -451,7 +488,7 @@ namespace IBM1410Console
 
                 //  If the UDP packet is almost full, send it.
 
-                if (packetIx > packet.Length -4) {
+                if (packetIx > packet.Length - 4) {
                     udpClient.Send(packet, packetIx);
                     //  Sleep so that we don't overrun the IBM 1410 channel at 9us / char
                     System.Threading.Thread.Sleep(5);  // TAPEPACKETSLEEPTIME
@@ -477,7 +514,7 @@ namespace IBM1410Console
             }
 
             //  If we have data still in the UDP packet, send it.
-            if(packetIx > 0) {
+            if (packetIx > 0) {
                 udpClient.Send(packet, packetIx);
             }
 
@@ -590,7 +627,7 @@ namespace IBM1410Console
 
         //  Update the display...
 
-        void Display() {
+        public void Display() {
             if (tapeUnit == null) {
                 return;
             }
@@ -669,6 +706,9 @@ namespace IBM1410Console
                 e.Cancel = true;
                 Hide();
             }
+        }
+
+        private void IBM1410TapesForm_Load(object sender, EventArgs e) {
         }
     }
 }

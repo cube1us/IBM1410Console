@@ -296,14 +296,6 @@ namespace IBM1410Console
         }
 
         private void LoadCoreImageToolStripMenuItem_Click(object sender, EventArgs e) {
-            char[] coreSizeChars = new char[6];
-            long fileCoreSize = 0;
-            long coresize = 0;
-            int bytesPerCharacter = 0;
-            byte[] buffer = new byte[6];  //    Enough for start mark, bank and address bytes
-            byte[] packet = new byte[1024];
-            int packetIx = 0;
-            Stream fileStream;
 
             OpenFileDialog LoadCoreImageOpenDialog = new OpenFileDialog();
             LoadCoreImageOpenDialog.AddExtension = true;
@@ -313,199 +305,216 @@ namespace IBM1410Console
             LoadCoreImageOpenDialog.CheckPathExists = true;
 
             if (LoadCoreImageOpenDialog.ShowDialog() == DialogResult.OK) {
-                try {
-                    fileStream = File.Open(LoadCoreImageOpenDialog.FileName, FileMode.Open, FileAccess.Read);
-                }
-                catch (Exception e2) {
-                    MessageBox.Show("Core Image File open failed.", "File open failed.");
-                    return;
-                }
-                BinaryReader reader = new BinaryReader(fileStream);
+                loadCoreFile(LoadCoreImageOpenDialog.FileName, true);
+            }
+        }
 
-                //  The first five characters are the core size, in decimal, ascii characters
+        public void loadCoreFile(string filename, bool showMessages) {
 
-                reader.Read(coreSizeChars, 0, 5);
-                coreSizeChars[5] = '\0';
-                try {
-                    fileCoreSize = Int32.Parse(coreSizeChars);
-                }
-                catch (Exception) {
-                    MessageBox.Show("First five bytes - size - not numeric.  Load aborted",
-                        "Load Aborted");
+            char[] coreSizeChars = new char[6];
+            long fileCoreSize = 0;
+            long coresize = 0;
+            int bytesPerCharacter = 0;
+            byte[] buffer = new byte[6];  //    Enough for start mark, bank and address bytes
+            byte[] packet = new byte[1024];
+            int packetIx = 0;
+            Stream fileStream;
+
+            try {
+                fileStream = File.Open(filename, FileMode.Open, FileAccess.Read);
+            }
+            catch (Exception e2) {
+                Debug.WriteLine("     Core Image File open failed...");
+                MessageBox.Show("     Core Image File open failed.", "File open failed.");
+                return;
+            }
+
+            BinaryReader reader = new BinaryReader(fileStream);
+
+            //  The first five characters are the core size, in decimal, ascii characters
+
+            reader.Read(coreSizeChars, 0, 5);
+            coreSizeChars[5] = '\0';
+            try {
+                fileCoreSize = Int32.Parse(coreSizeChars);
+            }
+            catch (Exception) {
+                MessageBox.Show("First five bytes - size - not numeric.  Load aborted",
+                    "Load Aborted");
+                reader.Close();
+                fileStream.Close();
+                return;
+            }
+            Debug.WriteLine("File Core size: " + fileCoreSize);
+
+            //  See if file size matches up with size in first 5 bytes...
+            //  It should be either 2*size+5 or 4*size+5
+
+            if (fileStream.Length == fileCoreSize * 2 + 5) {
+                bytesPerCharacter = 2;
+            }
+            else if (fileStream.Length == fileCoreSize * 4 + 5) {
+                bytesPerCharacter = 4;
+            }
+            else {
+                DialogResult result = MessageBox.Show(
+                    "Actual size of file of " + fileStream.Length +
+                    " bytes is not 2x+5 or 4x+5 of core size in header of " +
+                    fileCoreSize,
+                    "File Size Warning",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Cancel) {
                     reader.Close();
                     fileStream.Close();
                     return;
                 }
-                Debug.WriteLine("File Core size: " + fileCoreSize);
-
-                //  See if file size matches up with size in first 5 bytes...
-                //  It should be either 2*size+5 or 4*size+5
-
-                if (fileStream.Length == fileCoreSize * 2 + 5) {
-                    bytesPerCharacter = 2;
-                }
-                else if (fileStream.Length == fileCoreSize * 4 + 5) {
-                    bytesPerCharacter = 4;
-                }
-                else {
-                    DialogResult result = MessageBox.Show(
-                        "Actual size of file of " + fileStream.Length +
-                        " bytes is not 2x+5 or 4x+5 of core size in header of " +
-                        fileCoreSize,
-                        "File Size Warning",
-                        MessageBoxButtons.OKCancel,
-                        MessageBoxIcon.Warning);
-
-                    if (result == DialogResult.Cancel) {
-                        reader.Close();
-                        fileStream.Close();
-                        return;
-                    }
-                }
-
-                if (fileCoreSize > Properties.Settings.Default.CoreSize) {
-                    DialogResult result = MessageBox.Show(
-                        "Core size in file of " + fileCoreSize +
-                        " is greater than selected FPGA core size of " +
-                        Properties.Settings.Default.CoreSize +
-                        " -- Will only send " + Properties.Settings.Default.CoreSize,
-                        "Core Size Warning",
-                        MessageBoxButtons.OKCancel,
-                        MessageBoxIcon.Warning);
-
-                    if (result == DialogResult.Cancel) {
-                        reader.Close();
-                        fileStream.Close();
-                        return;
-                    }
-                }
-
-                //  The amount we will send is the smaller of the FPGA core size
-                //  and the file core size.
-
-                coresize = fileCoreSize > Properties.Settings.Default.CoreSize ?
-                    Properties.Settings.Default.CoreSize : fileCoreSize;
-                Debug.WriteLine("Sending Core image size of " + coresize);
-
-                //  Acquire access to the serial port
-
-                serialOuputSemaphore.Wait();
-                udpOutputSemaphore.Wait();
-
-                //  Send the address, which, for now, is always 0 in bank 0.
-
-                buffer[0] = loaderStreamFlag;
-                buffer[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
-                buffer[2] = addrMark | 0x00;
-                buffer[3] = addrMark | 0x00;
-                buffer[4] = addrMark | 0x00;
-                buffer[5] = addrMark | 0x00;
-
-                packetIx = 0;
-                packet[0] = loaderStreamFlag;
-                packet[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
-                packet[2] = addrMark | 0x00;
-                packet[3] = addrMark | 0x00;
-                packet[4] = addrMark | 0x00;
-                packet[5] = addrMark | 0x00;
-                packetIx = 6;
-
-                // serialPort.Write(buffer, 0, 6);
-
-                //  Read the file and send the data...
-
-                for (int addr = 0; addr < coresize; addr++) {
-                    long c, t;
-
-                    try {
-                        c = bytesPerCharacter == 2 ? reader.ReadInt16() :
-                            reader.ReadInt32();
-                    }
-                    catch (EndOfStreamException) {
-                        MessageBox.Show("Unexpected EOF on core image file.",
-                            "Unexpected EOF");
-                        break;
-                    }
-                    catch (Exception ex) {
-                        MessageBox.Show("ERROR reading core image file: " +
-                            ex.Message, "Unexpected I/O Error");
-                        break;
-                    }
-
-                    //  Exchange the top two bits to convert file format (WM C ...)
-                    //  to FPGA format (C WM ...)
-
-                    t = c;
-                    c = c & 0x3f;
-                    if ((t & 0x80) == 0x80) {
-                        c = c | 0x40;
-                    }
-                    if ((t & 0x40) == 0x40) {
-                        c = c | 0x80;
-                    }
-
-                    //  Fix bad parity on zeroes (kludge)
-
-                    if (c == 0) {
-                        c = 0x80;
-                    }
-
-                    //  Temporary debug...
-                    /*
-                    if (addr < 10) {
-                        Debug.WriteLine("Read in " + t.ToString("X4") +
-                            " Converted to " + c.ToString("X4"));
-                    }
-                    */
-
-                    // If packet buffer is almsot full, send it.
-                    // The -4 gives us 2 extra bytes left for the end mark
-
-                    if (packetIx > packet.Length - 4) {
-                        udpState.udpClient.Send(packet, packetIx);
-                        // Debug.WriteLine("Sent UDP packet length " + packetIx.ToString());
-                        /*
-                        Debug.Write("/");
-                        for (int i = 0; i < packetIx; ++i) {
-                            Debug.Write(packet[i].ToString("X2") + " ");
-                        }
-                        Debug.WriteLine("/");
-                        */
-
-                        packetIx = 0;
-                        // System.Threading.Thread.Sleep(100);
-                    }
-
-                    //  Data is sent HIGH four bits first, with appropriate marks.
-
-                    buffer[0] = (byte)(((c & 0xf0) >> 4) | data0Mark);
-                    buffer[1] = (byte)((c & 0x0f) | data1Mark);
-                    // serialPort.Write(buffer, 0, 2);
-
-                    packet[packetIx++] = (byte)(((c & 0xf0) >> 4) | data0Mark);
-                    packet[packetIx++] = (byte)((c & 0x0f) | data1Mark);
-                }
-
-                //  Send the end of load marker.
-
-                buffer[0] = endMark;
-                // serialPort.Write(buffer, 0, 1);
-
-                packet[packetIx++] = endMark;
-                udpState.udpClient.Send(packet, packetIx);
-                Debug.WriteLine("Sent final packet of length " + packetIx.ToString());
-
-                //  Release the kraken, I mean semaphore...
-
-                udpOutputSemaphore.Release();
-                serialOuputSemaphore.Release();
-
-                reader.Close();
-                fileStream.Close();
-
-                MessageBox.Show("Core File Image Load Complete", "Core Image Load Complete");
             }
 
+            if (fileCoreSize > Properties.Settings.Default.CoreSize && showMessages) {
+                DialogResult result = MessageBox.Show(
+                    "Core size in file of " + fileCoreSize +
+                    " is greater than selected FPGA core size of " +
+                    Properties.Settings.Default.CoreSize +
+                    " -- Will only send " + Properties.Settings.Default.CoreSize,
+                    "Core Size Warning",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Cancel) {
+                    reader.Close();
+                    fileStream.Close();
+                    return;
+                }
+            }
+
+            //  The amount we will send is the smaller of the FPGA core size
+            //  and the file core size.
+
+            coresize = fileCoreSize > Properties.Settings.Default.CoreSize ?
+                Properties.Settings.Default.CoreSize : fileCoreSize;
+            Debug.WriteLine("Sending Core image size of " + coresize);
+
+            //  Acquire access to the serial port
+
+            serialOuputSemaphore.Wait();
+            udpOutputSemaphore.Wait();
+
+            //  Send the address, which, for now, is always 0 in bank 0.
+
+            buffer[0] = loaderStreamFlag;
+            buffer[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
+            buffer[2] = addrMark | 0x00;
+            buffer[3] = addrMark | 0x00;
+            buffer[4] = addrMark | 0x00;
+            buffer[5] = addrMark | 0x00;
+
+            packetIx = 0;
+            packet[0] = loaderStreamFlag;
+            packet[1] = addrMark | 0x01;    // Bank 1 - 0-9999 start address
+            packet[2] = addrMark | 0x00;
+            packet[3] = addrMark | 0x00;
+            packet[4] = addrMark | 0x00;
+            packet[5] = addrMark | 0x00;
+            packetIx = 6;
+
+            // serialPort.Write(buffer, 0, 6);
+
+            //  Read the file and send the data...
+
+            for (int addr = 0; addr < coresize; addr++) {
+                long c, t;
+
+                try {
+                    c = bytesPerCharacter == 2 ? reader.ReadInt16() :
+                        reader.ReadInt32();
+                }
+                catch (EndOfStreamException) {
+                    MessageBox.Show("Unexpected EOF on core image file.",
+                        "Unexpected EOF");
+                    break;
+                }
+                catch (Exception ex) {
+                    MessageBox.Show("ERROR reading core image file: " +
+                        ex.Message, "Unexpected I/O Error");
+                    break;
+                }
+
+                //  Exchange the top two bits to convert file format (WM C ...)
+                //  to FPGA format (C WM ...)
+
+                t = c;
+                c = c & 0x3f;
+                if ((t & 0x80) == 0x80) {
+                    c = c | 0x40;
+                }
+                if ((t & 0x40) == 0x40) {
+                    c = c | 0x80;
+                }
+
+                //  Fix bad parity on zeroes (kludge)
+
+                if (c == 0) {
+                    c = 0x80;
+                }
+
+                //  Temporary debug...
+                /*
+                if (addr < 10) {
+                    Debug.WriteLine("Read in " + t.ToString("X4") +
+                        " Converted to " + c.ToString("X4"));
+                }
+                */
+
+                // If packet buffer is almsot full, send it.
+                // The -4 gives us 2 extra bytes left for the end mark
+
+                if (packetIx > packet.Length - 4) {
+                    udpState.udpClient.Send(packet, packetIx);
+                    // Debug.WriteLine("Sent UDP packet length " + packetIx.ToString());
+                    /*
+                    Debug.Write("/");
+                    for (int i = 0; i < packetIx; ++i) {
+                        Debug.Write(packet[i].ToString("X2") + " ");
+                    }
+                    Debug.WriteLine("/");
+                    */
+
+                    packetIx = 0;
+                    // System.Threading.Thread.Sleep(100);
+                }
+
+                //  Data is sent HIGH four bits first, with appropriate marks.
+
+                buffer[0] = (byte)(((c & 0xf0) >> 4) | data0Mark);
+                buffer[1] = (byte)((c & 0x0f) | data1Mark);
+                // serialPort.Write(buffer, 0, 2);
+
+                packet[packetIx++] = (byte)(((c & 0xf0) >> 4) | data0Mark);
+                packet[packetIx++] = (byte)((c & 0x0f) | data1Mark);
+            }
+
+            //  Send the end of load marker.
+
+            buffer[0] = endMark;
+            // serialPort.Write(buffer, 0, 1);
+
+            packet[packetIx++] = endMark;
+            udpState.udpClient.Send(packet, packetIx);
+            Debug.WriteLine("Sent final packet of length " + packetIx.ToString());
+
+            //  Release the kraken, I mean semaphore...
+
+            udpOutputSemaphore.Release();
+            serialOuputSemaphore.Release();
+
+            reader.Close();
+            fileStream.Close();
+
+            if(showMessages) {
+                MessageBox.Show("Core File Image Load Complete", "Core Image Load Complete");               
+            }
         }
 
         private void fPGACoreSizeToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -566,6 +575,186 @@ namespace IBM1410Console
             MessageBox.Show("Core Clear Complete", "Core Clear Complete");
         }
 
+        private void initializationFileToolStripMenuItem_Click(object sender, EventArgs e) {
+
+            String unit;
+            String commandFileName;
+            String command;
+            String[] tokens;
+            String channel;
+
+            IBM1410TapeUnit tapeUnit;
+
+            int fileNameToken;
+            int unitToken;
+            int tapeUnitNumber;
+            int channelNumber;
+            int tokenError = 0;
+            int totalErrors = 0;
+
+            if(iniFileOpenDialog.ShowDialog() == DialogResult.OK) {
+
+                Debug.WriteLine("IBM1410Form: Processing ini file " + iniFileOpenDialog.FileName);
+
+                foreach (string line in File.ReadLines(iniFileOpenDialog.FileName)) {
+
+                    Debug.WriteLine("IBM1410Form: Process Ini File: Line: " + line);
+                    tokens = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+
+                    Debug.Write("     Tokens: ");
+                    for(int t = 0; t < tokens.Length; ++t) {
+                        Debug.Write("/" + tokens[t] + "/");
+                    }
+                    Debug.Write("\n");
+
+                    // Ignore empty lines
+
+                    if (tokens.Length <= 0) {
+                        continue;
+                    }
+
+                    command = tokens[0].ToUpper();
+                    unit = "";
+                    commandFileName = "";
+                    tokenError = 0;
+                    tapeUnitNumber = -1;
+                    unitToken = -1;
+                    fileNameToken = -1;
+
+                    //  First, validate the command...
+
+                    if (command.Equals("ATTACH")) {
+                        unitToken = 1;
+                        fileNameToken = 2;
+                        if (tokens.Length < 3) {
+                            tokenError = 1;
+                        }
+                    }
+
+                    else if (command.Equals("LOAD")) {
+                        unitToken = 1;
+                        fileNameToken = 2;
+                        if (tokens.Length < 3) {
+                            tokenError = 1;
+                        }
+                    }
+
+                    else if (command.Equals("SET")) {
+                        //  Can't set the coresize dynamically - at least not yet
+                        unitToken = 1;      // CPU
+                        fileNameToken = 2;  // 1410 or 1401
+                    }
+
+                    else {
+                        unitToken = -1;
+                        fileNameToken = -1;
+                        tokenError = 1;
+                        Debug.WriteLine("     Invalid command token " + command);
+                    }
+
+                    if (tokenError == 0) {
+                        if(unitToken > -1) {
+                            unit = tokens[unitToken].ToUpper();
+                        }
+                        if (fileNameToken > -1) {
+                            for (int t = fileNameToken; t < tokens.Length; t++) {
+                                commandFileName += (t > fileNameToken ? " " : "") + tokens[t];
+                            }
+                        }
+                    }
+
+                    else {
+                        Debug.WriteLine("     Invalid ini file command...");
+                        ++totalErrors;
+                        continue;
+                    }
+
+                    Debug.WriteLine("     Command: " + command + ", Unit: " + unit + ", fileName: " +
+                        commandFileName);
+
+                    //  Now, process the command
+
+                    if (command.Equals("ATTACH")) {
+
+                        if (unit.Length == 0 || commandFileName.Length == 0) {
+                            Debug.WriteLine("     ATTACH: missing unit or file name");
+                            ++totalErrors;
+                            continue;
+                        }
+
+                        channel = unit.Substring(0, 1);
+
+                        if (unit.Length == 2 && (channel == "1" || channel == "2")) {
+                            if (!int.TryParse(channel, out channelNumber) ||
+                                !int.TryParse(unit.Substring(1, 1), out tapeUnitNumber)) {
+                                Debug.WriteLine("     ATTACH: invalid tape channel and/or unit number.");
+                                ++totalErrors;
+                                continue;
+                            }
+
+                            Debug.WriteLine("     Mounting file on unit " + channelNumber + tapeUnitNumber);
+
+                            tapeUnit = IBM1410TapesForm.getTapeUnit(channelNumber, tapeUnitNumber);
+                            if (tapeUnit != null) {
+                                tapeUnit.Reset();
+                                tapeUnit.Unload();
+                                tapeUnit.Mount(commandFileName);
+                                tapeUnit.LoadRewind();
+                                tapeUnit.Start();
+                            }
+                            else {
+                                Debug.WriteLine("     Tape Unit Reference unexpectedly null...");
+                                ++totalErrors;
+                                continue;
+                            }
+                            IBM1410TapesForm.Display();
+                        }
+
+                        else if(unit.Length == 3 && unit.Substring(2,1) == "1") {
+                            if(unit.Equals("RD1")) {
+                                Debug.WriteLine("     Loading " + unit + " from file " + commandFileName);
+                                IBM1402Form.doReaderStop();
+                                IBM1402Form.doReaderLoad(commandFileName);
+                                IBM1402Form.doReaderEOF(true);
+                                IBM1402Form.doReaderStart();
+                            }
+                        }
+                    }
+
+                    else if (command.Equals("LOAD")) {
+                        if (unit.Equals("CORE")) {
+                            Debug.WriteLine("     Loading core from file " + commandFileName);
+                            loadCoreFile(commandFileName, false);
+                        }
+                        else {
+                            Debug.WriteLine("     LOAD command syntax error. Unit is not CORE...");
+                            ++totalErrors;
+                        }
+                    }
+
+                    else if (command.Equals("SET")) {
+                        if (unit.Equals("CPU")) {
+                            if(commandFileName.Equals("1410")) {
+                                IBM1410SwitchForm.set1410or1401(false);
+                            }
+                            else if(commandFileName.Equals("1401")) {
+                                IBM1410SwitchForm.set1410or1401(true);
+                            }
+                            else {
+                                Debug.WriteLine("     SET command syntax error. CPU is not 1401 or 1410.  Ignored.");
+                                ++totalErrors;
+                            }
+                        }
+                        else {
+                            Debug.WriteLine("     LOAD command syntax error. Unit is not CPU...");
+                            ++totalErrors;
+                        }
+                    }
+                }
+
+                MessageBox.Show("Ini File Processing Complete. " + totalErrors + " Errors Found");
+            }
+        }
     }
 }
 

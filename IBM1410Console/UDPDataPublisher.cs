@@ -139,6 +139,17 @@ namespace IBM1410Console
         public const int tapeChannel2ToTAUCodeByte = 0x83;
         public const int deviceTo1414CodeByte  = 0x85;
 
+        //  Data that may (or may not) be saved between packets...
+
+        int dispatchLen = 0;
+        int[] dispatchBytes = new int[2048];
+
+        int dispatchLen1414 = 0;
+        int[] dispatchBytes1414 = new int[256];
+
+        // int dispatchLenLights = 0;
+        // int[] dispatchBytesLights = new int[256];
+
         //  Nesting counters for debugging
         private int udpPacketNest = 0;
         private int udpLampNest = 0;
@@ -193,7 +204,7 @@ namespace IBM1410Console
 
             udpMessages.Add(rxBytes);
 
-            for(int i = 0; i < numBytes && i < 32; ++i) {
+            for(int i = 0; i < numBytes && i < 50; ++i) {
                 sample = sample + " " + rxBytes[i].ToString("X2");
             }
 
@@ -255,8 +266,8 @@ namespace IBM1410Console
 
             int numBytes = rxBytes.Length;
             int readByte = 0;
-            int dispatchLen = 0;
-            int[] dispatchBytes = new int[2048];
+            // int dispatchLen = 0;
+            // int[] dispatchBytes = new int[2048];
 
             Helpers.checkNesting("UDPDataPublisher UDP Packet Nesting", ++udpPacketNest);
 
@@ -331,7 +342,7 @@ namespace IBM1410Console
                     //  data we already grabbed, then reset the dispatchLen variable.
 
                     if (i > 0) {
-                        // Debug.WriteLine("Dispatching " + dispatchLen + " bytes...");
+                        // Debug.WriteLine("Dispatching " + dispatchLenLights + " bytes...");
                         if (lastCodeByte == lightCodeByte) {
                             UDPLightDataEventArgs udpLightDataEventArgs =
                                 new UDPLightDataEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
@@ -351,7 +362,7 @@ namespace IBM1410Console
                             if (lastUnitRecordDevice == 0x00) {
                                 Debug.WriteLine("UDPDataPublisher: No unit record device available yet - no Dispatch.");
                             }
-                            else if (lastUnitRecordOperation == 0x00 || dispatchLen == 0) {
+                            else if (lastUnitRecordOperation == 0x00 || dispatchLen1414 == 0) {
                                 Debug.WriteLine("UDPDataPublisher: No unit record operation available yet - no Dispatch");
                                 if(lastUnitRecordDevice == 0x10) {
                                     Debug.WriteLine("UDPDataPublisher: Invalid Unit Record Device.  Ignoring/resetting.");
@@ -360,35 +371,38 @@ namespace IBM1410Console
                             }
                             //  For a card reader, nothing follows the operation
                             else if (lastUnitRecordDevice == readerChannel1Device) {
-                                if (dispatchLen != 2) {
+                                if (dispatchLen1414 != 2) {
                                     Debug.WriteLine("UDPDataPublisher: Reader Channel 1 Dispatch Length not 2 " +
-                                        dispatchLen.ToString());
+                                        dispatchLen1414.ToString());
                                     // MessageBox.Show("UDPDataPublisher: Reader Channel 1 Dispatch Length not 2 " +
                                     //    dispatchLen.ToString());
                                 }
-                                Debug.WriteLine("UDPDataPublisher: Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 Reader.");
+                                Debug.WriteLine("UDPDataPublisher: Dispatching last " + dispatchLen1414.ToString("D2") + 
+                                    " bytes to Channel 1 Reader.");
                                 String s = "";
-                                for (int j = 0; j < dispatchLen; j++) {
-                                    s = s + dispatchBytes[j].ToString("X2") + " ";
+                                for (int j = 0; j < dispatchLen1414; j++) {
+                                    s = s + dispatchBytes1414[j].ToString("X2") + " ";
                                 }
                                 Debug.WriteLine("UDPDataPublisher: Dispatch Vector: " + s);
 
                                 // Debug.WriteLine("Dispatching Reader Channel 1 operation of " +
                                 //    dispatchBytes[0].ToString("X2"));
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
-                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
+                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes1414, dispatchLen1414);
                                 OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
                                 //  And then reset...
                                 lastUnitRecordDevice = 0x00;
                                 lastUnitRecordOperation = 0x00;
+                                dispatchLen1414 = 0;
                             }
                             else if (lastUnitRecordDevice == punchChannel1Device) {
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
-                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                                Debug.WriteLine("UDPDataPublisher: Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 punch.");
+                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes1414, dispatchLen1414);
+                                Debug.WriteLine("UDPDataPublisher: Dispatching last " + dispatchLen1414.ToString("D2") + 
+                                    " bytes to Channel 1 punch.");
                                 String s = "";
-                                for (int j = 0; j < dispatchLen; j++) {
-                                    s = s + dispatchBytes[j].ToString("X2") + " ";
+                                for (int j = 0; j < dispatchLen1414; j++) {
+                                    s = s + dispatchBytes1414[j].ToString("X2") + " ";
                                 }
                                 Debug.WriteLine("UDPDataPublisher: Dispatch Vector: " + s);
 
@@ -398,15 +412,16 @@ namespace IBM1410Console
                                     lastUnitRecordDevice = 0x00;
                                     lastUnitRecordOperation = 0x00;
                                 }
+                                dispatchLen1414 = 0;
                             }
 
                             else if (lastUnitRecordDevice == printerChannel1Device) {
                                 UDPUnitRecordChannelEventArgs unitRecordChannelEventArgs =
-                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes, dispatchLen);
-                                // Debug.WriteLine("Dispatching last " + dispatchLen.ToString("D2") + " bytes to Channel 1 printer.");
+                                    new UDPUnitRecordChannelEventArgs(lastCodeByte, dispatchBytes1414, dispatchLen1414);
+                                // Debug.WriteLine("Dispatching last " + dispatchLen1414.ToString("D2") + " bytes to Channel 1 printer.");
                                 // String s = "";
-                                // for (int j = 0; j < dispatchLen; j++) {
-                                //     s = s + dispatchBytes[j].ToString("X2") + " ";
+                                // for (int j = 0; j < dispatchLen1414; j++) {
+                                //     s = s + dispatchBytes1414[j].ToString("X2") + " ";
                                 // }
                                 // Debug.WriteLine("Dispatch Vector: " + s);
                                 OnRaiseUDPUnitChannel1OutputEvent(unitRecordChannelEventArgs);
@@ -415,6 +430,7 @@ namespace IBM1410Console
                                     lastUnitRecordDevice = 0x00;
                                     lastUnitRecordOperation = 0x00;
                                 }
+                                dispatchLen1414 = 0;
                             }
                         }
 
@@ -455,20 +471,26 @@ namespace IBM1410Console
                     //  For unit record devices, capture the first byte as the device,
                     //  and the second byte as the operation.
 
+                    //  Display the last unit record device...
+
+                    // Debug.WriteLine("UDPDataPublisher: Not last byte.  Last code byte: " +
+                    //     lastCodeByte.ToString("X2") + ", Last unit record device: " +
+                    //     lastUnitRecordDevice.ToString("X2"));
+
                     if (lastCodeByte == deviceFrom1414CodeByte) {
                         if (lastUnitRecordDevice == 0) {
                             lastUnitRecordDevice = readByte;
-                            dispatchBytes[dispatchLen++] = readByte;
-                            // Debug.WriteLine("Set unit record device to " + readByte.ToString("X2"));
+                            dispatchBytes1414[dispatchLen1414++] = readByte;
+                            Debug.WriteLine("Set unit record device to " + readByte.ToString("X2"));
                         }
                         else if (lastUnitRecordDevice != 0 && lastUnitRecordOperation == 0) {
                             // We DO include the operation code in the dispatch vector for unit record devices.
                             lastUnitRecordOperation = readByte;
                             // Debug.WriteLine("Set unit record operation to " + readByte.ToString("X2"));
-                            dispatchBytes[dispatchLen++] = readByte;
+                            dispatchBytes1414[dispatchLen1414++] = readByte;
                         }
                         else {
-                            dispatchBytes[dispatchLen++] = readByte;
+                            dispatchBytes1414[dispatchLen1414++] = readByte;
                         }
                     }
 

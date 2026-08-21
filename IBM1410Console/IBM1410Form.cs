@@ -183,7 +183,7 @@ namespace IBM1410Console
             IBM1402Form.Show();
 
             IBM1403Form = new IBM1403Form(serialDataPublisher, udpDataPublisher,
-                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore, IBM1410SwitchForm);
 
             //  Next, tell the switch form about other forms that need to know about
             //  Computer and Program resets
@@ -253,7 +253,7 @@ namespace IBM1410Console
         private void printerToolStripMenuItem_Click(object sender, EventArgs e) {
             if (IBM1403Form == null) {
                 IBM1403Form = new IBM1403Form(serialDataPublisher, udpDataPublisher,
-                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore);
+                    serialPort, serialOuputSemaphore, udpState.udpClient, udpOutputSemaphore, IBM1410SwitchForm);
             }
             IBM1403Form.Show();
         }

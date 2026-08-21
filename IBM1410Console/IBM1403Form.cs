@@ -124,6 +124,8 @@ namespace IBM1410Console
         public int formLines = 66;
         public double lineHeight = LINEHEIGHT66;
 
+        private IBM1410SwitchForm IBM1410SwitchForm = null;
+
 
         //  Translate numerics to carriage channel.  0 is invalid.
 
@@ -139,13 +141,15 @@ namespace IBM1410Console
         public IBM1403Form(SerialDataPublisher serialDataPublisher,
             UDPDataPublisher udpDataPublisher,
             SerialPort serialPort, SemaphoreSlim serialOutputSemaphore,
-            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore) {
+            UdpClient udpClient, SemaphoreSlim udpOutputSemaphore,
+            IBM1410SwitchForm IBM1410SwitchForm) {
 
             this.serialPort = serialPort;
             this.serialOutputSemaphore = serialOutputSemaphore;
             this.udpDataPublisher = udpDataPublisher;
             this.udpClient = udpClient;
             this.udpOutputSemaphore = udpOutputSemaphore;
+            this.IBM1410SwitchForm = IBM1410SwitchForm;
             printLine = null;
 
             InitializeComponent();      // Create the buttons, etc.
@@ -242,6 +246,7 @@ namespace IBM1410Console
                 }
                 else if (currentUnitRecordDevice == PRINTERCH1FLAG) {
                     //  The current unit record device is the printer, so process it.
+                    //  Debug.WriteLine("IBM1403Form: Processing UDP Input byte for Printer: " + e.UDPBytes[i].ToString("X2"));
                     printerMessageInputAvailable((byte)e.UDPBytes[i]);
                 }
                 else if (e.UDPBytes[i] == 0) {
@@ -315,11 +320,22 @@ namespace IBM1410Console
                 else if (currentPrinterOperation == FORMSOPERATION) {
                     if (currentCarriageControlCharacter == 0) {
                         Debug.WriteLine("IBM1403Form.printerMessageInputAvailable: Empty carriage control message received.");
-                        MessageBox.Show("IBM1403Form.printerMessageInputAvailable: Empty carriage control message received.");
+
+                        // If we are in 1401 mode, just ignore this, and update the printer status.
+                        // Otherwise, for 1410 mode, display a message box
+
+                        if(IBM1410SwitchForm.get1401Mode()) {
+                            // Sending status will turn off carriage busy in CPU for this unexpected case...
+                            sendPrinterStatus();
+                            currentCarriageControlCharacter = 0;
+                        }
+                        else {
+                            MessageBox.Show("IBM1403Form.printerMessageInputAvailable: Empty carriage control message received.");
+                        }
                     }
                     else {
                         //  TODO:  Actually do the carriage control operation.
-                        //  Debug.WriteLine("IBM1403Form: Carriage Control Operation character = " + currentCarriageControlCharacter.ToString("X2"));
+                        Debug.WriteLine("IBM1403Form: Carriage Control Operation character = " + currentCarriageControlCharacter.ToString("X2"));
 
                         switch (currentCarriageControlCharacter & (IBM1410BCD.BITA | IBM1410BCD.BITB)) {
                             case 0:
@@ -336,6 +352,8 @@ namespace IBM1410Console
                             case IBM1410BCD.BITB:
                                 //  Immediate Space
                                 int i;
+                                Debug.WriteLine("IBM1403Form: Carriage Control immediate space of " + 
+                                    BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f] + " lines.");
                                 for (i = 0; i < BCDToCarriageChannel[currentCarriageControlCharacter & 0x0f]; ++i) {
                                     advanceCarriage();
                                 }
@@ -511,6 +529,7 @@ namespace IBM1410Console
             //  Send the updated status to the FPGA...
 
             udpOutputSemaphore.Wait();
+            Debug.WriteLine("IBM1403Form: Sending Printer Status " + printerStatus.ToString("X2"));
             statusBuffer[0] = UNITRECORDTO1414FLAG;
             statusBuffer[1] = PRINTERCH1FLAG;
             statusBuffer[2] = STATUSUPDATEOPERATION;

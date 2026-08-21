@@ -21,6 +21,7 @@
 //  channel number field.
 
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -208,8 +209,6 @@ namespace IBM1410Console
                 return;
             }
 
-            Debug.WriteLine("IBM1402Form: Processing UDP Input.");
-
             //  Loop through the bytes (hopefully / typically, the entire packet)
 
             for (int i = 0; i < e.UDPLen; i++) {
@@ -224,9 +223,11 @@ namespace IBM1410Console
                 }
                 else if (currentUnitRecordDevice == READERCH1FLAG) {
                     //  The current unit record device is the reader, so process it.
+                    Debug.WriteLine("IBM1402Form: Processing UDP Input byte for Reader: " + e.UDPBytes[i].ToString("X2"));
                     readerMessageInputAvailable((byte)e.UDPBytes[i]);
                 }
                 else if (currentUnitRecordDevice == PUNCHCH1FLAG) {
+                    // Debug.WriteLine("IBM1402Form: Processing UDP Input byte for Punch: " + e.UDPBytes[i].ToString("X2"));
                     punchMessageInputAvailable((byte)e.UDPBytes[i]);
                 }
                 else if (e.UDPBytes[i] == 0) {
@@ -468,9 +469,10 @@ namespace IBM1410Console
                     safeUpdate = delegate
                     {
                         readerEOFButton.BackColor = Color.SeaGreen;
-                        loadButton.Enabled = true;
-                        loadButton.ForeColor = Color.Black;
-                        loadButton.Text = "Load...";
+                        setLoadButton(true, false, false);
+                        // loadButton.Enabled = true;
+                        // loadButton.ForeColor = Color.Black;
+                        // loadButton.Text = "Load...";
                     };
                     this.Invoke(safeUpdate);
                 }
@@ -578,9 +580,10 @@ namespace IBM1410Console
             try {
                 readerFileStream = new FileStream(filename,
                     FileMode.Open, FileAccess.Read);
+                setLoadButton(loadButton.Enabled, true, true);
                 // loadButton.Enabled = false;
-                loadButton.Text = "(Loaded)";
-                loadButton.ForeColor = Color.ForestGreen;
+                // loadButton.Text = "(Loaded)";
+                // loadButton.ForeColor = Color.ForestGreen;
                 // labelReaderReady.ForeColor = Color.SeaGreen;
                 // readerReady = true;
                 labelReaderReady.ForeColor = Color.DimGray;
@@ -594,9 +597,10 @@ namespace IBM1410Console
                 Debug.WriteLine("ERROR: IBM1402: Load: new FileStream failed on reader");
                 Debug.WriteLine(e2.ToString());
                 MessageBox.Show("Open of file name " + readerOpenFileDialog.FileName + " Failed.");
-                loadButton.Enabled = true;
-                loadButton.ForeColor = Color.Black;
-                loadButton.Text = "Load...";
+                setLoadButton(true, false, false);
+                // loadButton.Enabled = true;
+                // loadButton.ForeColor = Color.Black;
+                // loadButton.Text = "Load...";
                 labelReaderReady.ForeColor = Color.DimGray;
                 readerReady = false;
                 readerLastCard = false;
@@ -688,9 +692,10 @@ namespace IBM1410Console
                 }
             }
             else if (readStationAlreadyFull) {
-                loadButton.Text = "(Loaded)";
-                loadButton.ForeColor = Color.ForestGreen;
-                sendReaderStatus();
+                setLoadButton(loadButton.Enabled, true, true);
+                // loadButton.Text = "(Loaded)";
+                // loadButton.ForeColor = Color.ForestGreen;
+                // sendReaderStatus();
             }
 
             this.Refresh();
@@ -712,8 +717,9 @@ namespace IBM1410Console
             readerStopButton.Enabled = false; // Consider leaving it enabled?
             labelReaderReady.ForeColor = Color.DimGray;
             readerStartButton.BackColor = Color.SeaGreen;
-            loadButton.Enabled = true;
-            loadButton.ForeColor = Color.Black;
+            setLoadButton(true, false, loadButton.Text.Equals("(Loaded)"));
+            // loadButton.Enabled = true;
+            // loadButton.ForeColor = Color.Black;
             // loadButton.Text = "Load...";
             sendReaderStatus();
         }
@@ -868,6 +874,14 @@ namespace IBM1410Console
 
             //  Consider setting readStation to null here...
 
+        }
+
+        //  Method to set the load button enabled or not, text and color
+
+        private void setLoadButton(bool enabled, bool setGreen, bool setLoaded) {
+            loadButton.Enabled = enabled;
+            loadButton.Text = setLoaded ? "(Loaded)" : "Load...";
+            loadButton.ForeColor = setGreen ? Color.ForestGreen : Color.Black;
         }
 
         //  Handler methods for all of the stacker buttons - opens a dialog

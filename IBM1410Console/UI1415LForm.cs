@@ -365,7 +365,7 @@ namespace IBM1410Console
 
             int currentOffset = lampByte * 7;
 
-            // Debug.WriteLine("UI1415Form: Received lamp data byte: " + c.ToString("X2"));
+            // Debug.WriteLine("UI1415LForm: Received lamp data byte: " + c.ToString("X2"));
 
             //  waiting for sync bytes
 
@@ -373,7 +373,7 @@ namespace IBM1410Console
                 case lampSyncStates.lampSyncStart:
                     //  If data matches 1st sync byte, start the sync process
                     if(c == lampSyncVector[0]) {
-                        // Debug.WriteLine("UI1415LForm: Starting lamp sync.");
+                        Debug.WriteLine("UI1415LForm: Starting lamp sync.");
                         lampSyncIndex = 1;
                         lampSyncState = lampSyncStates.lampSyncing;
                     }
@@ -386,7 +386,7 @@ namespace IBM1410Console
                             lampSyncState = lampSyncStates.lampSyncCompleted;
                             outOfSync = false;
                             lampSyncIndex = 0;
-                            // Debug.WriteLine("UI1415Form: Lamp sync complete.");
+                            Debug.WriteLine("UI1415LForm: Lamp sync complete.");
                         }
                     }
                     // Does not match - out of sync.  Ignore data until next sync

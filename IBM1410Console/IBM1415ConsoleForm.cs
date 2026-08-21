@@ -364,7 +364,7 @@ namespace IBM1410Console
                 serialPort.Write(consoleControlByte, 0, 1);
             }
             else {
-                Debug.WriteLine("Console Input Sending BCD character");
+                Debug.WriteLine("Console Input Sending BCD character " + consoleByte[0].ToString("X2"));
                 serialPort.Write(consoleByte, 0, 1);
             }
 
